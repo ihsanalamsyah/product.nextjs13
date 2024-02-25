@@ -1,5 +1,7 @@
 # fullstack.node.next
 
+Aplikasi dashboard product dengan otorisasi jwt, autentikasi dll.
+
 Pastikan semua ini sudah terinstall:
 - MySQL
 - Node
@@ -17,4 +19,4 @@ Lanjutkan mejalankan dengan cara berikut:
 - Cara jalanin, di backend command npx nodemon index.js
 - Cara jalanin, di frontend command npx next dev
 
-Aplikasi dashboard product dengan otorisasi, autentikasi dll.
+Selamat menikmati apps saya
