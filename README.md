@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -34,3 +35,27 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+=======
+# fullstack.node.next
+
+Aplikasi dashboard product dengan otorisasi jwt, autentikasi dll.
+
+Pastikan semua ini sudah terinstall:
+- MySQL
+- Node
+- Next
+- DaisyUI
+- Tailwind
+- bycrpt
+- cors
+- dotenv
+- sequelize
+- jwt
+- dst.
+
+Lanjutkan mejalankan dengan cara berikut:
+- Cara jalanin, di backend command npx nodemon index.js
+- Cara jalanin, di frontend command npx next dev
+
+Selamat menikmati apps saya
+>>>>>>> 0511ef7d5b40b86162ac54ffea70efc1950820a8
