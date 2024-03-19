@@ -4,9 +4,11 @@ import AddProduct from "./addProduct";
 import Logout from "./logout";
 import DeleteProduct from "./deleteProduct";
 import UpdateProduct from "./updateProduct";
+import EnrollProduct from "./enrollProduct";
+import OpenProduct from "./openProduct";
 import { useSearchParams } from 'next/navigation';
 import { getCookie } from '../../utils/cookies';
-
+import moment from 'moment';
 
 interface Product {
     id: number;
@@ -70,29 +72,87 @@ export default async function ProductList(){
     let welcomeword;
     let addProduct;
     let tableDiv;
+    let appearTableDiv = <table className="table w-full">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                {allResult.user_products.map((user_product, index)=>{
+                                    const role = allResult.user.role;
+                                    let today = new Date();
+                                    let enrollDate = user_product.enroll_date;            
+                                    let formattedToday = moment(today);
+                                    let dateDiff = 99999999;
+                                    if(user_product.enroll_date != null){
+                                        dateDiff = formattedToday.diff(enrollDate, 'days');
+                                    }
+                                                            
+                                    if(role == "Admin"){
+                                        return(<tr key={user_product.Product.id}>
+                                            <th>{index + 1}</th>
+                                            <th>{user_product.Product.title}</th>
+                                            <th>{user_product.Product.price}</th>
+                                            <th className="flex">
+                                                <UpdateProduct {...user_product.Product}/>
+                                                <DeleteProduct {...user_product.Product} />
+                                            </th>
+                                        </tr>)
+                                    }
+                                    else if (role == "User"){
+                                        if(dateDiff < 3){
+                                            return(<tr key={user_product.Product.id}>
+                                                <th>{index + 1}</th>
+                                                <th>{user_product.Product.title}</th>
+                                                <th>{user_product.Product.price}</th>
+                                                <th className="flex">
+                                                    <OpenProduct {...user_product.Product}/>
+                                                </th>
+                                            </tr>)
+                                        }
+                                        else{
+                                            return(<tr key={user_product.Product.id}>
+                                                <th>{index + 1}</th>
+                                                <th>{user_product.Product.title}</th>
+                                                <th>{user_product.Product.price}</th>
+                                                <th className="flex">
+                                                    <EnrollProduct user={allResult.user} product={user_product.Product}/>
+                                                </th>
+                                            </tr>)
+                                        }
+                                    }
+                                })}
+                                </tbody>
+                            </table>
+
     if(allResult.user.role == "Admin"){
         welcomeword = <p><b>Welcome to dashboard admin {name}!</b></p>
         addProduct =  <div className="py-2 flex"><AddProduct /></div>
         if(allResult.user_products.length <= 0){
-            tableDiv = <div><p>Product is zero why not add some ?</p></div>
+            tableDiv = <div className="flex justify-center my-2"><p>Product is zero why not add some ?</p></div>
         }
         else{
             //isi table div beneran
-            tableDiv = <div></div>
+            tableDiv = appearTableDiv;
         }
     }      
     else{
         welcomeword = <p><b>Welcome to dashboard {name}!</b></p>
         addProduct =  <div className="py-2 flex"></div>
         if(allResult.user_products.length <= 0){
-            tableDiv = <div><p>Product is zero please contact admin to add some</p></div>
+            tableDiv = <div className="flex justify-center my-2"><p>Product is zero please contact <b>admin</b> to add some </p></div>
         }
         else{
             //isi table div beneran
-            tableDiv = <div></div>
+            tableDiv = appearTableDiv;
         }
     }
-   
+
     return (
         //<></>
         <div className="py-10 px-10">
@@ -100,29 +160,8 @@ export default async function ProductList(){
                 {welcomeword}
             </div>
             {addProduct}
-            <table className="table w-full">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Product Nmae</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {allResult.user_products.map((user_product, index)=>(
-                    <tr key={user_product.Product.id}>
-                        <th>{index + 1}</th>
-                        <th>{user_product.Product.title}</th>
-                        <th>{user_product.Product.price}</th>
-                        <th className="flex">
-                            <UpdateProduct {...user_product.Product}/>
-                            <DeleteProduct {...user_product.Product} />
-                        </th>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <hr></hr>
+            {tableDiv}
             <div className="py-2 flex flex-row-reverse">         
                 <Logout />
             </div>
