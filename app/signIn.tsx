@@ -12,6 +12,8 @@ const route = "http://localhost:4000/api";
 function classNames(...classes : any) {
     return classes.filter(Boolean).join(' ')
 }
+
+
 export default function SignIn(){
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -22,19 +24,25 @@ export default function SignIn(){
     const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
 
+    function resetForm(){
+        setName("");
+        setEmail("");
+        setPassword("");
+        document.getElementById("dropdown-gender")!.innerHTML = `Choose Gender<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;
+        document.getElementById("dropdown-role")!.innerHTML = `Choose Role<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;      
+    }
     function handleChange(){
         setModal(!modal);
     }
-    function handleRole(value: string){
-        setRole(value);
-        document.getElementById("dropdown-role")!.innerHTML = `${value}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;
-        
-    }
     function handleGender(value: string){
         setGender(value);
-        document.getElementById("dropdown-gender")!.innerHTML = `${value}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;
-        
+        document.getElementById("dropdown-gender")!.innerHTML = `${value}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;      
     }
+    function handleRole(value: string){
+        setRole(value);
+        document.getElementById("dropdown-role")!.innerHTML = `${value}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon" class="-mr-1 h-5 w-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path></svg>`;      
+    }
+  
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true);
@@ -54,20 +62,20 @@ export default function SignIn(){
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            setName("");
-            setPassword("");
             router.refresh();
             setModal(false);
+            resetForm();
             setCookie("token", content.token, 7);
             setCookie("name", content.data.name, 7);
+            setCookie("role", content.data.role, 7);
             return router.push(`products/`);  
         }
         else{
             setIsMutating(false);
-            setName("");
-            setPassword("");
             router.refresh();
             setModal(false);
+            alert(content.msg);
+            resetForm();
             return router.push("/");
         }
         

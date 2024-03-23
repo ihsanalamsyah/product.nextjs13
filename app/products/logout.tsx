@@ -2,7 +2,7 @@
 
 import { useState, SyntheticEvent, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getCookie } from '../../utils/cookies';
+import { getCookie, deleteCookie } from '../../utils/cookies';
 
 
 
@@ -14,6 +14,9 @@ export default function Logout(){
         setModal(!modal);
     }
     function handleLogout(){
+        deleteCookie("token");
+        deleteCookie("name");
+        deleteCookie("role");
         return router.push(`/`);
     }
    

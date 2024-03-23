@@ -16,6 +16,10 @@ export default function Login(){
     const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
 
+    function resetForm(){
+        setName("");
+        setPassword("");
+    }
     function handleChange(){
         setModal(!modal);
     }
@@ -36,23 +40,22 @@ export default function Login(){
         const content = await response.json();
         if(content.status == "OK"){            
             setIsMutating(false);
-            setName("");
-            setPassword("");
             setModal(false);
             setCookie("token", content.token, 7);
             setCookie("name", content.data.name, 7);
+            setCookie("role", content.data.role, 7);
+            resetForm();
             // return router.push({
             //     pathname: '/products',
             //     query: { token: content.token,  name: content.data.name, role: content.data.role} // Melewatkan variabel via query string
             //   });
-            return router.push(`products/`);
-            
+            return router.push(`products/`);            
         }
         else{            
             setIsMutating(false);
-            setName("");
-            setPassword("");
             setModal(false);
+            alert(content.msg);
+            resetForm();
             // return router.push({
             //     pathname: '/'
             //   });
