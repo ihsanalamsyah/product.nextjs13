@@ -1,11 +1,7 @@
 'use client'
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { getCookie } from '../../utils/cookies';
 import moment from 'moment';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import DeleteProduct from "./deleteProduct";
 import UpdateProduct from "./updateProduct";
 import EnrollProduct from "./enrollProduct";
@@ -45,7 +41,7 @@ interface GetUserProduct{
 
 const getUserProduct = async (token: string | null | undefined, name: string | null | undefined) => {
 
-    const route = "http://localhost:4000/api";
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
                
         const response = await fetch(`${route}/getusergetproducts`, {

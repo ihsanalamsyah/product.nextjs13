@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { getCookie } from '../../../utils/cookies';
 import ImageUploader from './imageUploader';
-import ImageProduct from './imageProduct';
 
 interface Product {
     id: number;
@@ -19,7 +18,7 @@ interface GetProduct {
 }
 
 async function getProductById(token: string | null | undefined, productId: string){
-    const route = "http://localhost:4000/api";
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
                
         const response = await fetch(`${route}/product`, {
@@ -43,7 +42,7 @@ async function getProductById(token: string | null | undefined, productId: strin
 }
 
 async function getImage(token: string | null | undefined,  productId: string){
-    const route = "http://localhost:4000/api";
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     try{
         const response = await fetch(`${route}/getimage`, {
             method: 'POST',

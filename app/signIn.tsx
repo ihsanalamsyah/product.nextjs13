@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { getCookie, setCookie } from '../utils/cookies';
+import { setCookie } from '../utils/cookies';
 
 
-const route = "http://localhost:4000/api";
+const route = process.env.NEXT_PUBLIC_ROUTE;
 function classNames(...classes : any) {
     return classes.filter(Boolean).join(' ')
 }

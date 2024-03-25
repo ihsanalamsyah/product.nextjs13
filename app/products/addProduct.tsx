@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, SyntheticEvent, use } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, SyntheticEvent } from "react";
+import { useRouter} from "next/navigation";
 import { getCookie } from '../../utils/cookies';
 
 
@@ -20,7 +20,7 @@ export default function AddProduct(){
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true);
-        const route = "http://localhost:4000/api";
+        const route = process.env.NEXT_PUBLIC_ROUTE;
                 
         const response = await fetch(`${route}/products`,{
             method: 'POST',

@@ -35,7 +35,7 @@ interface EnrollProduct{
     product: Product;
 }
 
-const route = "http://localhost:4000/api";
+const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function EnrollProduct(enrollProduct: EnrollProduct){
     const [modal, setModal] = useState(false);

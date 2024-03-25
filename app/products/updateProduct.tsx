@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, SyntheticEvent, use } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, SyntheticEvent } from "react";
+import { useRouter} from "next/navigation";
 import { getCookie } from '../../utils/cookies';
 
 type Product = {
@@ -9,7 +9,7 @@ type Product = {
     title: string;
     price: number;
 }
-const route = "http://localhost:4000/api";
+const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function UpdateProduct(product: Product){
     const [title, setTitle] = useState(product.title);

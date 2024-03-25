@@ -2,14 +2,14 @@
 
 import { useState, SyntheticEvent } from "react";
 import { useRouter } from 'next/navigation';
-import { getCookie, setCookie } from '../utils/cookies';
+import { setCookie } from '../utils/cookies';
 
 
 
 
 export default function Login(){
     
-    const route = "http://localhost:4000/api";
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [modal, setModal] = useState(false);

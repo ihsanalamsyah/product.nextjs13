@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, SyntheticEvent, use } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { getCookie, deleteCookie } from '../../utils/cookies';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { deleteCookie } from '../../utils/cookies';
 
 
 

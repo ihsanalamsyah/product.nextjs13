@@ -1,10 +1,5 @@
 'use client'
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { getCookie } from '../../utils/cookies';
-import moment from 'moment';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface Product {

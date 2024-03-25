@@ -1,10 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, SyntheticEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { getCookie } from '../../../utils/cookies';
-import moment from 'moment';
-import { useRef } from 'react';
 
 interface Product {
     id: number;
@@ -35,11 +31,10 @@ interface EnrollProduct{
     product: Product;
 }
 
-const route = "http://localhost:4000/api";
 
 export default function ImageUploader(product: { productId: number }){
 
-    const route = "http://localhost:4000/api";
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     const productID = product.productId;
     
     async function handleLoadImage (){
