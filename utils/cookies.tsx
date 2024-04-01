@@ -6,17 +6,13 @@ export function getCookie(name: string) {
       return cookieValue ? decodeURIComponent(cookieValue) : null;
     }
     else{
-      console.error("di render di lingkungan server document gak bisa di akses dong");
+      console.error("di render di lingkungan server document gak bisa di akses");
     }
    
   }
   catch (err){
-    //alert(err);
     console.error(err);
-  }
-    
-    
-    
+  } 
 }
 
 export function setCookie(name: string, value: string, days: number) {
@@ -27,7 +23,7 @@ export function setCookie(name: string, value: string, days: number) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
   }
   else{
-    console.error("di render di lingkungan server document gak bisa di akses dong");
+    console.error("di render di lingkungan server document gak bisa di akses");
   }
  
 }
@@ -37,7 +33,7 @@ export function deleteCookie(name: string) {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
   else{
-    console.error("di render di lingkungan server document gak bisa di akses dong");
+    console.error("di render di lingkungan server document gak bisa di akses");
   }
  
 }

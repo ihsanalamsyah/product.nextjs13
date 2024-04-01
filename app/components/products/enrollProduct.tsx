@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getCookie } from '../../utils/cookies';
+import { getCookie } from '../../../utils/cookies';
 import moment from 'moment';
 
 

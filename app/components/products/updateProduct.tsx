@@ -2,12 +2,12 @@
 
 import { useState, SyntheticEvent } from "react";
 import { useRouter} from "next/navigation";
-import { getCookie } from '../../utils/cookies';
+import { getCookie } from '../../../utils/cookies';
 
-type Product = {
-    id: number;
-    title: string;
-    price: number;
+interface Product {
+    id: number,
+    title: string,
+    price: number
 }
 const route = process.env.NEXT_PUBLIC_ROUTE;
 

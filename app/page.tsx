@@ -1,4 +1,4 @@
-'use client'
+
 
 import SignIn from "./signIn";
 import Login from "./login";
