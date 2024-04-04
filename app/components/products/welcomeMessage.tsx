@@ -2,7 +2,7 @@
 
 
 interface WelcomeMessage {
-    name: any,
+    name: string,
     isAdmin: boolean
 }
 
@@ -10,7 +10,7 @@ interface WelcomeMessage {
 export default function welcomeMessage(welcomeMessage: WelcomeMessage){
     
     let isAdmin = false;
-    const name = welcomeMessage.name as string;
+    const name = welcomeMessage.name;
     if(welcomeMessage.isAdmin){
         isAdmin = true;
     }

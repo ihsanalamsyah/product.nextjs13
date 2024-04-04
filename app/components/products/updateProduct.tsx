@@ -23,18 +23,18 @@ export default function UpdateProduct(product: Product){
     }
     
     async function handleUpdate(e: SyntheticEvent){
-    e.preventDefault();
-    setIsMutating(true);
-    const response = await fetch(`${route}/products/${product.id}`,{
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ token
-        },
-        body: JSON.stringify({
-            title: title,
-            price: price
-        })
+        e.preventDefault();
+        setIsMutating(true);
+        const response = await fetch(`${route}/products/${product.id}`,{
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
+            },
+            body: JSON.stringify({
+                title: title,
+                price: price
+            })
     });
     const content = await response.json();
     if(content.status == "OK"){

@@ -37,3 +37,13 @@ export function deleteCookie(name: string) {
   }
  
 }
+
+export function deleteLocalStorage(name: string){
+  if(typeof window !== 'undefined'){
+    localStorage.removeItem(name);
+  }
+  else{
+    console.error("di render di lingkungan server document gak bisa di akses");
+  }
+  
+}

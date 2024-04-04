@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteCookie } from '../../../utils/cookies';
+import { deleteCookie, deleteLocalStorage } from '../../../utils/cookies';
 
 
 
@@ -17,6 +17,7 @@ export default function Logout(){
         deleteCookie("token");
         deleteCookie("name");
         deleteCookie("role");
+        deleteLocalStorage("role");
         return router.push(`/`);
     }
    

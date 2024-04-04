@@ -1,7 +1,6 @@
 
-
-import SignIn from "./signIn";
-import Login from "./login";
+import SignIn from "./components/signIn";
+import Login from "./components/login";
 
 export default function Home() {
   return (
