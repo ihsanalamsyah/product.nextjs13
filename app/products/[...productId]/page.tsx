@@ -1,5 +1,4 @@
 
-
 import Link from 'next/link';
 import { getCookie } from '../../../utils/cookies';
 import ImageUploader from '../../components/products/[...productId]/imageProduct';

@@ -6,8 +6,9 @@ import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { setCookie } from '../../utils/cookies';
+import env from "dotenv";
 
-
+env.config();
 const route = process.env.NEXT_PUBLIC_ROUTE;
 function classNames(...classes : any) {
     return classes.filter(Boolean).join(' ')
@@ -46,7 +47,7 @@ export default function SignIn(){
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true);
-        const response = await fetch(`${route}/signin`,{
+        const response = await fetch(`${route}/users`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
