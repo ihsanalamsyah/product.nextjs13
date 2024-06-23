@@ -42,7 +42,7 @@ interface UserProduct {
 
 interface GetUserProduct{
     user: User;
-    user_products: UserProduct[];
+    mapUserProduct: UserProduct[];
 }
 
 const getUserProduct = async (token: string | null | undefined, name: string | null | undefined):Promise<GetUserProduct> => {
@@ -55,12 +55,12 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
             password: "",
             role: "",
         },
-        user_products: []
+        mapUserProduct: []
     };
     const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
                
-        const response = await fetch(`${route}/getusergetproducts`, {
+        const response = await fetch(`${route}/mapUserProduct`, {
             method: 'POST',
             cache: 'no-store',
             headers:{
@@ -92,13 +92,12 @@ export default async function Products(){
     let isProductZero = false;
    
     let allResult:GetUserProduct = await getUserProduct(token.value, name.value);
- 
    
     if(allResult.user.role == "Admin"){
         isAdmin = true;
     }
-   
-    if(allResult.user_products.length <= 0){
+    console.log("role: ", allResult)
+    if(allResult.mapUserProduct.length <= 0){
         isProductZero = true;
     }
     return (
@@ -137,7 +136,7 @@ export default async function Products(){
                         </thead>
                         <tbody>
                             
-                        {allResult.user_products.map((user_product, index)=>{
+                        {allResult.mapUserProduct.map((user_product, index)=>{
                             const role = allResult.user.role;
                             let today = new Date();
                             let enrollDate = user_product.enroll_date;            

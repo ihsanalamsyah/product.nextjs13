@@ -64,16 +64,12 @@ async function getProductById(token: string | null | undefined, productId: numbe
     const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
 
-        const response = await fetch(`${route}/product`, {
-            method: 'POST',
+        const response = await fetch(`${route}/product?id=${productId}`, {
+            method: 'GET',
             headers:{
                 'Authorization': 'Bearer '+ token,
-                'Content-Type': 'application/json'
-                
-            },
-            body: JSON.stringify({
-                id: productId.toString()
-            })
+                'Content-Type': 'application/json'            
+            }
         });
 
         const content = await response.json();

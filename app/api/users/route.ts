@@ -3,56 +3,56 @@ import bcrypt from 'bcrypt';
 import User from '../models/userModel';
 import jwt  from 'jsonwebtoken';
 import env from 'dotenv';
+import generateToken from '@/utils/generateToken';
+import { resolve } from "path";
 env.config();
 
 
 export async function GET() {
     try {
         const response = await User.findAll();
-        return NextResponse.json({status: "OK", msg: "Get User", data: response});
+        return NextResponse.json({status: "OK", msg: "Get User", data: response}, {status: 200});
     }
     catch {
-        return NextResponse.json({status: "Failed", msg: "Error"});
+        return NextResponse.json({status: "Failed", msg: "Error"}, {status: 400});
     }
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
-        const JWT_SECRET = process.env.JWT_SECRET!;
-        var body = await req.json();
-        bcrypt.genSalt(10, function(err, salt){
-            bcrypt.hash(body.password, salt, async function(err, hash){
-                const data = {
-                    name : body.name,
-                    email: body.email || null,
-                    gender: body.gender || null,
-                    password: hash,
-                    role: body.role || null
-                }
-                
-                const alredyExist = await User.findAll({
-                    where: {
-                        name: body.name
-                    }
-                })
-                if (alredyExist.length > 0){
-                    return NextResponse.json({status: "Failed", msg: "name already exist"});
-                }
-                else{
-                    await User.create(data);
-                    //pembuatan token saat login success
-                    const token = jwt.sign({
-                        email: data.email,
-                        name: data.name
-                    }, JWT_SECRET, function(err, token){
-                        return NextResponse.json({status: "OK", data: data, token: token});
-                    })
-
-                }
-            })
+        var body:Users = await req.json();
+        const hashedPassword = await new Promise((resolve, reject) => {
+            bcrypt.hash(body.password, 10, function(err, hash) {
+              if (err) reject(err)
+              resolve(hash)
+            });
         })
+        const data = {
+            name : body.name,
+            email: body.email,
+            gender: body.gender,
+            password: hashedPassword,
+            role: body.role
+        }
+        const alredyExist = await User.findAll({
+            where: {
+                name: body.name
+            }
+        })
+        if (alredyExist.length > 0){
+            return NextResponse.json({status: "Failed",  msg: "name already exist", data: data}, {status: 400});
+        }
+        else{
+            await User.create(data);
+
+            const token = await generateToken({
+                email: data.email,
+                name: data.name
+            });
+            return NextResponse.json({status: "OK",  msg: "user created", data: data, token: token}, {status: 200});          
+        }        
     }
     catch (error){
-        return NextResponse.json({status: "Failed", error: error});
+        return NextResponse.json({status: "Failed", error: error}, {status: 400});
     }
 }
