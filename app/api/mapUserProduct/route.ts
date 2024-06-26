@@ -1,54 +1,29 @@
 import { NextResponse, NextRequest } from "next/server";
-import bcrypt from 'bcrypt';
 import User from '../models/userModel';
 import MapUserProduct from "../models/mapUserProductModel";
 import Product from "../models/productModel";
-import jwt  from 'jsonwebtoken';
-import env from 'dotenv';
-import generateToken from '@/utils/generateToken';
-import { resolve } from "path";
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         var body:GetMapUserProduct = await req.json();
-        let response;
+        let mapUserProduct;
         const user = await User.findOne({
             where: {
                 name: body.name
             }
         });
-        console.log("Role :", user?.dataValues.role);
-        if ( user?.dataValues.role == "User"){
-            console.log("name body :", body.name);
-            response = await MapUserProduct.findAll({             
-                include: [
-                {
-                    model: User,
-                    right: true
-                },{
-                    model: Product,
-                    required: false
-                }]
-            });
+        if (user?.dataValues.role == "User"){
+            mapUserProduct = await MapUserProduct.sequelize?.query(`select * from crud_db.mapuserproduct;`);
         }
         else{
-            response = await MapUserProduct.findAll({             
-                include: [
-                {
-                    model: Product,
-                    required: false,
-                    right: true
-                },{
-                    model: User,
-                    required: true,
-                    right: false
-                }]
-            });
-            console.log("response admin :", response);
+            mapUserProduct = await MapUserProduct.sequelize?.query(`
+                select * from crud_db.mapuserproduct;`
+            
+            );        
         }
        
-        return NextResponse.json({status: "OK", msg: "Get Product", mapUserProduct: response, user: "OK"}, {status : 200});
+        return NextResponse.json({status: "OK", msg: "Get Product", mapUserProducts: mapUserProduct, user: user}, {status : 200});
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status : 400});
@@ -58,15 +33,18 @@ export async function POST(req: NextRequest, res: NextResponse) {
 export async function PATCH(req: NextRequest, res: NextResponse) {
     try {
         var body:MapUserProduct = await req.json();
-        const url = new URL(req.url);
-        const searchParams = new URLSearchParams(url.searchParams);
-        const id = searchParams.get('id');
-        await MapUserProduct.update(body,{
+        const data = {      
+            userID: body.userID,
+            productID : body.productID,
+            enrollDate : body.enrollDate,
+            rowStatus: true
+        }
+        await MapUserProduct.update(data,{
             where: {
-                id: id
+                id: body.id
             }
         });
-        return NextResponse.json({status: "OK", msg: `User Product ${id} Updated`}, {status: 200});
+        return NextResponse.json({status: "OK", msg: `User Product ${body.id} Updated`}, {status: 200});
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status: 300});

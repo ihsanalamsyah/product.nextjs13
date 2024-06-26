@@ -1,10 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import bcrypt from 'bcrypt';
 import User from '../models/userModel';
-import jwt  from 'jsonwebtoken';
 import env from 'dotenv';
 import generateToken from '@/utils/generateToken';
-import { resolve } from "path";
 env.config();
 
 
@@ -32,7 +30,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
             email: body.email,
             gender: body.gender,
             password: hashedPassword,
-            role: body.role
+            role: body.role,
+            rowStatus: true
         }
         const alredyExist = await User.findAll({
             where: {

@@ -24,12 +24,16 @@ export default function DeleteProduct(product: Product){
     async function handleDelete(productId: number){
     
     setIsMutating(true);
-    const response = await fetch(`${route}/products/${productId}`,{
+    const response = await fetch(`${route}/products`,{
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer '+ token
         },
+        body: JSON.stringify({
+            id: productId
+            
+        })
     });
     const content = await response.json();
     if(content.status == "OK"){

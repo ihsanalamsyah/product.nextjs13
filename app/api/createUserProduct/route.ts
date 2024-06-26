@@ -6,25 +6,34 @@ import { Op } from 'sequelize';
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         var body:MapUserProduct = await req.json();
-        const response = await MapUserProduct.findAll({
+        const data = {         
+            userID: body.userID,
+            productID : body.productID,
+            enrollDate : body.enrollDate,
+            rowStatus: true
+        }
+        console.log("data",data)
+        const mapUserProduct = await MapUserProduct.findAll({
             where:{
-                product_id: {
-                  [Op.eq]: body.product_id
-                }}
+                productID: {
+                  [Op.eq]: body.productID
+                }
+            }
         });
-        if(response.length > 0){
-            await MapUserProduct.update(body,{
+        if(mapUserProduct.length > 0){
+            await MapUserProduct.update(data,{
                 where: {
-                    product_id: {
-                      [Op.eq]: body.product_id
-                    }}
+                    productID: {
+                      [Op.eq]: body.productID
+                    }
+                }
             });
+            return NextResponse.json({status: "OK", msg: "User Product Updated"}, {status : 200});
         }
         else{
-            await MapUserProduct.create(body);
-        }
-        
-        return NextResponse.json({status: "OK", msg: "User Product Created"}, {status : 201});
+            await MapUserProduct.create(data);
+            return NextResponse.json({status: "OK", msg: "User Product Created"}, {status : 201});
+        }        
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error},{status: 400});

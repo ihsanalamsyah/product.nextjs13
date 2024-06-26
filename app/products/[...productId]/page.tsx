@@ -64,7 +64,7 @@ async function getProductById(token: string | null | undefined, productId: numbe
     const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
 
-        const response = await fetch(`${route}/product?id=${productId}`, {
+        const response = await fetch(`${route}/products?id=${productId}`, {
             method: 'GET',
             headers:{
                 'Authorization': 'Bearer '+ token,
@@ -84,7 +84,6 @@ async function getProductById(token: string | null | undefined, productId: numbe
 export default async function ProductDetail({params}: {params: {productId: number}}){
 
     let productId2 = Number(params.productId);
-
     if (productId2 < 0  || isNaN(productId2)) {
       notFound();
     }
@@ -99,7 +98,7 @@ export default async function ProductDetail({params}: {params: {productId: numbe
     if(role.value == "Admin"){
         isAdmin = true;
     }
-    const getProduct: GetProduct = await getProductById(token.value, params.productId);
+    const productDetail: GetProduct = await getProductById(token.value, params.productId);
     const imageUrl = await getImageUrl(token.value, params.productId);
     const imageId = `image-product-${params.productId}`;
     const imageAlt = `image product ${params.productId}`;
@@ -119,9 +118,8 @@ export default async function ProductDetail({params}: {params: {productId: numbe
 
             <DetailProduct>
                 <div>
-                    <p>Product id number: {getProduct.data.id}</p>
-                    <p>Product title: {getProduct.data.title}</p>
-                    <p>Product price: {getProduct.data.price}</p>   
+                    <p>Product title: {productDetail.data.title}</p>
+                    <p>Product price: {productDetail.data.price}</p>   
                 </div> 
             </DetailProduct>
 

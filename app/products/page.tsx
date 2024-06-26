@@ -10,43 +10,10 @@ import UpdateProduct from "../components/products/updateProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
 import moment from "moment";
 import { cookies } from 'next/headers';
-import { ReactNode } from "react";
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    gender: string;
-    password: string;
-    role: string;
-}
-
-interface Product {
-    id: number;
-    title: string;
-    price: number;
-}
-interface GetUser {
-    data: User;
-    msg: string;
-    status: string;
-}
-interface UserProduct {
-    id: number;
-    product_id: number;
-    user_id: number;
-    enroll_date: Date;
-    Product: Product;
-    User: User;
-}
-
-interface GetUserProduct{
-    user: User;
-    mapUserProduct: UserProduct[];
-}
 
 const getUserProduct = async (token: string | null | undefined, name: string | null | undefined):Promise<GetUserProduct> => {
-    let allResult: GetUserProduct = {
+    let userAndProduct: GetUserProduct = {
         user: {
             id: 0,
             name: "",
@@ -55,7 +22,7 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
             password: "",
             role: "",
         },
-        mapUserProduct: []
+        mapUserProducts: []
     };
     const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
@@ -73,13 +40,12 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
         });
         const content = await response.json();
         
-        allResult = content;
-
+        userAndProduct = content;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
 
-    return allResult;
+    return userAndProduct;
 };
 
 export default async function Products(){
@@ -91,13 +57,12 @@ export default async function Products(){
     let isAdmin = false;
     let isProductZero = false;
    
-    let allResult:GetUserProduct = await getUserProduct(token.value, name.value);
-   
-    if(allResult.user.role == "Admin"){
+    const userAndProduct:GetUserProduct = await getUserProduct(token.value, name.value);
+    console.log("userAndProduct", userAndProduct)
+    if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }
-    console.log("role: ", allResult)
-    if(allResult.mapUserProduct.length <= 0){
+    if(userAndProduct.mapUserProducts.length <= 0){
         isProductZero = true;
     }
     return (
@@ -136,46 +101,46 @@ export default async function Products(){
                         </thead>
                         <tbody>
                             
-                        {allResult.mapUserProduct.map((user_product, index)=>{
-                            const role = allResult.user.role;
+                        {userAndProduct.mapUserProducts.map((mapUserProduct, index)=>{
+                            const role = userAndProduct.user.role;
                             let today = new Date();
-                            let enrollDate = user_product.enroll_date;            
+                            let enrollDate = mapUserProduct.enrollDate;            
                             let formattedToday = moment(today);
                             let dateDiff = 99999999;
-                            if(user_product.enroll_date != null){
+                            if(mapUserProduct.enrollDate != null){
                                 dateDiff = formattedToday.diff(enrollDate, 'days');
                             }
                                                     
                             if(role == "Admin"){
-                                return(<tr key={user_product.Product.id}>
+                                return(<tr key={mapUserProduct.Product.id}>
                                     <th>{index + 1}</th>
-                                    <th>{user_product.Product.title}</th>
-                                    <th>{user_product.Product.price}</th>
+                                    <th>{mapUserProduct.Product.title}</th>
+                                    <th>{mapUserProduct.Product.price}</th>
                                     <th className="flex">
-                                        <UpdateProduct {...user_product.Product}/>
-                                        <DeleteProduct {...user_product.Product} />
-                                        <OpenProduct {...user_product.Product}/>
+                                        <UpdateProduct {...mapUserProduct.Product}/>
+                                        <DeleteProduct {...mapUserProduct.Product} />
+                                        <OpenProduct {...mapUserProduct.Product}/>
                                     </th>
                                 </tr>)
                             }
                             else if (role == "User"){
                                 if(dateDiff < 3){
-                                    return(<tr key={user_product.Product.id}>
+                                    return(<tr key={mapUserProduct.Product.id}>
                                         <th>{index + 1}</th>
-                                        <th>{user_product.Product.title}</th>
-                                        <th>{user_product.Product.price}</th>
+                                        <th>{mapUserProduct.Product.title}</th>
+                                        <th>{mapUserProduct.Product.price}</th>
                                         <th className="flex">
-                                            <OpenProduct {...user_product.Product}/>
+                                            <OpenProduct {...mapUserProduct.Product}/>
                                         </th>
                                     </tr>)
                                 }
                                 else{
-                                    return(<tr key={user_product.Product.id}>
+                                    return(<tr key={mapUserProduct.Product.id}>
                                         <th>{index + 1}</th>
-                                        <th>{user_product.Product.title}</th>
-                                        <th>{user_product.Product.price}</th>
+                                        <th>{mapUserProduct.Product.title}</th>
+                                        <th>{mapUserProduct.Product.price}</th>
                                         <th className="flex">
-                                            <EnrollProduct user={allResult.user} product={user_product.Product}/>
+                                            <EnrollProduct user={userAndProduct.user} product={mapUserProduct.Product}/>
                                         </th>
                                     </tr>)
                                 }

@@ -2,36 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 
-interface Product {
-    id: number;
-    title: string;
-    price: number;
-}
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    gender: string;
-    password: string;
-    role: string;
-}
 
-interface UserProduct {
-    id: number;
-    product_id: number;
-    user_id: number;
-    enroll_date: Date;
-    Product: Product;
-    User: User;
-}
-
-interface EnrollProduct{
-    user: User;
-    product: Product;
-}
-
-export default function EnrollProduct(product: Product){
+export default function EnrollProduct(product: Products){
     const router = useRouter();
     
     function handleOpen(productId: number){

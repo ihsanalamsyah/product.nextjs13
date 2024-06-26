@@ -8,6 +8,7 @@ const { DataTypes } = Sequelize;
 const Product = db.define('Products', {
     title: DataTypes.STRING,
     price: DataTypes.INTEGER,
+    rowStatus: DataTypes.BOOLEAN
 }, {
     freezeTableName: true
 })

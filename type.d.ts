@@ -1,11 +1,6 @@
-type ToDo = {
-    userId: number,
-    id: number,
-    title: string,
-    completed: boolean
-}
 
 type Users = {
+    id: number,
     name: string,
     email: string,
     password: string,
@@ -14,16 +9,30 @@ type Users = {
 }
 
 type Products = {
+    id: number,
     title: string,
     price: number,
 }
 
 type MapUserProduct = {
-    user_id: number,
-    product_id: number,
-    enroll_date: Date
+    id: number;
+    productID: number;
+    userID: number;
+    enrollDate: Date;
+    Product: Products;
+    User: Users;
 }
 
 type GetMapUserProduct = {
     name: string
+}
+
+type EnrollProduct = {
+    user: Users;
+    product: Products;
+}
+
+type GetUserProduct = {
+    user: Users;
+    mapUserProducts: MapUserProduct[];
 }

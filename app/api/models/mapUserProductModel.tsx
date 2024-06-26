@@ -8,19 +8,20 @@ const { DataTypes } = Sequelize;
 
 
 const MapUserProduct = db.define('MapUserProduct', {
-    user_id: DataTypes.INTEGER,
-    product_id: DataTypes.INTEGER,
-    enroll_date: DataTypes.DATE
+    userID: DataTypes.INTEGER,
+    productID: DataTypes.INTEGER,
+    enrollDate: DataTypes.DATE,
+    rowStatus: DataTypes.BOOLEAN
 }, {
     freezeTableName: true
 })
 
 
 MapUserProduct.belongsTo(Users, 
-    { foreignKey: 'user_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+    { foreignKey: 'userID', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
 );
 MapUserProduct.belongsTo(Products, 
-    { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+    { foreignKey: 'productID', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
 );
 
 Products.hasMany(MapUserProduct, { foreignKey: 'id' });

@@ -4,14 +4,9 @@ import { useState, SyntheticEvent } from "react";
 import { useRouter} from "next/navigation";
 import { getCookie } from '../../../utils/cookies';
 
-interface Product {
-    id: number,
-    title: string,
-    price: number
-}
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-export default function UpdateProduct(product: Product){
+export default function UpdateProduct(product: Products){
     const [title, setTitle] = useState(product.title);
     const [price, setPrice] = useState(product.price);
     const [modal, setModal] = useState(false);
@@ -25,13 +20,14 @@ export default function UpdateProduct(product: Product){
     async function handleUpdate(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true);
-        const response = await fetch(`${route}/products/${product.id}`,{
+        const response = await fetch(`${route}/products`,{
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+ token
             },
             body: JSON.stringify({
+                id: product.id,
                 title: title,
                 price: price
             })

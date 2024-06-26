@@ -6,35 +6,6 @@ import { getCookie } from '../../../utils/cookies';
 import moment from 'moment';
 
 
-interface Product {
-    id: number;
-    title: string;
-    price: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    gender: string;
-    password: string;
-    role: string;
-}
-
-interface UserProduct {
-    id: number;
-    product_id: number;
-    user_id: number;
-    enroll_date: Date;
-    Product: Product;
-    User: User;
-}
-
-interface EnrollProduct{
-    user: User;
-    product: Product;
-}
-
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function EnrollProduct(enrollProduct: EnrollProduct){
@@ -50,16 +21,16 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
         setIsMutating(true);
         let today = new Date();
         let formattedToday = moment(today).format('YYYY-MM-DD');
-        const response = await fetch(`${route}/userproducts`,{
+        const response = await fetch(`${route}/createUserProduct`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+ token
             },
             body: JSON.stringify({
-                product_id: productId,
-                user_id: userId,
-                enroll_date: formattedToday
+                userID: userId,
+                productID: productId,     
+                enrollDate: formattedToday
                 
             })
         });
