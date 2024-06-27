@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "OK", msg: `Get Product ${id}`, data: response});
         }
         else{
-            response = await Product.findAll({
+            response! = await Product.findAll({
                 order:[
                     ['title', 'asc']
                 ]
@@ -34,22 +34,25 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
-        var body:Products = await req.json();
-        var price = body.price;
+        const body:Products = await req.json();
+        const price = body.price as number;
+        const title = body.title as string
         if(isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is not number"}, {status: 400});
         }
         const product = await Product.findOne({
             where: {
-                title: body.title.trim()
+                title: title.trim()
             }
         });
         if(product != null){
             return NextResponse.json({status: "Failed", msg: "product already exists"}, {status: 400});
         }
         const data = {         
-            title: body.title,
+            title: title,
             price : price,
+            userID: null,
+            enrollDate: null,
             rowStatus: true
         }
         await Product.create(data);
@@ -62,8 +65,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 export async function PATCH(req: NextRequest, res: NextResponse){
     try {
-        var body:Products = await req.json();
-        var price = body.price;
+        const body:Products = await req.json();
+        const price = body.price as number;
         const data = {         
             title: body.title,
             price : price,
@@ -89,16 +92,19 @@ export async function PATCH(req: NextRequest, res: NextResponse){
 
 export async function DELETE(req: NextRequest, res: NextResponse){
     try {
-        var body:Products = await req.json();
+        const body:Products = await req.json();
         const product = await Product.findOne({
             where: {
                 id: body.id
             }
         });
-        product?.set({
+        if(product == null){
+            return NextResponse.json({status: "Failed", msg: `Data is not exists`}, {status: 300});
+        }
+        product!.set({
             rowStatus: false
         })
-        await product?.save();
+        await product!.save();
         return NextResponse.json({status: "OK", msg: `Product ${body.id} Deleted`}, {status: 200});
     }
     catch (error){

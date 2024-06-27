@@ -25,8 +25,7 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
         mapUserProducts: []
     };
     const route = process.env.NEXT_PUBLIC_ROUTE;
-    try {
-               
+    try {             
         const response = await fetch(`${route}/mapUserProduct`, {
             method: 'POST',
             cache: 'no-store',
@@ -53,7 +52,6 @@ export default async function Products(){
     
     const token = cookieStore.get('token') as any;
     const name = cookieStore.get('name') as any;
-    const role = cookieStore.get('role') as any;
     let isAdmin = false;
     let isProductZero = false;
    
@@ -85,9 +83,9 @@ export default async function Products(){
                 <div>
                 {isProductZero ? (
                 isAdmin ? (
-                    <div className="flex justify-center my-2"><p>Product is zero, but why not add some ?</p></div>
+                    <div className="flex justify-center my-2"><p>Product is empty, please add some</p></div>
                 ) : (
-                    <div className="flex justify-center my-2"><p>Product is zero, please contact <b>admin</b> to add some </p></div>
+                    <div className="flex justify-center my-2"><p>Product is empty, please contact <b>admin</b> to add some </p></div>
                 )              
                 ) : (
                     <table className="table w-full">
@@ -103,44 +101,49 @@ export default async function Products(){
                             
                         {userAndProduct.mapUserProducts.map((mapUserProduct, index)=>{
                             const role = userAndProduct.user.role;
-                            let today = new Date();
-                            let enrollDate = mapUserProduct.enrollDate;            
-                            let formattedToday = moment(today);
+                            const today = new Date();
+                            const enrollDate = mapUserProduct.enrollDate;            
+                            const formattedToday = moment(today);
                             let dateDiff = 99999999;
                             if(mapUserProduct.enrollDate != null){
                                 dateDiff = formattedToday.diff(enrollDate, 'days');
                             }
                                                     
                             if(role == "Admin"){
-                                return(<tr key={mapUserProduct.Product.id}>
+                                return(<tr key={mapUserProduct.productID!}>
                                     <th>{index + 1}</th>
-                                    <th>{mapUserProduct.Product.title}</th>
-                                    <th>{mapUserProduct.Product.price}</th>
+                                    <th>{mapUserProduct.title!}</th>
+                                    <th>{mapUserProduct.price!}</th>
                                     <th className="flex">
-                                        <UpdateProduct {...mapUserProduct.Product}/>
-                                        <DeleteProduct {...mapUserProduct.Product} />
-                                        <OpenProduct {...mapUserProduct.Product}/>
+                                        <UpdateProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
+                                        <DeleteProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!} />
+                                        <OpenProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                     </th>
                                 </tr>)
                             }
                             else if (role == "User"){
                                 if(dateDiff < 3){
-                                    return(<tr key={mapUserProduct.Product.id}>
+                                    return(<tr key={mapUserProduct.productID!}>
                                         <th>{index + 1}</th>
-                                        <th>{mapUserProduct.Product.title}</th>
-                                        <th>{mapUserProduct.Product.price}</th>
+                                        <th>{mapUserProduct.title!}</th>
+                                        <th>{mapUserProduct.price!}</th>
                                         <th className="flex">
-                                            <OpenProduct {...mapUserProduct.Product}/>
+                                            <OpenProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                         </th>
                                     </tr>)
                                 }
                                 else{
-                                    return(<tr key={mapUserProduct.Product.id}>
+                                    const product: Products = {
+                                        id: mapUserProduct.productID!,
+                                        price: mapUserProduct.price!,
+                                        title: mapUserProduct.title!,
+                                    }
+                                    return(<tr key={mapUserProduct.productID!}>
                                         <th>{index + 1}</th>
-                                        <th>{mapUserProduct.Product.title}</th>
-                                        <th>{mapUserProduct.Product.price}</th>
+                                        <th>{mapUserProduct.title!}</th>
+                                        <th>{mapUserProduct.price!}</th>
                                         <th className="flex">
-                                            <EnrollProduct user={userAndProduct.user} product={mapUserProduct.Product}/>
+                                            <EnrollProduct user={userAndProduct.user} product={product}/>
                                         </th>
                                     </tr>)
                                 }
@@ -148,8 +151,7 @@ export default async function Products(){
                         })}
                         </tbody>
                     </table>
-                )}
-                
+                )}         
                 </div>
             </TableProduct>
               

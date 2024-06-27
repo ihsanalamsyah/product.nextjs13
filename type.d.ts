@@ -1,26 +1,31 @@
 
 type Users = {
-    id: number,
-    name: string,
-    email: string,
-    password: string,
-    gender: string,
-    role: string,
+    id: number | null,
+    name: string | null,
+    email: string | null,
+    password: string | null,
+    gender: string | null,
+    role: string | null,
 }
 
 type Products = {
-    id: number,
-    title: string,
-    price: number,
+    id: number | null,
+    title: string | null,
+    price: number | null,
 }
 
 type MapUserProduct = {
-    id: number;
-    productID: number;
-    userID: number;
-    enrollDate: Date;
-    Product: Products;
-    User: Users;
+    productID: number | null,
+    title: string | null,
+    price: number | null,
+    userID: number | null,
+    enrollDate: Date | null,
+    userID2: number | null,
+    name: string | null,
+    email: string | null,
+    password: string | null,
+    gender: string | null,
+    role: string | null,
 }
 
 type GetMapUserProduct = {

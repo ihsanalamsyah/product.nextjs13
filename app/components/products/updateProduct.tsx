@@ -7,8 +7,8 @@ import { getCookie } from '../../../utils/cookies';
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function UpdateProduct(product: Products){
-    const [title, setTitle] = useState(product.title);
-    const [price, setPrice] = useState(product.price);
+    const [title, setTitle] = useState(product.title!);
+    const [price, setPrice] = useState(product.price!);
     const [modal, setModal] = useState(false);
     const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);

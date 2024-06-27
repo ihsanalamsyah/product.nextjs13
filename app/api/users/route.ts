@@ -20,7 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         var body:Users = await req.json();
         const hashedPassword = await new Promise((resolve, reject) => {
-            bcrypt.hash(body.password, 10, function(err, hash) {
+            bcrypt.hash(body.password as string, 10, function(err, hash) {
               if (err) reject(err)
               resolve(hash)
             });

@@ -7,7 +7,7 @@ env.config();
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
-        var body:Users = await req.json();
+        const body:Users = await req.json();
         const response = await User.findAll({
             where: {
                 name: body.name
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         })
         if(response.length > 0){
             const comparePassword = await new Promise((resolve, reject) => {
-                bcrypt.compare(body.password, response[0].toJSON().password, function(err, result) {
+                bcrypt.compare(body.password!, response[0].toJSON().password, function(err, result) {
                   if (err) reject(err)
                   resolve(result)
                 });
@@ -29,14 +29,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
             }
             else{
                 return NextResponse.json({status: "Failed", msg: "password invalid"}, {status: 400})
-            }
-            
+            }          
         }
         else{
             return NextResponse.json({status: "Failed", msg: "name invalid"}, {status: 400})
-        }
-       
-             
+        }               
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status: 400});

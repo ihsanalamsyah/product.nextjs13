@@ -64,7 +64,7 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
                                 Close
                             </button>
                             {!isMutating ? (
-                            <button type="button" onClick={()=> handleEnroll(enrollProduct.product.id, enrollProduct.user.id)} className="btn btn-primary">
+                            <button type="button" onClick={()=> handleEnroll(enrollProduct.product.id!, enrollProduct.user.id!)} className="btn btn-primary">
                                 Enroll
                             </button>
                             ) : (
