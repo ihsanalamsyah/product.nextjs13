@@ -1,6 +1,6 @@
 
 =======
-# fullstack.node.next
+# fullstack.next
 
 Aplikasi dashboard product mapping product dengan user, terdapat User dan Admin, terdapat detail product
 
