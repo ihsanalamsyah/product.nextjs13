@@ -41,3 +41,7 @@ type GetUserProduct = {
     user: Users;
     mapUserProducts: MapUserProduct[];
 }
+type WelcomeMessage = {
+    name: string,
+    isAdmin: boolean
+}

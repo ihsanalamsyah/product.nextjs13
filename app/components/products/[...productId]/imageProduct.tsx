@@ -1,7 +1,7 @@
 'use client'
 
 import { ChangeEvent, useEffect} from "react";
-import { getCookie } from '../../../../utils/cookies';
+import { getCookie } from '@/utils/cookies';
 
 interface Product {
     id: number;

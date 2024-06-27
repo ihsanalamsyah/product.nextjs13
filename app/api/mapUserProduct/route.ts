@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import User from '../models/userModel';
 import Product from "../models/productModel";
-import { Op, Sequelize } from 'sequelize';
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
@@ -30,16 +29,41 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "Failed", msg: "user not exists"}, {status : 300});
         }
         if (user.dataValues.role == "User"){
-           
-            
+            const [results, metadata]: [any, any] = await Product.sequelize?.query(`
+                select * from (
+                    select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
+                    left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
+                    where p.rowStatus = 1
+                ) t
+                where (t.name = '${body.name}' OR t.name is null)
+                order by case when t.enrollDate is null then 1 else 0 end, t.enrollDate, t.title asc;
+            `) as [any, any];
+            const mapUserProducts = results;
+            mapUserProducts.forEach(mapUserProduct => {
+                result = {
+                    productID: mapUserProduct.productID,
+                    title: mapUserProduct.title,
+                    price: mapUserProduct.price,
+                    userID: mapUserProduct.userID,
+                    enrollDate: mapUserProduct.enrollDate,
+                    userID2: mapUserProduct.userID2,
+                    name: mapUserProduct.name,
+                    email: mapUserProduct.email,
+                    password: mapUserProduct.password,
+                    gender: mapUserProduct.gender,
+                    role: mapUserProduct.role,
+                }
+                data.push(result)
+            });
         }
         else{
             const [results, metadata]: [any, any] = await Product.sequelize?.query(`
             select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
-            inner join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
-            where p.rowStatus = 1;    
+            left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
+            where p.rowStatus = 1
+            order by u.name asc;
             `) as [any, any];
-            const mapUserProducts = results;              
+            const mapUserProducts = results;
             mapUserProducts.forEach(mapUserProduct => {
                 result = {
                     productID: mapUserProduct.productID,
@@ -72,16 +96,20 @@ export async function PATCH(req: NextRequest, res: NextResponse) {
                 id: body.productID
             }
         });
+        const data = {
+            enrollDate: body.enrollDate,
+            userID: body.userID,
+            rowStatus: true,
+        }
         if(product == null){
             return NextResponse.json({status: "Failed", msg: `Data is not exists`}, {status: 300});
         }
-        product!.set({
-            userID: body.userID,
-            enrollDate : body.enrollDate,
-            rowStatus: true
-        })
-        await product!.save();
-        return NextResponse.json({status: "OK", msg: `User Product ${body.productID} Updated`}, {status: 200});
+        const result = await Product.update(data,{
+            where: {
+                id: body.productID
+            }
+        });
+        return NextResponse.json({status: "OK", msg: `User Product ${body.productID} Updated`, data: result}, {status: 200});
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status: 300});

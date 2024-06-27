@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getCookie } from '../../../utils/cookies';
+import { getCookie } from '@/utils/cookies';
 import moment from 'moment';
 
 
@@ -21,8 +21,8 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
         setIsMutating(true);
         let today = new Date();
         let formattedToday = moment(today).format('YYYY-MM-DD');
-        const response = await fetch(`${route}/createUserProduct`,{
-            method: 'POST',
+        const response = await fetch(`${route}/mapUserProduct`,{
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+ token
@@ -30,8 +30,7 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
             body: JSON.stringify({
                 userID: userId,
                 productID: productId,     
-                enrollDate: formattedToday
-                
+                enrollDate: formattedToday  
             })
         });
         const content = await response.json();

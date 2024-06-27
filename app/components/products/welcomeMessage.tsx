@@ -1,12 +1,6 @@
 'use client'
 
 
-interface WelcomeMessage {
-    name: string,
-    isAdmin: boolean
-}
-
-
 export default function welcomeMessage(welcomeMessage: WelcomeMessage){
     
     let isAdmin = false;

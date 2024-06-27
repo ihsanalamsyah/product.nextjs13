@@ -1,26 +1,27 @@
 import Sequelize from "sequelize";
 
-import Users from '@/app/api/models/userModel'
+import User from '@/app/api/models/userModel'
 import db from '@/utils/sequelize';
 
 const { DataTypes } = Sequelize;
 
 
 const Product = db.define('Products', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     title: DataTypes.STRING,
     price: DataTypes.INTEGER,
-    userID: DataTypes.INTEGER,
-    enrollDate: DataTypes.DATE,
+    userID: {type: DataTypes.INTEGER, allowNull: true},
+    enrollDate: {type: DataTypes.DATE, allowNull: true},
     rowStatus: DataTypes.BOOLEAN,
 }, {
     freezeTableName: true
 })
 
-Product.belongsTo(Users, 
+Product.belongsTo(User, 
     { foreignKey: 'userID', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
 );
 
-Users.hasMany(Product, { foreignKey: 'id' });
+User.hasMany(Product, { foreignKey: 'userID' });
 export default Product;
 
 (async()=>{

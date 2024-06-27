@@ -16,7 +16,7 @@ export default function EnrollProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-success btn-sm" onClick={()=> handleOpen(product.id)}>Open detail product</button>
+            <button className="btn btn-success btn-sm" onClick={()=> handleOpen(product.id!)}>Open detail product</button>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 
-import Product from '../models/productModel';
+import Product from '@/app/api/models/productModel';
 
 export async function GET(req: NextRequest, res: NextResponse) {
     try {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 title: title.trim()
             }
         });
-        if(product != null){
+        if (product != null){
             return NextResponse.json({status: "Failed", msg: "product already exists"}, {status: 400});
         }
         const data = {         
@@ -55,10 +55,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
             enrollDate: null,
             rowStatus: true
         }
+        console.log("data", data)
         await Product.create(data);
         return NextResponse.json({status: "OK", msg: "Product Created"}, {status: 200});
     }
     catch (error){
+        console.log("error", error)
         return NextResponse.json({status: "Failed", msg: "error"}, {status: 400});
     }
 }
@@ -72,18 +74,15 @@ export async function PATCH(req: NextRequest, res: NextResponse){
             price : price,
             rowStatus: true
         }
-        const url = new URL(req.url);
-        const searchParams = new URLSearchParams(url.searchParams);
-        const id = searchParams.get('id');
-        if(isNaN(price)){
+        if (isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is NaN"}, {status: 400});
-        }       
-        await Product.update(data,{
+        }
+        const result = await Product.update(data,{
             where: {
-                id: id
+                id: body.id
             }
         });
-        return NextResponse.json({status: "OK", msg: `Product ${id} Updated`}, {status: 200});
+        return NextResponse.json({status: "OK", msg: `Product ${body.id} Updated`, data: result}, {status: 200});
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status: 400});

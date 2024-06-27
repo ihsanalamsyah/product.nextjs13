@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteCookie, deleteLocalStorage } from '../../../utils/cookies';
+import { deleteCookie, deleteLocalStorage } from '@/utils/cookies';
 
 
 

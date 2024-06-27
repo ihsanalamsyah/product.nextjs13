@@ -2,8 +2,7 @@
 
 import { useState, SyntheticEvent } from "react";
 import { useRouter } from 'next/navigation';
-import { setCookie } from '../../utils/cookies';
-
+import { setCookie } from '@/utils/cookies';
 
 
 

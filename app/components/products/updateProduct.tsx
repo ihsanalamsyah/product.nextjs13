@@ -2,7 +2,7 @@
 
 import { useState, SyntheticEvent } from "react";
 import { useRouter} from "next/navigation";
-import { getCookie } from '../../../utils/cookies';
+import { getCookie } from '@/utils/cookies';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 

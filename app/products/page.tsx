@@ -2,7 +2,7 @@
 import AddProduct from "../components/products/addProduct";
 import Logout from "../components/products/logout";
 import TableProduct from "../components/products/tableProduct";
-import { getCookie } from '../../utils/cookies';
+import { getCookie } from '@/utils/cookies';
 import DeleteProduct from "../components/products/deleteProduct";
 import EnrollProduct from "../components/products/enrollProduct";
 import OpenProduct from "../components/products/openProduct";
@@ -56,7 +56,6 @@ export default async function Products(){
     let isProductZero = false;
    
     const userAndProduct:GetUserProduct = await getUserProduct(token.value, name.value);
-    console.log("userAndProduct", userAndProduct)
     if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }
