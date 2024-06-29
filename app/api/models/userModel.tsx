@@ -16,9 +16,7 @@ const User = db.define('Users', {
     freezeTableName: true
 })
 
-
 export default User;
-
 
 (async()=>{
     await db.sync({alter : true});

@@ -56,35 +56,35 @@ export default function GoogleSignIn(){
     //   }, []);
     
     return (
+        <></>
+        // <div>
+        //     <Script
+        //         src="https://accounts.google.com/gsi/client"
+        //         strategy="afterInteractive"
+        //         onLoad={() => {
+        //         if (window.google) {
+        //             window.google.accounts.id.initialize({
+        //               client_id: '507909387104-c04gsjipd57or5uuoeie1d95kqb60s3d.apps.googleusercontent.com',
+        //               callback: (response) => {
+        //                 const tokens = response.credential.split(".");
+        //                 const responsePayload = JSON.parse(atob(tokens[1]));
+        //                 console.log("ID: " + responsePayload.sub);
+        //                 console.log('Full Name: ' + responsePayload.name);
+        //                 console.log('Given Name: ' + responsePayload.given_name);
+        //                 console.log('Family Name: ' + responsePayload.family_name);
+        //                 console.log("Image URL: " + responsePayload.picture);
+        //                 console.log("Email: " + responsePayload.email);
+        //               },
+        //             });
 
-        <div>
-            <Script
-                src="https://accounts.google.com/gsi/client"
-                strategy="afterInteractive"
-                onLoad={() => {
-                if (window.google) {
-                    window.google.accounts.id.initialize({
-                      client_id: '507909387104-c04gsjipd57or5uuoeie1d95kqb60s3d.apps.googleusercontent.com',
-                      callback: (response) => {
-                        const tokens = response.credential.split(".");
-                        const responsePayload = JSON.parse(atob(tokens[1]));
-                        console.log("ID: " + responsePayload.sub);
-                        console.log('Full Name: ' + responsePayload.name);
-                        console.log('Given Name: ' + responsePayload.given_name);
-                        console.log('Family Name: ' + responsePayload.family_name);
-                        console.log("Image URL: " + responsePayload.picture);
-                        console.log("Email: " + responsePayload.email);
-                      },
-                    });
-
-                    window.google.accounts.id.renderButton(
-                    document.getElementById('signInButton') as HTMLElement,
-                      { theme: 'outline', size: 'large' }
-                    );
-                }
-              }}
-            />
-            <div id="signInButton"></div>
-        </div>
+        //             window.google.accounts.id.renderButton(
+        //             document.getElementById('signInButton') as HTMLElement,
+        //               { theme: 'outline', size: 'large' }
+        //             );
+        //         }
+        //       }}
+        //     />
+        //     <div id="signInButton"></div>
+        // </div>
     )
 }

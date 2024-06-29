@@ -29,7 +29,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "Failed", msg: "user not exists"}, {status : 300});
         }
         if (user.dataValues.role == "User"){
-            const [results, metadata]: [any, any] = await Product.sequelize?.query(`
+            const [results, metadata]: [MapUserProduct[], any] = await Product.sequelize?.query(`
                 select * from (
                     select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
                     left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 ) t
                 where (t.name = '${body.name}' OR t.name is null)
                 order by case when t.enrollDate is null then 1 else 0 end, t.enrollDate, t.title asc;
-            `) as [any, any];
+            `) as [MapUserProduct[], any];
             const mapUserProducts = results;
             mapUserProducts.forEach(mapUserProduct => {
                 result = {
@@ -57,12 +57,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
             });
         }
         else{
-            const [results, metadata]: [any, any] = await Product.sequelize?.query(`
-            select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
-            left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
-            where p.rowStatus = 1
-            order by u.name asc;
-            `) as [any, any];
+            const [results, metadata]: [MapUserProduct[], any] = await Product.sequelize?.query(`
+                select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
+                left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
+                where p.rowStatus = 1
+                order by u.name asc;
+            `) as [MapUserProduct[], any];
             const mapUserProducts = results;
             mapUserProducts.forEach(mapUserProduct => {
                 result = {
@@ -80,6 +80,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 }
                 data.push(result)
             });
+
+            
         }
         return NextResponse.json({status: "OK", msg: "Get Product", mapUserProducts: data, user: user}, {status : 200});
     }

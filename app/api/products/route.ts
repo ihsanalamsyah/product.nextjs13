@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const id = searchParams.get('id');
         let response;
         if(id != null){
-            response = await Product.findOne({
+            response! = await Product.findOne({
                 where: {
                     id: id
                 }
