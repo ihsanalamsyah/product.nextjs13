@@ -3,11 +3,28 @@ import bcrypt from 'bcrypt';
 import User from '../models/userModel';
 import env from 'dotenv';
 import generateToken from '@/utils/generateToken';
+import {supabase} from '@/utils/supabase';
 env.config();
 
 export async function POST(req: NextRequest, res: NextResponse) {
+
     try {
+
         const body:Users = await req.json();
+        let { data, error } = await supabase.auth.signInWithPassword({
+            email: body.email!,
+            password: body.password!
+        })
+        if (error) {
+            console.error(error);
+            return NextResponse.json({ status: "error", message: error.message }, { status: 400 });
+        }
+        if(data){
+            console.log(data)
+            return NextResponse.json({status: "OK", data: data, token: "token"}, {status: 200});
+        } 
+        return NextResponse.json({status: "OK", data: data, token: "token"}, {status: 200});
+        
         const response = await User.findAll({
             where: {
                 name: body.name
@@ -36,6 +53,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         }               
     }
     catch (error){
+        console.log(error);
         return NextResponse.json({status: "Failed", msg: error}, {status: 400});
     }
 }

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/userModel';
 import env from 'dotenv';
 import generateToken from '@/utils/generateToken';
+import {supabase} from '@/utils/supabase';
 env.config();
 
 
@@ -19,13 +20,25 @@ export async function GET() {
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         var body:Users = await req.json();
+        let { data, error } = await supabase.auth.signUp({
+            email: body.email!,
+            password: body.password!
+        })
+        if(error){
+            console.error(error);
+            return NextResponse.json({ status: "error", message: error.message }, { status: 400 });
+        }
+        if(data) {
+            console.log(data)
+        }
+        return NextResponse.json({status: "OK", data: data, token: "token"}, {status: 200});
         const hashedPassword = await new Promise((resolve, reject) => {
             bcrypt.hash(body.password as string, 10, function(err, hash) {
               if (err) reject(err)
               resolve(hash)
             });
         })
-        const data = {
+        const result = {
             name : body.name,
             email: body.email,
             gender: body.gender,
@@ -39,16 +52,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
             }
         })
         if (alredyExist.length > 0){
-            return NextResponse.json({status: "Failed",  msg: "name already exist", data: data}, {status: 400});
+            return NextResponse.json({status: "Failed",  msg: "name already exist", data: result}, {status: 400});
         }
         else{
-            await User.create(data);
+            await User.create(result);
 
             const token = await generateToken({
-                email: data.email,
-                name: data.name
+                email: result.email,
+                name: result.name
             });
-            return NextResponse.json({status: "OK",  msg: "user created", data: data, token: token}, {status: 200});          
+            return NextResponse.json({status: "OK",  msg: "user created", data: result, token: token}, {status: 200});          
         }        
     }
     catch (error){

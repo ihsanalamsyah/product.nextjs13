@@ -9,14 +9,14 @@ import { setCookie } from '@/utils/cookies';
 export default function Login(){
     
     const route = process.env.NEXT_PUBLIC_ROUTE;
-    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [modal, setModal] = useState(false);
     const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
 
     function resetForm(){
-        setName("");
+        setEmail("");
         setPassword("");
     }
     function handleChange(){
@@ -32,7 +32,7 @@ export default function Login(){
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: name,
+                email: email,
                 password: password
             })
         });
@@ -41,12 +41,12 @@ export default function Login(){
             setIsMutating(false);
             setModal(false);
             setCookie("token", content.token, 7);
-            setCookie("name", content.data.name, 7);
+            setCookie("email", content.data.email, 7);
             setCookie("role", content.data.role, 7);
             resetForm();
             // return router.push({
             //     pathname: '/products',
-            //     query: { token: content.token,  name: content.data.name, role: content.data.role} // Melewatkan variabel via query string
+            //     query: { token: content.token,  email: content.data.email, role: content.data.role} // Melewatkan variabel via query string
             //   });
             return router.push(`products/`);            
         }
@@ -74,13 +74,13 @@ export default function Login(){
                     <h3 className="font-bold text-lg">Login User</h3>
                     <form onSubmit={handleSubmit}>
                         <div className="form-control">
-                            <label className="label font-bold">Name</label>
+                            <label className="label font-bold">Email</label>
                             <input 
                             type="text" 
-                            value={name}
-                            onChange={(e)=> setName(e.target.value)}
+                            value={email}
+                            onChange={(e)=> setEmail(e.target.value)}
                             className="input w-full input-bordered"  
-                            placeholder="Name"/>
+                            placeholder="Email"/>
                         </div>                      
                         <div className="form-control">
                             <label className="label font-bold">Password</label>

@@ -3,6 +3,7 @@ import AddProduct from "../components/products/addProduct";
 import Logout from "../components/products/logout";
 import TableProduct from "../components/products/tableProduct";
 import { getCookie } from '@/utils/cookies';
+import { supabase } from '@/utils/supabase';
 import DeleteProduct from "../components/products/deleteProduct";
 import EnrollProduct from "../components/products/enrollProduct";
 import OpenProduct from "../components/products/openProduct";
@@ -49,7 +50,6 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
 
 export default async function Products(){
     const cookieStore = cookies();
-    
     const token = cookieStore.get('token') as any;
     const name = cookieStore.get('name') as any;
     let isAdmin = false;
