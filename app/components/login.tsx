@@ -37,27 +37,21 @@ export default function Login(){
             })
         });
         const content = await response.json();
-        if(content.status == "OK"){            
+        if(content.status == "OK"){
             setIsMutating(false);
             setModal(false);
             setCookie("token", content.token, 7);
             setCookie("email", content.data.email, 7);
             setCookie("role", content.data.role, 7);
             resetForm();
-            // return router.push({
-            //     pathname: '/products',
-            //     query: { token: content.token,  email: content.data.email, role: content.data.role} // Melewatkan variabel via query string
-            //   });
-            return router.push(`products/`);            
+          
+            return router.push(`/products`);
         }
         else{            
             setIsMutating(false);
             setModal(false);
             alert(content.msg);
             resetForm();
-            // return router.push({
-            //     pathname: '/'
-            //   });
             return router.push("/");
         }
         

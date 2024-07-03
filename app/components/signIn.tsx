@@ -67,7 +67,7 @@ export default function SignIn(){
             setModal(false);
             resetForm();
             setCookie("token", content.token, 7);
-            setCookie("name", content.data.name, 7);
+            setCookie("email", content.data.email, 7);
             setCookie("role", content.data.role, 7);
             return router.push(`products/`);  
         }

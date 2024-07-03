@@ -1,89 +1,45 @@
 import { NextResponse, NextRequest } from "next/server";
 import User from '../models/userModel';
 import Product from "../models/productModel";
+import { supabase } from "@/utils/supabase";
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Users = await req.json();
         
-        let result: MapUserProduct = {   
-            productID: null,
-            title: null,
-            price: null,
-            userID: null,
-            enrollDate: null,
-            userID2: null,
-            name: null,
-            email: null,
-            password: null,
-            gender: null,
-            role: null,
-        };
-        let data: any = []
-        const user = await User.findOne({
-            where: {
-                name: body.name
-            }
-        });
-        if(user == null){
+        let mapUserProducts: MapUserProduct[] = [];
+        const response = await supabase
+            .from('users')
+            .select()
+            .eq('email', body.email)
+            .limit(1)
+
+        if(response.data?.length! <= 0){
             return NextResponse.json({status: "Failed", msg: "user not exists"}, {status : 300});
         }
-        if (user.dataValues.role == "User"){
-            const [results, metadata]: [MapUserProduct[], any] = await Product.sequelize?.query(`
-                select * from (
-                    select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
-                    left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
-                    where p.rowStatus = 1
-                ) t
-                where (t.name = '${body.name}' OR t.name is null)
-                order by case when t.enrollDate is null then 1 else 0 end, t.enrollDate, t.title asc;
-            `) as [MapUserProduct[], any];
-            const mapUserProducts = results;
-            mapUserProducts.forEach(mapUserProduct => {
-                result = {
-                    productID: mapUserProduct.productID,
-                    title: mapUserProduct.title,
-                    price: mapUserProduct.price,
-                    userID: mapUserProduct.userID,
-                    enrollDate: mapUserProduct.enrollDate,
-                    userID2: mapUserProduct.userID2,
-                    name: mapUserProduct.name,
-                    email: mapUserProduct.email,
-                    password: mapUserProduct.password,
-                    gender: mapUserProduct.gender,
-                    role: mapUserProduct.role,
-                }
-                data.push(result)
-            });
+        const user:Users = response.data![0];
+
+        if(user.role == "User"){
+            const {data, error} = await supabase
+                .from('products')
+                .select()
+            if(error != null){
+                return NextResponse.json({status: "Failed", msg: "error fetching data"}, {status : 300});
+            }
+            mapUserProducts = data!;
+           
         }
         else{
-            const [results, metadata]: [MapUserProduct[], any] = await Product.sequelize?.query(`
-                select p.id as productID, p.title, p.price, p.userID, p.enrollDate, u.id as userID2, u.name, u.email, u.gender, u.password, u.role from crud_db.products p
-                left join crud_db.users u ON u.id = p.userID AND u.rowStatus = 1
-                where p.rowStatus = 1
-                order by u.name asc;
-            `) as [MapUserProduct[], any];
-            const mapUserProducts = results;
-            mapUserProducts.forEach(mapUserProduct => {
-                result = {
-                    productID: mapUserProduct.productID,
-                    title: mapUserProduct.title,
-                    price: mapUserProduct.price,
-                    userID: mapUserProduct.userID,
-                    enrollDate: mapUserProduct.enrollDate,
-                    userID2: mapUserProduct.userID2,
-                    name: mapUserProduct.name,
-                    email: mapUserProduct.email,
-                    password: mapUserProduct.password,
-                    gender: mapUserProduct.gender,
-                    role: mapUserProduct.role,
-                }
-                data.push(result)
-            });
-
-            
+            const {data, error} = await supabase
+                .from('products')
+                .select()
+            if(error != null){
+                return NextResponse.json({status: "Failed", msg: "error fetching data"}, {status : 300});
+            }
+            mapUserProducts= data!;
+           
         }
-        return NextResponse.json({status: "OK", msg: "Get Product", mapUserProducts: data, user: user}, {status : 200});
+        return NextResponse.json({status: "OK", msg: "Get User Product", mapUserProducts: mapUserProducts, user: user}, {status : 200});
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status : 400});
@@ -92,26 +48,20 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 export async function PATCH(req: NextRequest, res: NextResponse) {
     try {
-        const body:MapUserProduct = await req.json();    
-        const product = await Product.findOne({
-            where: {
-                id: body.productID
-            }
-        });
-        const data = {
-            enrollDate: body.enrollDate,
-            userID: body.userID,
-            rowStatus: true,
+        const body:MapUserProduct = await req.json();
+
+        const { data, error, count } = await supabase
+            .from("products")
+            .update({ enrolldate: body.enrollDate, userid: body.userID, rowstatus: true })
+            .eq("id", body.productID)
+        if(error != null){
+            return NextResponse.json({status: "Failed", msg: `Error mapping user to product`}, {status: 300});
         }
-        if(product == null){
-            return NextResponse.json({status: "Failed", msg: `Data is not exists`}, {status: 300});
+        if(count! <= 0){
+            return NextResponse.json({status: "Failed", msg: `Data Product is not exists`}, {status: 300});
         }
-        const result = await Product.update(data,{
-            where: {
-                id: body.productID
-            }
-        });
-        return NextResponse.json({status: "OK", msg: `User Product ${body.productID} Updated`, data: result}, {status: 200});
+        return NextResponse.json({status: "OK", msg: `Success mapping user: ${body.name} denagn id: ${body.userID} to product: ${body.productID}`, data: data}, {status: 200});
+     
     }
     catch (error){
         return NextResponse.json({status: "Failed", msg: error}, {status: 300});

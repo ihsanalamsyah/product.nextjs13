@@ -9,15 +9,13 @@ import { deleteCookie, deleteLocalStorage } from '@/utils/cookies';
 export default function Logout(){
     const [modal, setModal] = useState(false);
     const router = useRouter();
-    const [isMutating, setIsMutating] = useState(false);
     function handleChange(){
         setModal(!modal);
     }
     function handleLogout(){
         deleteCookie("token");
-        deleteCookie("name");
+        deleteCookie("email");
         deleteCookie("role");
-        deleteLocalStorage("role");
         return router.push(`/`);
     }
    

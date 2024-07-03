@@ -13,7 +13,8 @@ import moment from "moment";
 import { cookies } from 'next/headers';
 
 
-const getUserProduct = async (token: string | null | undefined, name: string | null | undefined):Promise<GetUserProduct> => {
+// Method
+async function getUserProduct(token: any, email: any) {
     let userAndProduct: GetUserProduct = {
         user: {
             id: 0,
@@ -35,7 +36,7 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: name
+                email: email
             })
         });
         const content = await response.json();
@@ -51,11 +52,10 @@ const getUserProduct = async (token: string | null | undefined, name: string | n
 export default async function Products(){
     const cookieStore = cookies();
     const token = cookieStore.get('token') as any;
-    const name = cookieStore.get('name') as any;
+    const email = cookieStore.get('email') as any;
     let isAdmin = false;
     let isProductZero = false;
-   
-    const userAndProduct:GetUserProduct = await getUserProduct(token.value, name.value);
+    const userAndProduct: GetUserProduct = await getUserProduct(token.value, email.value);
     if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }
@@ -66,7 +66,7 @@ export default async function Products(){
         //<></>
         <div className="py-10 px-10">
             <div className="flex justify-center my-2">
-               <WelcomeMessage name={name.value} isAdmin={isAdmin} />
+               <WelcomeMessage name={userAndProduct.user.name!} isAdmin={isAdmin} />
             </div>
             <div className="py-2 flex">
                 {isAdmin ? (
