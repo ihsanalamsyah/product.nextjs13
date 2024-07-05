@@ -56,6 +56,7 @@ export default async function Products(){
     let isAdmin = false;
     let isProductZero = false;
     const userAndProduct: GetUserProduct = await getUserProduct(token.value, email.value);
+    console.log("userAndProduct", userAndProduct)
     if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Users = await req.json();
         
-        let mapUserProducts: MapUserProduct[] = [];
+        let mapUserProducts: any[] = [];
         const response = await supabase
             .from('users')
             .select()
@@ -18,13 +18,28 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "Failed", msg: "user not exists"}, {status : 300});
         }
         const user:Users = response.data![0];
-
         if(user.role == "User"){
             const {data, error} = await supabase
                 .from('products')
-                .select()
+                .select(`productid: id, 
+                    title,
+                    price,
+                    enrolldate,
+                    userid,
+                    users:userid (
+                        userid2: id, 
+                        name,
+                        email,
+                        gender,
+                        password,
+                        role
+                    )
+                `)
+                .filter('users.rowstatus', 'eq', true)
+                .eq('rowstatus', true)
+                
             if(error != null){
-                return NextResponse.json({status: "Failed", msg: "error fetching data"}, {status : 300});
+                return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
             }
             mapUserProducts = data!;
            
@@ -32,13 +47,30 @@ export async function POST(req: NextRequest, res: NextResponse) {
         else{
             const {data, error} = await supabase
                 .from('products')
-                .select()
+                .select(`productid: id, 
+                    title,
+                    price,
+                    enrolldate,
+                    userid,
+                    users:userid (
+                        userid2: id, 
+                        name,
+                        email,
+                        gender,
+                        password,
+                        role
+                    )
+                `)
+                .filter('users.rowstatus', 'eq', true)
+                .eq('rowstatus', true)
+                
             if(error != null){
-                return NextResponse.json({status: "Failed", msg: "error fetching data"}, {status : 300});
+                return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
             }
-            mapUserProducts= data!;
+            mapUserProducts = data!;
            
         }
+        console.log("mapUserProducts", mapUserProducts)
         return NextResponse.json({status: "OK", msg: "Get User Product", mapUserProducts: mapUserProducts, user: user}, {status : 200});
     }
     catch (error){
