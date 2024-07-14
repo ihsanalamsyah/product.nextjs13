@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <>
       
-      <div className="py-2 flex">
+      <div className="py-2 flex justify-evenly">
         <SignIn />
         <Login />
         <GoogleSignIn />

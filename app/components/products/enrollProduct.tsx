@@ -16,7 +16,7 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
     function handleChange(){
         setModal(!modal);
     }
-    async function handleEnroll(productId: number, userId: number){
+    async function handleEnroll(product_id: number, user_id: number){
     
         setIsMutating(true);
         let today = new Date();
@@ -28,9 +28,9 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
                 'Authorization': 'Bearer '+ token
             },
             body: JSON.stringify({
-                userID: userId,
-                productID: productId,     
-                enrollDate: formattedToday  
+                user_id: user_id,
+                product_id: product_id,     
+                enroll_date: formattedToday  
             })
         });
         const content = await response.json();

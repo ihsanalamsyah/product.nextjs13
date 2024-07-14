@@ -16,7 +16,7 @@ export default function DeleteProduct(product: Products){
         setModal(!modal);
     }
     
-    async function handleDelete(productId: number){
+    async function handleDelete(product_id: number){
     
     setIsMutating(true);
     const response = await fetch(`${route}/products`,{
@@ -26,7 +26,7 @@ export default function DeleteProduct(product: Products){
             'Authorization': 'Bearer '+ token
         },
         body: JSON.stringify({
-            id: productId
+            id: product_id
             
         })
     });

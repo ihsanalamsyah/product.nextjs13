@@ -7,17 +7,17 @@ const { DataTypes } = Sequelize;
 
 const Image = db.define('Images', {
     blob: DataTypes.BLOB,
-    productID: DataTypes.INTEGER,
-    rowStatus: DataTypes.BOOLEAN
+    product_id: DataTypes.INTEGER,
+    row_status: DataTypes.BOOLEAN
 }, {
     freezeTableName: true
 })
 
 Image.belongsTo(Product, 
-    { foreignKey: 'productID', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
+    { foreignKey: 'product_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' }
 );
 
-Product.hasOne(Image, { foreignKey: 'productID' });
+Product.hasOne(Image, { foreignKey: 'product_id' });
 
 export default Image;
 

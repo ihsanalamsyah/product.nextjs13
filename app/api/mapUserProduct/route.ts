@@ -19,25 +19,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         }
         const user:Users = response.data![0];
         if(user.role == "User"){
-            const {data, error} = await supabase
-                .from('products')
-                .select(`productid: id, 
-                    title,
-                    price,
-                    enrolldate,
-                    userid,
-                    users:userid (
-                        userid2: id, 
-                        name,
-                        email,
-                        gender,
-                        password,
-                        role
-                    )
-                `)
-                .filter('users.rowstatus', 'eq', true)
-                .eq('rowstatus', true)
-                
+            const { data, error } = await supabase.rpc('get_products_users', {
+                email_args: body.email
+            });
+                         
             if(error != null){
                 return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
             }
@@ -45,32 +30,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
            
         }
         else{
-            const {data, error} = await supabase
-                .from('products')
-                .select(`productid: id, 
-                    title,
-                    price,
-                    enrolldate,
-                    userid,
-                    users:userid (
-                        userid2: id, 
-                        name,
-                        email,
-                        gender,
-                        password,
-                        role
-                    )
-                `)
-                .filter('users.rowstatus', 'eq', true)
-                .eq('rowstatus', true)
-                
+            const { data, error } = await supabase.rpc('get_products_users_admin');
+            //console.log("data mapUserProducts admin", data)     
             if(error != null){
                 return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
             }
             mapUserProducts = data!;
            
         }
-        console.log("mapUserProducts", mapUserProducts)
+        //console.log("mapUserProducts api", mapUserProducts)
         return NextResponse.json({status: "OK", msg: "Get User Product", mapUserProducts: mapUserProducts, user: user}, {status : 200});
     }
     catch (error){
@@ -84,15 +52,16 @@ export async function PATCH(req: NextRequest, res: NextResponse) {
 
         const { data, error, count } = await supabase
             .from("products")
-            .update({ enrolldate: body.enrollDate, userid: body.userID, rowstatus: true })
-            .eq("id", body.productID)
+            .update({ enroll_date: body.enroll_date, user_id: body.user_id, row_status: true })
+            .eq("id", body.product_id)
+
         if(error != null){
             return NextResponse.json({status: "Failed", msg: `Error mapping user to product`}, {status: 300});
         }
-        if(count! <= 0){
+        if(count! <= 0 && count != null){
             return NextResponse.json({status: "Failed", msg: `Data Product is not exists`}, {status: 300});
         }
-        return NextResponse.json({status: "OK", msg: `Success mapping user: ${body.name} denagn id: ${body.userID} to product: ${body.productID}`, data: data}, {status: 200});
+        return NextResponse.json({status: "OK", msg: `Success mapping user: ${body.name} denagn id: ${body.user_id} to product: ${body.product_id}`, data: data}, {status: 200});
      
     }
     catch (error){

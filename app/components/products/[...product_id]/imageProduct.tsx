@@ -19,14 +19,14 @@ interface User {
 }
 
 interface ImageProduct {
-    productId: string;
+    product_id: string;
     
 }
 
 
 
 
-export default async function ImageComponent({children, isAdmin, productId, token } : any){
+export default async function ImageComponent({children, isAdmin, product_id, token } : any){
     async function handleFileChange (e: ChangeEvent<HTMLInputElement>){
         const route = process.env.NEXT_PUBLIC_ROUTE;
         
@@ -40,7 +40,7 @@ export default async function ImageComponent({children, isAdmin, productId, toke
                 const file = files[0];
                 
                 formData.append('image', file);
-                formData.append('productId', productId.toString());
+                formData.append('product_id', product_id.toString());
                 const response = await fetch(`${route}/imageupload`, {
                     method: 'POST',
                     headers:{
@@ -59,15 +59,15 @@ export default async function ImageComponent({children, isAdmin, productId, toke
                     const imageUrl = URL.createObjectURL(blob);
 
 
-                    const imageProduct = document.getElementById(`image-product-${productId.toString()}`);
+                    const imageProduct = document.getElementById(`image-product-${product_id.toString()}`);
                     if (imageProduct != null){
                         imageProduct.remove();
                     }
     
                     const imgElement = document.createElement('img');
                     imgElement.src = imageUrl;
-                    imgElement.setAttribute("id", `image-product-${productId.toString()}`);
-                    imgElement.setAttribute("alt", `image product ${productId.toString()}`);
+                    imgElement.setAttribute("id", `image-product-${product_id.toString()}`);
+                    imgElement.setAttribute("alt", `image product ${product_id.toString()}`);
                     imgElement.setAttribute("class","object-cover");
                     const container = document.getElementById('container');
                     if (container != null) {

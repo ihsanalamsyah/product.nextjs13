@@ -1,29 +1,13 @@
-
+'use server'
 import Link from 'next/link';
-import { getCookie } from '../../../utils/cookies';
-import ImageUploader from '../../components/products/[...productId]/imageProduct';
+import { cookies } from 'next/headers'
 import { ChangeEvent } from 'react';
-import { cookies } from 'next/headers';
-import DetailProduct from '../../components/products/[...productId]/detailProduct';
+import DetailProduct from '@/app/components/products/[...product_id]/detailProduct'
 import { notFound } from "next/navigation";
-import ImageComponent from '../../components/products/[...productId]/imageProduct';
-
-interface Product {
-    id: number,
-    title: string,
-    price: number;
-}
+import ImageComponent from '@/app/components/products/[...product_id]/imageProduct';
 
 
-interface GetProduct {
-    status: string,
-    msg: string,
-    data: Product  
-}
-
-
-
-async function getImageUrl(token: string | null | undefined,  productId: number){
+async function getImageUrl(token: string | null | undefined,  product_id: number){
     const route = process.env.NEXT_PUBLIC_ROUTE;
     let imageUrl = "";
     try{
@@ -35,7 +19,7 @@ async function getImageUrl(token: string | null | undefined,  productId: number)
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify({
-                productId: productId.toString()
+                product_id: product_id.toString()
             })
         }); 
         
@@ -48,7 +32,6 @@ async function getImageUrl(token: string | null | undefined,  productId: number)
             
         }
         else{
-            //console.error("Error");
             alert(content.msg);
         }
         
@@ -59,12 +42,16 @@ async function getImageUrl(token: string | null | undefined,  productId: number)
     return imageUrl;
 }
 
-async function getProductById(token: string | null | undefined, productId: number){
-
+async function getProductById(token: any, product_id: any){
+    let product: Products = {
+       title: "",
+       id: 0,
+       price: 0
+    };
     const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
-
-        const response = await fetch(`${route}/products?id=${productId}`, {
+        
+        const response = await fetch(`${route}/products?id=${product_id}`, {
             method: 'GET',
             headers:{
                 'Authorization': 'Bearer '+ token,
@@ -73,38 +60,36 @@ async function getProductById(token: string | null | undefined, productId: numbe
         });
 
         const content = await response.json();
-
-        return content;
+        product = content.data[0];
 
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+    
+    return product;
 }
 
-export default async function ProductDetail({params}: {params: {productId: number}}){
+export default async function ProductDetail({params}: {params: {product_id: number}}){
 
-    let productId2 = Number(params.productId);
-    if (productId2 < 0  || isNaN(productId2)) {
+    let product_id = Number(params.product_id);
+    
+    if (product_id < 0  || isNaN(product_id)) {
       notFound();
     }
-    const productID = params.productId;
-
-    
-    const cookieStore = cookies();
-    
-    const token = cookieStore.get('token') as any;
-    const role = cookieStore.get('role') as any;
+    const cookieStore = cookies()
+    const token = cookieStore.get('token');
+    const role = cookieStore.get('role');
     let isAdmin = false;
-    if(role.value == "Admin"){
+    if(role!.value == "Admin"){
         isAdmin = true;
     }
-    const productDetail: GetProduct = await getProductById(token.value, params.productId);
-    const imageUrl = await getImageUrl(token.value, params.productId);
-    const imageId = `image-product-${params.productId}`;
-    const imageAlt = `image product ${params.productId}`;
+    const productDetail: Products = await getProductById(token!, params.product_id);
+    const imageUrl = await getImageUrl(token!.value, params.product_id);
+    const imageId = `image-product-${params.product_id}`;
+    const imageAlt = `image product ${params.product_id}`;
     return(
         <div>
-            {/* <ImageComponent isAdmin={isAdmin} productId={params.productId} token={token.value}> 
+            {/* <ImageComponent isAdmin={isAdmin} product_id={params.product_id} token={token.value}> 
                 <div className="flex">
                     <p>Image: </p>
                     <div id="container" className="d-flex rounded-full w-40 h-40 relative overflow-hidden">
@@ -117,14 +102,18 @@ export default async function ProductDetail({params}: {params: {productId: numbe
             <br></br>
 
             <DetailProduct>
-                <div>
-                    <p>Product title: {productDetail.data.title}</p>
-                    <p>Product price: {productDetail.data.price}</p>   
+                <div className='flex justify-evenly'>
+                    <p>Product title: {productDetail.title}</p>
+                    <p>Product price: {productDetail.price}</p>   
                 </div> 
             </DetailProduct>
 
             <br></br>
-            <Link href="/products"><button className="btn btn-error btn-sm">Back to dashboard</button></Link>         
+            <div className='flex justify-evenly'>
+                <Link href="/products"><button className="btn btn-error btn-sm">Back to dashboard</button></Link>
+                <p></p>
+            </div>
+            
         </div>
     )
 }

@@ -1,8 +1,9 @@
+'use server'
 
 import AddProduct from "../components/products/addProduct";
 import Logout from "../components/products/logout";
 import TableProduct from "../components/products/tableProduct";
-import { getCookie } from '@/utils/cookies';
+import { cookies } from 'next/headers'
 import { supabase } from '@/utils/supabase';
 import DeleteProduct from "../components/products/deleteProduct";
 import EnrollProduct from "../components/products/enrollProduct";
@@ -10,53 +11,53 @@ import OpenProduct from "../components/products/openProduct";
 import UpdateProduct from "../components/products/updateProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
 import moment from "moment";
-import { cookies } from 'next/headers';
 
-
-// Method
-async function getUserProduct(token: any, email: any) {
-    let userAndProduct: GetUserProduct = {
-        user: {
-            id: 0,
-            name: "",
-            email: "",
-            gender: "",
-            password: "",
-            role: "",
-        },
-        mapUserProducts: []
-    };
-    const route = process.env.NEXT_PUBLIC_ROUTE;
-    try {             
-        const response = await fetch(`${route}/mapUserProduct`, {
-            method: 'POST',
-            cache: 'no-store',
-            headers:{
-                'Authorization': 'Bearer '+ token,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email
-            })
-        });
-        const content = await response.json();
-        
-        userAndProduct = content;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-
-    return userAndProduct;
-};
 
 export default async function Products(){
-    const cookieStore = cookies();
-    const token = cookieStore.get('token') as any;
-    const email = cookieStore.get('email') as any;
+    //Method
+    async function getUserProduct(token: any, email: any) {
+        let userAndProduct: GetUserProduct = {
+            user: {
+                id: 0,
+                name: "",
+                email: "",
+                gender: "",
+                password: "",
+                role: "",
+            },
+            mapUserProducts: []
+        };
+        const route = process.env.NEXT_PUBLIC_ROUTE;
+        try {             
+            const response = await fetch(`${route}/mapUserProduct`, {
+                method: 'POST',
+                cache: 'no-store',
+                headers:{
+                    'Authorization': 'Bearer '+ token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email
+                })
+            });
+            const content = await response.json();
+            
+            userAndProduct = content;
+            
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+    
+        return userAndProduct;
+    };
     let isAdmin = false;
     let isProductZero = false;
-    const userAndProduct: GetUserProduct = await getUserProduct(token.value, email.value);
-    console.log("userAndProduct", userAndProduct)
+    const cookieStore = cookies()
+    const token = cookieStore.get('token');
+    const email = cookieStore.get('email');
+    const userAndProduct: GetUserProduct = await getUserProduct(token!.value, email!.value);
+  
+    
     if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }
@@ -102,43 +103,43 @@ export default async function Products(){
                         {userAndProduct.mapUserProducts.map((mapUserProduct, index)=>{
                             const role = userAndProduct.user.role;
                             const today = new Date();
-                            const enrollDate = mapUserProduct.enrollDate;            
+                            const enroll_date = mapUserProduct.enroll_date;            
                             const formattedToday = moment(today);
                             let dateDiff = 99999999;
-                            if(mapUserProduct.enrollDate != null){
-                                dateDiff = formattedToday.diff(enrollDate, 'days');
+                            if(mapUserProduct.enroll_date != null){
+                                dateDiff = formattedToday.diff(enroll_date, 'days');
                             }
                                                     
                             if(role == "Admin"){
-                                return(<tr key={mapUserProduct.productID!}>
+                                return(<tr key={mapUserProduct.product_id!}>
                                     <th>{index + 1}</th>
                                     <th>{mapUserProduct.title!}</th>
                                     <th>{mapUserProduct.price!}</th>
                                     <th className="flex">
-                                        <UpdateProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
-                                        <DeleteProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!} />
-                                        <OpenProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
+                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
+                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} />
+                                        <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                     </th>
                                 </tr>)
                             }
                             else if (role == "User"){
                                 if(dateDiff < 3){
-                                    return(<tr key={mapUserProduct.productID!}>
+                                    return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
                                         <th>{mapUserProduct.title!}</th>
                                         <th>{mapUserProduct.price!}</th>
                                         <th className="flex">
-                                            <OpenProduct id={mapUserProduct.productID!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
+                                            <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                         </th>
                                     </tr>)
                                 }
                                 else{
                                     const product: Products = {
-                                        id: mapUserProduct.productID!,
+                                        id: mapUserProduct.product_id!,
                                         price: mapUserProduct.price!,
                                         title: mapUserProduct.title!,
                                     }
-                                    return(<tr key={mapUserProduct.productID!}>
+                                    return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
                                         <th>{mapUserProduct.title!}</th>
                                         <th>{mapUserProduct.price!}</th>

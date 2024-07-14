@@ -25,13 +25,21 @@ export async function GET() {
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         var body:Users = await req.json();
+             
+        let { data, error } = await supabase.auth.signUp({
+            email: body.email!,
+            password: body.password!
+        })
+        if(error != null){
+            return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
+        }
         const result = {
             name : body.name,
             email: body.email,
             gender: body.gender,
             password: null,
             role: body.role,
-            rowstatus: true
+            row_status: true
         }
         const resultAlreadyExists = await supabase
             .from('users')
@@ -46,15 +54,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if (resultInsert.error != null){
             return NextResponse.json({ status: "error", msg: resultInsert.error?.message }, { status: 400 });
         }
-        
-        let resultSignUp = await supabase.auth.signUp({
-            email: body.email!,
-            password: body.password!
-        })
-        if(resultSignUp.error != null){
-            return NextResponse.json({ status: "error", msg: resultSignUp.error?.message }, { status: 400 });
-        }
-        return NextResponse.json({status: "OK", msg: "user created", data: resultSignUp.data, token: resultSignUp.data.session!.access_token}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "user created please confirm your email first"}, {status: 200});
      
     }
     catch (error){

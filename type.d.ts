@@ -15,12 +15,12 @@ type Products = {
 }
 
 type MapUserProduct = {
-    productID: number | null,
+    product_id: number | null,
     title: string | null,
     price: number | null,
-    userID: number | null,
-    enrollDate: Date | null,
-    userID2: number | null,
+    user_id: number | null,
+    enroll_date: Date | null,
+    user_id2: number | null,
     name: string | null,
     email: string | null,
     password: string | null,

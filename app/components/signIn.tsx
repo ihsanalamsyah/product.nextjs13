@@ -66,10 +66,8 @@ export default function SignIn(){
             router.refresh();
             setModal(false);
             resetForm();
-            setCookie("token", content.token, 7);
-            setCookie("email", content.data.email, 7);
-            setCookie("role", content.data.role, 7);
-            return router.push(`products/`);  
+            alert(content.msg);
+            return router.push("/");
         }
         else{
             setIsMutating(false);
@@ -234,11 +232,11 @@ export default function SignIn(){
                             </button>
                             {!isMutating ? (
                             <button type="submit" className="btn btn-primary">
-                                Save
+                                Sign In
                             </button>
                             ) : (
                             <button type="button" className="btn loading">
-                                Saving...
+                                Sign In...
                             </button>
                             )}
                            

@@ -15,6 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             email: body.email!,
             password: body.password!
         })
+       
         if (error != null) {
             return NextResponse.json({ status: "error", msg: "Error login" }, { status: 400 });
         }
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             password:  user.data![0].password,
             role : user.data![0].role,
             email : user.data![0].email,
-            gender : user.data![0].gender,
+            gender : user.data![0].gender
 
         }
         return NextResponse.json({status: "OK", msg: "Success login", data: dataUser, token: data.session?.access_token}, {status: 200});

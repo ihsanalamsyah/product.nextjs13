@@ -11,7 +11,7 @@ const User = db.define('Users', {
     gender: DataTypes.STRING,
     password:  DataTypes.STRING,
     role:  DataTypes.STRING,
-    rowStatus: DataTypes.BOOLEAN
+    row_status: DataTypes.BOOLEAN
 }, {
     freezeTableName: true
 })

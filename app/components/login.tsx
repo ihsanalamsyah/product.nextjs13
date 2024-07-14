@@ -91,11 +91,11 @@ export default function Login(){
                             </button>
                             {!isMutating ? (
                             <button type="submit" className="btn btn-primary">
-                                Save
+                                Login
                             </button>
                             ) : (
                             <button type="button" className="btn loading">
-                                Saving...
+                                Login...
                             </button>
                             )}
                            
