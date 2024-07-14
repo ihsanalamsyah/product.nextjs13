@@ -2,25 +2,24 @@
 =======
 # fullstack.next
 
-Aplikasi dashboard product mapping product dengan user, terdapat User dan Admin, terdapat detail product
+Aplikasi product dan dapat dimapping product dan user dapat di mapping kembali saat > 3 hari, ada User dan Admin, ada detail product
 
-Tech stack menggunakan:
-- MySQL
-- Node
-- Next
-- Clever cloud
-- DaisyUI
-- Tailwind
-- bycrpt
+Tech stack:
+- PostgreSQL (SQL progamming language)
+- Next (Framework)
+- Supabase (Database connection)
+- DaisyUI (Styling UI)
+- Tailwind (Styling UI)
+- bycrpt (Token)
 - cors
-- dotenv
-- sequelize
-- JSON Web Token
-- Cookie
-- Vercel
+- dotenv (Environment)
+- sequelize (ORM [not used])
+- JSON Web Token (Token)
+- Cookie (Store data)
+- Vercel (Deployment)
   
-Terdapat website yang sudah di deploy dengan vercel url berikut:
+Website sudah di deploy dengan vercel berikut url-nya:
 
-Website: https://enroll-product-nextjs13.vercel.app/
+https://enroll-product-nextjs13.vercel.app/
 
-Selamat menikmati apps saya
+Thank you selamat mencoba
