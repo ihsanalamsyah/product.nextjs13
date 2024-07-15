@@ -107,29 +107,17 @@ async function getUserByEmail(token:any, email:any){
 export default async function ProductDetail({params}: {params: {product_id: number}}){
     const getSession = await supabase.auth.getSession();
     const route = process.env.NEXT_PUBLIC_ROUTE;
-    
+    const cookieStore = cookies();
     const product_id = Number(params.product_id);
     if (getSession.data.session == null){
-        const response = await fetch(`${route}/logout`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const content = await response.json();
-        if(content.status == "OK"){        
-            redirect('/');
-        }
-        else{
-            alert(content.msg);
-            redirect(`/products/${product_id}`)
-        }      
+        cookieStore.delete("token");
+        cookieStore.delete("email");
+        redirect('/');  
     }  
     
     if (product_id < 0  || isNaN(product_id)) {
       notFound();
     }
-    const cookieStore = cookies();
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');
     let isAdmin = false;

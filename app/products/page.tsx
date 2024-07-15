@@ -16,22 +16,12 @@ import moment from "moment";
 
 export default async function Products(){
     const route = process.env.NEXT_PUBLIC_ROUTE;
+    const cookieStore = cookies();
     const getSession = await supabase.auth.getSession();
-    if(getSession.data.session == null){
-        const response = await fetch(`${route}/logout`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const content = await response.json();
-        if(content.status == "OK"){
-            redirect('/');
-        }
-        else{
-            alert(content.msg);
-            redirect('/products')
-        }
+    if (getSession.data.session == null){
+        cookieStore.delete("token");
+        cookieStore.delete("email");
+        redirect('/');
     }
     //Method
     async function getUserProduct(token: any, email: any) {
@@ -71,7 +61,6 @@ export default async function Products(){
     };
     let isAdmin = false;
     let isProductZero = false;
-    const cookieStore = cookies();
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');
     const userAndProduct: GetUserProduct = await getUserProduct(token!.value, email!.value);
