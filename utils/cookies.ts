@@ -39,6 +39,7 @@ export function deleteCookie(name: string) {
 }
 
 export function deleteLocalStorage(name: string){
+  
   if(typeof window !== 'undefined'){
     localStorage.removeItem(name);
   }

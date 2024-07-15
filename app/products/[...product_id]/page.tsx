@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { cookies } from 'next/headers'
 import { ChangeEvent } from 'react';
 import DetailProduct from '@/app/components/products/[...product_id]/detailProduct'
-import { notFound } from "next/navigation";
 import ImageComponent from '@/app/components/products/[...product_id]/imageProduct';
+import { notFound } from "next/navigation";
+import { supabase } from '@/utils/supabase';
+import { redirect } from 'next/navigation';
 
 
 async function getImageUrl(token: string | null | undefined,  product_id: number){
@@ -69,21 +71,74 @@ async function getProductById(token: any, product_id: any){
     return product;
 }
 
-export default async function ProductDetail({params}: {params: {product_id: number}}){
+async function getUserByEmail(token:any, email:any){
+    let user: Users = {
+        name: "",
+        password: "",
+        email: "",
+        gender: "",
+        role: "",
+        id: 0
+     };
+    const route = process.env.NEXT_PUBLIC_ROUTE;
+    try {
+        
+        const response = await fetch(`${route}/users`, {
+            method: 'GET',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'            
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        });
 
-    let product_id = Number(params.product_id);
+        const content = await response.json();
+        user = content.data[0];
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    
+    return user;
+}
+
+export default async function ProductDetail({params}: {params: {product_id: number}}){
+    const getSession = await supabase.auth.getSession();
+    const route = process.env.NEXT_PUBLIC_ROUTE;
+    
+    const product_id = Number(params.product_id);
+    if (getSession.data.session == null){
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){        
+            redirect('/');
+        }
+        else{
+            alert(content.msg);
+            redirect(`/products/${product_id}`)
+        }      
+    }  
     
     if (product_id < 0  || isNaN(product_id)) {
       notFound();
     }
-    const cookieStore = cookies()
+    const cookieStore = cookies();
     const token = cookieStore.get('token');
-    const role = cookieStore.get('role');
+    const email = cookieStore.get('email');
     let isAdmin = false;
-    if(role!.value == "Admin"){
+    const user:Users = await getUserByEmail(token!, email!);
+    if(user.role! == "Admin"){
         isAdmin = true;
     }
     const productDetail: Products = await getProductById(token!, params.product_id);
+    console.log("productDetail", productDetail)
     const imageUrl = await getImageUrl(token!.value, params.product_id);
     const imageId = `image-product-${params.product_id}`;
     const imageAlt = `image product ${params.product_id}`;

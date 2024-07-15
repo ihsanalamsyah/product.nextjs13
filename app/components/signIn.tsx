@@ -64,9 +64,9 @@ export default function SignIn(){
         if(content.status == "OK"){
             setIsMutating(false);
             router.refresh();
-            setModal(false);
-            resetForm();
+            setModal(false);   
             alert(content.msg);
+            resetForm();
             return router.push("/");
         }
         else{

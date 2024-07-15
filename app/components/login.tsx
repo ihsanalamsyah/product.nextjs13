@@ -44,9 +44,7 @@ export default function Login(){
             setModal(false);
             setCookie("token", content.token, 7);
             setCookie("email", content.data.email, 7);
-            setCookie("role", content.data.role, 7);
             resetForm();
-          
             return router.push(`/products`);
         }
         else{            

@@ -5,18 +5,32 @@ import { useRouter } from "next/navigation";
 import { deleteCookie, deleteLocalStorage } from '@/utils/cookies';
 
 
-
 export default function Logout(){
     const [modal, setModal] = useState(false);
+    const route = process.env.NEXT_PUBLIC_ROUTE;
     const router = useRouter();
     function handleChange(){
         setModal(!modal);
     }
-    function handleLogout(){
-        deleteCookie("token");
-        deleteCookie("email");
-        deleteCookie("role");
-        return router.push(`/`);
+    async function handleLogout(){
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            setModal(false);
+            return router.push("/");
+        }
+        else{       
+            setModal(false);
+            alert(content.msg);
+            return router.push("/products");
+           
+        }
+        
     }
    
     

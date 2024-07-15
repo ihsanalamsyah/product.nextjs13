@@ -5,7 +5,6 @@ import { useRouter} from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 
 
-
 export default function AddProduct(){
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState("");

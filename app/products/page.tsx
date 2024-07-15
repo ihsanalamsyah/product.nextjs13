@@ -3,17 +3,36 @@
 import AddProduct from "../components/products/addProduct";
 import Logout from "../components/products/logout";
 import TableProduct from "../components/products/tableProduct";
-import { cookies } from 'next/headers'
-import { supabase } from '@/utils/supabase';
 import DeleteProduct from "../components/products/deleteProduct";
 import EnrollProduct from "../components/products/enrollProduct";
 import OpenProduct from "../components/products/openProduct";
 import UpdateProduct from "../components/products/updateProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
+import { cookies } from 'next/headers'
+import { supabase } from '@/utils/supabase';
+import { redirect } from 'next/navigation'
 import moment from "moment";
 
 
 export default async function Products(){
+    const route = process.env.NEXT_PUBLIC_ROUTE;
+    const getSession = await supabase.auth.getSession();
+    if(getSession.data.session == null){
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            redirect('/');
+        }
+        else{
+            alert(content.msg);
+            redirect('/products')
+        }
+    }
     //Method
     async function getUserProduct(token: any, email: any) {
         let userAndProduct: GetUserProduct = {
@@ -27,7 +46,7 @@ export default async function Products(){
             },
             mapUserProducts: []
         };
-        const route = process.env.NEXT_PUBLIC_ROUTE;
+        
         try {             
             const response = await fetch(`${route}/mapUserProduct`, {
                 method: 'POST',
@@ -52,7 +71,7 @@ export default async function Products(){
     };
     let isAdmin = false;
     let isProductZero = false;
-    const cookieStore = cookies()
+    const cookieStore = cookies();
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');
     const userAndProduct: GetUserProduct = await getUserProduct(token!.value, email!.value);
@@ -96,6 +115,12 @@ export default async function Products(){
                             <th>Product Name</th>
                             <th>Price</th>
                             <th>Action</th>
+                            {isAdmin ? (
+                                <th>Belongs To</th>
+                            ): (
+                                <th></th>
+                            )}
+                            
                         </tr>
                         </thead>
                         <tbody>
@@ -120,6 +145,7 @@ export default async function Products(){
                                         <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} />
                                         <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                     </th>
+                                    <th>{mapUserProduct.name ?? "None belongs to"}</th>
                                 </tr>)
                             }
                             else if (role == "User"){
@@ -131,6 +157,7 @@ export default async function Products(){
                                         <th className="flex">
                                             <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!}/>
                                         </th>
+                                        <th></th>
                                     </tr>)
                                 }
                                 else{
@@ -146,6 +173,7 @@ export default async function Products(){
                                         <th className="flex">
                                             <EnrollProduct user={userAndProduct.user} product={product}/>
                                         </th>
+                                        <th></th>
                                     </tr>)
                                 }
                             }

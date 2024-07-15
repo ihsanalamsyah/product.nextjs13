@@ -6,7 +6,6 @@ import { supabase } from "@/utils/supabase";
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Users = await req.json();
-        
         let mapUserProducts: any[] = [];
         const response = await supabase
             .from('users')

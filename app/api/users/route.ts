@@ -7,15 +7,38 @@ import { supabase } from '@/utils/supabase';
 env.config();
 
 
-export async function GET() {
+export async function GET(req: NextRequest, res: NextResponse) {
     try {
-        const {data, error} = await supabase
-            .from('users')
-            .select()
-        if(error != null){
-            return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
+        let result:Users[] = [{
+            id: 0,
+            name : "",
+            email: "",
+            gender: "",
+            password: "",
+            role: ""
+        }]
+        var body:Users = await req.json();
+        if(body.email != "" || body.email != null){
+            const {data, error} = await supabase
+                .from('users')
+                .select()
+                .eq("email", body.email)
+            if(error != null){
+                return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
+            }
+            result = data;
+        }else{
+            const {data, error} = await supabase
+                .from('users')
+                .select()
+            if(error != null){
+                return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
+            }
+            result = data;
         }
-        return NextResponse.json({status: "OK", msg: "Get all user", data: data}, {status: 200});
+        
+        
+        return NextResponse.json({status: "OK", msg: "Get all user", data: result}, {status: 200});
     }
     catch {
         return NextResponse.json({status: "Failed", msg: "Error"}, {status: 400});
@@ -54,7 +77,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if (resultInsert.error != null){
             return NextResponse.json({ status: "error", msg: resultInsert.error?.message }, { status: 400 });
         }
-        return NextResponse.json({status: "OK", msg: "user created please confirm your email first"}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "user success created please confirm your email first and then login"}, {status: 200});
      
     }
     catch (error){
