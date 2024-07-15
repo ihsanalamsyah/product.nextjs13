@@ -24,9 +24,7 @@ interface ImageProduct {
 }
 
 
-
-
-export default async function ImageComponent({children, isAdmin, product_id, token } : any){
+export default function ImageComponent({children, isAdmin, product_id, token } : any){
     async function handleFileChange (e: ChangeEvent<HTMLInputElement>){
         const route = process.env.NEXT_PUBLIC_ROUTE;
         

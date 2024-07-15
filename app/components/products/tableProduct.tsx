@@ -1,6 +1,6 @@
 'use client'
 
-export default async function TableProduct({children } : any){
+export default function TableProduct({children } : any){
   
     return (
         <>

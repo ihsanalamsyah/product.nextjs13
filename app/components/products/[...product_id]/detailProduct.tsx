@@ -2,7 +2,7 @@
 
 
 
-export default async function DetailProduct({children } : any){
+export default function DetailProduct({children } : any){
  
  
     return(
