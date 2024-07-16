@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteCookie, deleteLocalStorage } from '@/utils/cookies';
+import { getCookie } from '@/utils/cookies';
 
 
 export default function Logout(){
     const [modal, setModal] = useState(false);
     const route = process.env.NEXT_PUBLIC_ROUTE;
     const router = useRouter();
+    const token = getCookie("token");
     function handleChange(){
         setModal(!modal);
     }
@@ -16,7 +17,8 @@ export default function Logout(){
         const response = await fetch(`${route}/logout`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
             }
         });
         const content = await response.json();
@@ -39,17 +41,16 @@ export default function Logout(){
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure to logout?</h3>
-                                        
-                        <div className="modal-action">
-                            <button type="button" className="btn" onClick={handleChange}>
-                                Close
-                            </button>
-                            <button type="button" onClick={()=> handleLogout()} className="btn btn-primary">
-                                Yes
-                            </button>
-                                                                             
-                        </div>
+                    <h3 className="font-bold text-lg">Are you sure to logout?</h3>                                    
+                    <div className="modal-action">
+                        <button type="button" className="btn" onClick={handleChange}>
+                            Close
+                        </button>
+                        <button type="button" onClick={()=> handleLogout()} className="btn btn-primary">
+                            Yes
+                        </button>
+                                                                            
+                    </div>
                 
                 </div>
             </div>
