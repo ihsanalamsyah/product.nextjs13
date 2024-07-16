@@ -78,12 +78,13 @@ async function getUserByEmail(token:string, email:string){
     return user;
 }
 
-async function logout(){
+async function logout(token:string){
     let isSuccessLogout = false;
     try{
         const response = await fetch(`${route}/logout`,{
             method: 'POST',
             headers: {
+                'Authorization': 'Bearer '+ token,
                 'Content-Type': 'application/json'
             }
         });
@@ -99,11 +100,13 @@ async function logout(){
 export default async function ProductDetail({params}: {params: {product_id: number}}){
     const getSession = await supabase.auth.getSession();
     const cookieStore = cookies();
+    const token = cookieStore.get('token');
+    const email = cookieStore.get('email');
     const product_id = Number(params.product_id);
     if (getSession.data.session == null){
-        const isSuccessLogout = await logout();
+        const isSuccessLogout = await logout(token!.value);
         if(isSuccessLogout){
-            //console.log("Gak ada session");
+            console.log("Gak ada session");
             //redirect('/');
         }
     }  
@@ -111,8 +114,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
     if (product_id < 0  || isNaN(product_id)) {
       notFound();
     }
-    const token = cookieStore.get('token');
-    const email = cookieStore.get('email');
+   
     let isAdmin = false;
     const user:Users = await getUserByEmail(token!.value, email!.value);
     if(user.role! == "Admin"){

@@ -13,75 +13,80 @@ import { supabase } from '@/utils/supabase';
 import { redirect } from 'next/navigation'
 import moment from "moment";
 
+const route = process.env.NEXT_PUBLIC_ROUTE;
+//Method
+async function getUserProduct(token: string, email: string) {
+    let userAndProduct: GetUserProduct = {
+        user: {
+            id: 0,
+            name: "",
+            email: "",
+            gender: "",
+            password: "",
+            role: "",
+        },
+        mapUserProducts: []
+    };    
+    try {             
+        const response = await fetch(`${route}/mapUserProduct`, {
+            method: 'POST',
+            cache: 'no-store',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        });
+        const content = await response.json();
+        
+        userAndProduct = content;
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+
+    return userAndProduct;
+};
+
+async function logout(token: string){
+    let isSuccessLogout = false;
+    try{
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            isSuccessLogout = true;
+        }
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return isSuccessLogout;
+}
 
 export default async function Products(){
-    const route = process.env.NEXT_PUBLIC_ROUTE;
+    
     const cookieStore = cookies();
+    const token = cookieStore.get('token');
+    const email = cookieStore.get('email');
     const getSession = await supabase.auth.getSession();
     if (getSession.data.session == null){
-        const isSuccessLogout = await logout();
+        const isSuccessLogout = await logout(token!.value);
         if(isSuccessLogout){
-            //console.log("Gak ada session");
+            console.log("Gak ada session");
             //redirect('/');
         }
     }
-    //Method
-    async function getUserProduct(token: any, email: any) {
-        let userAndProduct: GetUserProduct = {
-            user: {
-                id: 0,
-                name: "",
-                email: "",
-                gender: "",
-                password: "",
-                role: "",
-            },
-            mapUserProducts: []
-        };    
-        try {             
-            const response = await fetch(`${route}/mapUserProduct`, {
-                method: 'POST',
-                cache: 'no-store',
-                headers:{
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email
-                })
-            });
-            const content = await response.json();
-            
-            userAndProduct = content;
-            
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
     
-        return userAndProduct;
-    };
-    async function logout(){
-        let isSuccessLogout = false;
-        try{
-            const response = await fetch(`${route}/logout`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const content = await response.json();
-            if(content.status == "OK"){
-                isSuccessLogout = true;
-            }
-        }catch(error) {
-            console.error('Error fetching data:', error);
-        }
-        return isSuccessLogout;
-    }
     let isAdmin = false;
     let isProductZero = false;
-    const token = cookieStore.get('token');
-    const email = cookieStore.get('email');
+   
     const userAndProduct: GetUserProduct = await getUserProduct(token!.value, email!.value);
   
     if(userAndProduct.user.role == "Admin"){
