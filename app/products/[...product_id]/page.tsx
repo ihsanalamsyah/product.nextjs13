@@ -8,35 +8,12 @@ import { notFound } from "next/navigation";
 import { supabase } from '@/utils/supabase';
 import { redirect } from 'next/navigation';
 
-
-async function getImageUrl(token: string | null | undefined,  product_id: number){
-    const route = process.env.NEXT_PUBLIC_ROUTE;
+const route = process.env.NEXT_PUBLIC_ROUTE;
+async function getImageUrl(token: string,  product_id: number){
+  
     let imageUrl = "";
     try{
-        const response = await fetch(`${route}/getimage`, {
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ token ,
-                'Access-Control-Allow-Origin': '*'
-            },
-            body: JSON.stringify({
-                product_id: product_id.toString()
-            })
-        }); 
-        
-        const content = await response.json();
-        if(content.status == "OK"){
-            const bufferObj = content.data;
-            const uint8Array = new Uint8Array(bufferObj.data);
-            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-            imageUrl = URL.createObjectURL(blob);
-            
-        }
-        else{
-            alert(content.msg);
-        }
-        
+
     }
     catch(error){
         console.error('Error fetching data:', error);
@@ -44,20 +21,19 @@ async function getImageUrl(token: string | null | undefined,  product_id: number
     return imageUrl;
 }
 
-async function getProductById(token: any, product_id: any){
+async function getProductById(token: string, product_id: number){
     let product: Products = {
        title: "",
        id: 0,
        price: 0
     };
-    const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
         
-        const response = await fetch(`${route}/products?id=${product_id}`, {
-            method: 'GET',
+        const response = await fetch(`${route}/productDetail?id=${product_id}`, {
+            method: 'POST',
             headers:{
                 'Authorization': 'Bearer '+ token,
-                'Content-Type': 'application/json'            
+                'Content-Type': 'application/json'     
             }
         });
 
@@ -71,7 +47,7 @@ async function getProductById(token: any, product_id: any){
     return product;
 }
 
-async function getUserByEmail(token:any, email:any){
+async function getUserByEmail(token:string, email:string){
     let user: Users = {
         name: "",
         password: "",
@@ -80,11 +56,9 @@ async function getUserByEmail(token:any, email:any){
         role: "",
         id: 0
      };
-    const route = process.env.NEXT_PUBLIC_ROUTE;
     try {
-        
-        const response = await fetch(`${route}/users`, {
-            method: 'GET',
+        const response = await fetch(`${route}/userDetail`, {
+            method: 'POST',
             headers:{
                 'Authorization': 'Bearer '+ token,
                 'Content-Type': 'application/json'            
@@ -104,15 +78,34 @@ async function getUserByEmail(token:any, email:any){
     return user;
 }
 
+async function logout(){
+    let isSuccessLogout = false;
+    try{
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            isSuccessLogout = true;
+        }          
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return isSuccessLogout;
+}
 export default async function ProductDetail({params}: {params: {product_id: number}}){
     const getSession = await supabase.auth.getSession();
-    const route = process.env.NEXT_PUBLIC_ROUTE;
     const cookieStore = cookies();
     const product_id = Number(params.product_id);
     if (getSession.data.session == null){
-        cookieStore.delete("token");
-        cookieStore.delete("email");
-        redirect('/');  
+        const isSuccessLogout = await logout();
+        if(isSuccessLogout){
+            //console.log("Gak ada session");
+            //redirect('/');
+        }
     }  
     
     if (product_id < 0  || isNaN(product_id)) {
@@ -121,16 +114,17 @@ export default async function ProductDetail({params}: {params: {product_id: numb
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');
     let isAdmin = false;
-    const user:Users = await getUserByEmail(token!, email!);
+    const user:Users = await getUserByEmail(token!.value, email!.value);
     if(user.role! == "Admin"){
         isAdmin = true;
     }
-    const productDetail: Products = await getProductById(token!, params.product_id);
-    console.log("productDetail", productDetail)
+    const productDetail: Products = await getProductById(token!.value, params.product_id);
     const imageUrl = await getImageUrl(token!.value, params.product_id);
     const imageId = `image-product-${params.product_id}`;
     const imageAlt = `image product ${params.product_id}`;
     return(
+        // <>
+        // </>
         <div>
             {/* <ImageComponent isAdmin={isAdmin} product_id={params.product_id} token={token.value}> 
                 <div className="flex">

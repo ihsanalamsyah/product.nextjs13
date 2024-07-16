@@ -27,8 +27,7 @@ export default function Logout(){
         else{       
             setModal(false);
             alert(content.msg);
-            return router.push("/products");
-           
+            return router.push("/products");   
         }
         
     }

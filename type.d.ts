@@ -45,3 +45,10 @@ type WelcomeMessage = {
     name: string,
     isAdmin: boolean
 }
+
+type DynamicResult = {
+    status: string,
+    msg: string,
+    errorMessage: string,
+    data: any
+}

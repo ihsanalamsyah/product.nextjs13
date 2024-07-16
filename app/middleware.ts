@@ -4,6 +4,7 @@ import { auth } from '@/utils/auth';
 
 
 export async function middleware(req: NextRequest) {
+    console.log("Melewati middleware");
     const authHeader = req.headers.get("authorization");
 
     if (!authHeader) {

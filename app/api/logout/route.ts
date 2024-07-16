@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const cookieStore = cookies();
         const { error } = await supabase.auth.signOut();
         if(error != null){
-            return NextResponse.json({ status: "error", msg: "Error login" }, { status: 400 });
+            return NextResponse.json({ status: "error", msg: "Error logout" }, { status: 400 });
         }
         cookieStore.delete("token");
         cookieStore.delete("email");

@@ -1,30 +1,38 @@
 import { NextResponse, NextRequest } from "next/server";
-
 import { supabase } from '@/utils/supabase';
 import Product from '@/app/api/models/productModel';
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
+    let result:DynamicResult =  {
+        status: "",
+        msg: "",
+        errorMessage: "",
+        data: []
+    }
     try {
-        const url = new URL(req.url);
-        const searchParams = new URLSearchParams(url.searchParams);
-        const id = searchParams.get('id');
-        if(id != null){
-            const {data, error} = await supabase
+        const {data, error} = await supabase
                 .from('products')
                 .select()
-                .eq('id', id)
-                .eq('row_status', true)
-            if(error != null){
-                return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
-            }
-            if(data.length <= 0){
-                return NextResponse.json({ status: "error", msg: "product is not exists"}, { status: 400 });
-            }
-            return NextResponse.json({status: "OK", msg: `Get Product ${id}`, data: data});
+        if(error != null){
+            result.status = "Failed";
+            result.msg = "Error fetch product";
+            result.errorMessage = error?.message;
+            return NextResponse.json(result, { status: 400 });
         }
+        if(data.length <= 0){
+            result.status = "Failed";
+            result.msg = "Product is not exists";
+            return NextResponse.json(result, { status: 400 });
+        }
+        result.status = "OK";
+        result.msg = "Success get Products";
+        result.data = data;
+        return NextResponse.json(result,{ status: 200 } );
     }
     catch {
-        return NextResponse.json({status: "Failed", msg: "Error"});
+        result.status = "Failed";
+        result.msg = "Error";
+        return NextResponse.json(result);
     }
 }
 

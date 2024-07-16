@@ -19,9 +19,11 @@ export default async function Products(){
     const cookieStore = cookies();
     const getSession = await supabase.auth.getSession();
     if (getSession.data.session == null){
-        cookieStore.delete("token");
-        cookieStore.delete("email");
-        redirect('/');
+        const isSuccessLogout = await logout();
+        if(isSuccessLogout){
+            //console.log("Gak ada session");
+            //redirect('/');
+        }
     }
     //Method
     async function getUserProduct(token: any, email: any) {
@@ -35,8 +37,7 @@ export default async function Products(){
                 role: "",
             },
             mapUserProducts: []
-        };
-        
+        };    
         try {             
             const response = await fetch(`${route}/mapUserProduct`, {
                 method: 'POST',
@@ -59,13 +60,30 @@ export default async function Products(){
     
         return userAndProduct;
     };
+    async function logout(){
+        let isSuccessLogout = false;
+        try{
+            const response = await fetch(`${route}/logout`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const content = await response.json();
+            if(content.status == "OK"){
+                isSuccessLogout = true;
+            }
+        }catch(error) {
+            console.error('Error fetching data:', error);
+        }
+        return isSuccessLogout;
+    }
     let isAdmin = false;
     let isProductZero = false;
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');
     const userAndProduct: GetUserProduct = await getUserProduct(token!.value, email!.value);
   
-    
     if(userAndProduct.user.role == "Admin"){
         isAdmin = true;
     }

@@ -1,13 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
-import bcrypt from 'bcrypt';
-import User from '../models/userModel';
-import env from 'dotenv';
-import generateToken from '@/utils/generateToken';
 import { supabase } from '@/utils/supabase';
-env.config();
 
-
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
     try {
         let result:Users[] = [{
             id: 0,
@@ -17,26 +11,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
             password: "",
             role: ""
         }]
-        var body:Users = await req.json();
-        if(body.email != "" || body.email != null){
-            const {data, error} = await supabase
+        const {data, error} = await supabase
                 .from('users')
                 .select()
-                .eq("email", body.email)
-            if(error != null){
-                return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
-            }
-            result = data;
-        }else{
-            const {data, error} = await supabase
-                .from('users')
-                .select()
-            if(error != null){
-                return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
-            }
-            result = data;
+        if(error != null){
+            return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
         }
-        
+        result = data;
         
         return NextResponse.json({status: "OK", msg: "Get all user", data: result}, {status: 200});
     }

@@ -4,6 +4,12 @@ import Product from "../models/productModel";
 import { supabase } from "@/utils/supabase";
 
 export async function POST(req: NextRequest, res: NextResponse) {
+    let result:DynamicResult =  {
+        status: "",
+        msg: "",
+        errorMessage: "",
+        data: []
+    }
     try {
         const body:Users = await req.json();
         let mapUserProducts: any[] = [];
@@ -14,7 +20,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .limit(1)
 
         if(response.data?.length! <= 0){
-            return NextResponse.json({status: "Failed", msg: "user not exists"}, {status : 300});
+            result.status = "Failed";
+            result.msg = "user not exists";
+            return NextResponse.json(result, {status : 300});
         }
         const user:Users = response.data![0];
         if(user.role == "User"){
@@ -23,7 +31,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
             });
                          
             if(error != null){
-                return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
+                result.status = "Failed";
+                result.msg = "error fetching data";
+                result.errorMessage = error.message;
+                return NextResponse.json(result, {status : 300});
             }
             mapUserProducts = data!;
            
@@ -32,12 +43,18 @@ export async function POST(req: NextRequest, res: NextResponse) {
             const { data, error } = await supabase.rpc('get_products_users_admin');
             //console.log("data mapUserProducts admin", data)     
             if(error != null){
-                return NextResponse.json({status: "Failed", msg: "error fetching data", errorMessage: error.message}, {status : 300});
+                result.status = "Failed";
+                result.msg = "Error fetching data";
+                result.errorMessage = error.message;
+                return NextResponse.json(result, {status : 300});
             }
             mapUserProducts = data!;
            
         }
         //console.log("mapUserProducts api", mapUserProducts)
+        result.status = "OK";
+        result.msg = "Get User Product";
+        result.data = mapUserProducts;
         return NextResponse.json({status: "OK", msg: "Get User Product", mapUserProducts: mapUserProducts, user: user}, {status : 200});
     }
     catch (error){
