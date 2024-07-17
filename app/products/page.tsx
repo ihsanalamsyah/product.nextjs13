@@ -71,7 +71,6 @@ async function logout(token: string){
 }
 
 export default async function Products(){
-    
     const cookieStore = cookies();
     const token = cookieStore.get('token');
     const email = cookieStore.get('email');

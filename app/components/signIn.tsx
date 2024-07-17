@@ -47,7 +47,7 @@ export default function SignIn(){
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true);
-        const response = await fetch(`${route}/users`,{
+        const response = await fetch(`${route}/signIn`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

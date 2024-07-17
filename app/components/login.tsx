@@ -29,10 +29,8 @@ export default function Login(){
         const response = await fetch(`${route}/login`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',  
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE'
+                'Content-Type': 'application/json'
             },
-            mode: 'no-cors',
             body: JSON.stringify({
                 email: email,
                 password: password

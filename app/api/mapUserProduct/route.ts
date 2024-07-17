@@ -65,10 +65,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 export async function PATCH(req: NextRequest, res: NextResponse) {
     try {
         const body:MapUserProduct = await req.json();
-
+        const today = new Date();
         const { data, error, count } = await supabase
             .from("products")
-            .update({ enroll_date: body.enroll_date, user_id: body.user_id, row_status: true })
+            .update({ enroll_date: body.enroll_date, user_id: body.user_id, row_status: true, updated_date: today})
             .eq("id", body.product_id)
 
         if(error != null){

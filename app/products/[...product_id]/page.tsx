@@ -9,11 +9,22 @@ import { supabase } from '@/utils/supabase';
 import { redirect } from 'next/navigation';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
-async function getImageUrl(token: string,  product_id: number){
+
+
+async function getImage(token: string,  product_id: number){
   
     let imageUrl = "";
     try{
-
+        const response = await fetch(`${route}/images`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
+            },
+            body: JSON.stringify({
+                product_id: product_id
+            })
+        });
     }
     catch(error){
         console.error('Error fetching data:', error);
@@ -121,7 +132,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
         isAdmin = true;
     }
     const productDetail: Products = await getProductById(token!.value, params.product_id);
-    const imageUrl = await getImageUrl(token!.value, params.product_id);
+    const imageUrl = await getImage(token!.value, params.product_id);
     const imageId = `image-product-${params.product_id}`;
     const imageAlt = `image product ${params.product_id}`;
     return(

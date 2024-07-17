@@ -31,19 +31,19 @@ export default function UpdateProduct(product: Products){
                 title: title,
                 price: price
             })
-    });
-    const content = await response.json();
-    if(content.status == "OK"){
-        setIsMutating(false);
-        router.refresh();
-        setModal(false);
-    }
-    else{
-        setIsMutating(false);
-        router.refresh();
-        setModal(false);
-        alert(content.msg);
-    }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            setIsMutating(false);
+            router.refresh();
+            setModal(false);
+        }
+        else{
+            setIsMutating(false);
+            router.refresh();
+            setModal(false);
+            alert(content.msg);
+        }
    
     }
     return (

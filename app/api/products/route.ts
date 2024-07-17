@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Products = await req.json();
         const price = body.price as number;
-        const title = body.title as string
+        const title = body.title as string;
         if(isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is not number"}, {status: 400});
         }
@@ -51,13 +51,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if (resultAlreadyExists.data!.length! > 0){
             return NextResponse.json({status: "Failed",  msg: "product already exist", data: resultAlreadyExists.data!}, {status: 400});
         }
-
+        const today = new Date();
         const dataProduct = {         
             title: title,
             price : price,
             user_id: null,
             enroll_date: null,
-            row_status: true
+            row_status: true,
+            created_date: today
         }
         const { data, error }  = await supabase
             .from('products')
@@ -77,12 +78,13 @@ export async function PATCH(req: NextRequest, res: NextResponse){
     try {
         const body:Products = await req.json();
         const price = body.price as number;
+        const today = new Date();
         if (isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is NaN"}, {status: 400});
         }
         const { data, error } = await supabase
             .from("products")
-            .update({ title: body.title, price: price, row_status: true })
+            .update({ title: body.title, price: price, row_status: true, updated_date: today})
             .eq("id", body.id)
             .select()
 
@@ -100,9 +102,10 @@ export async function PATCH(req: NextRequest, res: NextResponse){
 export async function DELETE(req: NextRequest, res: NextResponse){
     try {
         const body:Products = await req.json();
+        const today = new Date();
         const { data, error, count } = await supabase
             .from("products")
-            .update({row_status: false})
+            .update({row_status: false, updated_date: today})
             .eq("id", body.id)
 
         if(error != null){

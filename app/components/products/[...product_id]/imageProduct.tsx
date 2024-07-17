@@ -47,7 +47,6 @@ export default function ImageComponent({children, isAdmin, product_id, token } :
                     body: formData
                 }); 
     
-    
                 const content = await response.json();
     
                 if(content.status == "OK"){

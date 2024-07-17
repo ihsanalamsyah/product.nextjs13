@@ -52,3 +52,6 @@ type DynamicResult = {
     errorMessage: string,
     data: any
 }
+type GetImage = {
+    product_id: number
+}
