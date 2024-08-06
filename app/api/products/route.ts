@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import { supabase } from '@/utils/supabase';
-import Product from '@/app/api/models/productModel';
 
 export async function GET() {
     let result:DynamicResult =  {
@@ -29,10 +28,11 @@ export async function GET() {
         result.data = data;
         return NextResponse.json(result,{ status: 200 } );
     }
-    catch {
+    catch (error) {
         result.status = "Failed";
-        result.msg = "Error";
-        return NextResponse.json(result);
+        result.msg = error as string;
+        result.errorMessage = error as string;
+        return NextResponse.json(result, { status: 400 });
     }
 }
 
@@ -40,7 +40,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Products = await req.json();
         const price = body.price as number;
+        const quantity = body.quantity as number;
         const title = body.title as string;
+        const category = body.category as string;
         if(isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is not number"}, {status: 400});
         }
@@ -49,12 +51,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .select()
             .eq('title', body.title)
         if (resultAlreadyExists.data!.length! > 0){
-            return NextResponse.json({status: "Failed",  msg: "product already exist", data: resultAlreadyExists.data!}, {status: 400});
+            return NextResponse.json({status: "Failed",  msg: "Product already exist", data: resultAlreadyExists.data!}, {status: 400});
         }
         const today = new Date();
-        const dataProduct = {         
+        const dataProduct = {       
+            category: category,  
             title: title,
-            price : price,
+            price: price,
+            quantity: quantity,
             user_id: null,
             enroll_date: null,
             row_status: true,
@@ -65,12 +69,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .insert(dataProduct)
             .select()
         if(error != null){
-            return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: error?.message }, { status: 400 });
         }
         return NextResponse.json({status: "OK", msg: "Product Created", data: data}, {status: 200});
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: "error"}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: "Failed POST Product", errorMessage: error}, {status: 400});
     }
 }
 
@@ -78,13 +82,14 @@ export async function PATCH(req: NextRequest, res: NextResponse){
     try {
         const body:Products = await req.json();
         const price = body.price as number;
+        const quantity = body.quantity as number;
         const today = new Date();
         if (isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is NaN"}, {status: 400});
         }
         const { data, error } = await supabase
             .from("products")
-            .update({ title: body.title, price: price, row_status: true, updated_date: today})
+            .update({ title: body.title, price: price, quantity: quantity, row_status: true, updated_date: today})
             .eq("id", body.id)
             .select()
 
@@ -95,7 +100,7 @@ export async function PATCH(req: NextRequest, res: NextResponse){
         
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: "Failed PATCH Product", errorMessage: error}, {status: 400});
     }
 }
 
@@ -109,7 +114,7 @@ export async function DELETE(req: NextRequest, res: NextResponse){
             .eq("id", body.id)
 
         if(error != null){
-            return NextResponse.json({status: "Failed", msg: "Error delete data"}, {status: 400});
+            return NextResponse.json({status: "Failed", msg: "Error delete data", errorMesssage: error?.message}, {status: 400});
         }
         if(count! <= 0 && count != null){
             return NextResponse.json({status: "Failed", msg: `Data is not exists`}, {status: 300});
@@ -117,6 +122,6 @@ export async function DELETE(req: NextRequest, res: NextResponse){
         return NextResponse.json({status: "OK", msg: `Product ${body.id} Deleted`}, {status: 200});
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status: 300});
+        return NextResponse.json({status: "Failed", msg: "Failed DELETE Product", errorMessage: error}, {status: 300});
     }
 }

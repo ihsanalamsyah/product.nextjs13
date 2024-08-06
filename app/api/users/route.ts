@@ -12,8 +12,8 @@ export async function GET() {
             role: ""
         }]
         const {data, error} = await supabase
-                .from('users')
-                .select()
+            .from('users')
+            .select("*")
         if(error != null){
             return NextResponse.json({ status: "error", msg: error?.message }, { status: 400 });
         }
@@ -21,7 +21,7 @@ export async function GET() {
         
         return NextResponse.json({status: "OK", msg: "Get all user", data: result}, {status: 200});
     }
-    catch {
-        return NextResponse.json({status: "Failed", msg: "Error"}, {status: 400});
+    catch(error) {
+        return NextResponse.json({status: "Failed", msg: "Failed GET User", errorMessage: error}, {status: 400});
     }
 }

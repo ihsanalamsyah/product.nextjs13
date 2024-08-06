@@ -10,14 +10,18 @@ type Users = {
 
 type Products = {
     id: number | null,
+    category: string | null,
     title: string | null,
     price: number | null,
+    quantity: number | null
 }
 
 type MapUserProduct = {
     product_id: number | null,
     title: string | null,
     price: number | null,
+    quantity: number | null,
+    category: string | null,
     user_id: number | null,
     enroll_date: Date | null,
     user_id2: number | null,
@@ -38,7 +42,6 @@ type EnrollProduct = {
 }
 
 type GetUserProduct = {
-    user: Users;
     mapUserProducts: MapUserProduct[];
 }
 type WelcomeMessage = {
@@ -53,5 +56,62 @@ type DynamicResult = {
     data: any
 }
 type GetImage = {
+    image: File,
     product_id: number
+}
+
+type ImageComponent = {
+    children: any,
+    isAdmin: boolean,
+    product_id: number
+}
+
+type CheckImage = {
+    image_url: string
+}
+
+type DetailProduct = {
+    id: number,
+    title: string,
+    price: number,
+    quantity: number
+}
+
+type UploadImageProduct = {
+    isAdmin: boolean,
+    product_id: number
+}
+type BuyProduct = {
+    quantity: number,
+    product_id: number,
+    email: string
+}
+type Alert = {
+    onClose: any,
+    visible: boolean,
+    message: string
+}
+type ContentToogle = {
+    onToogle: any
+}
+type ImageProduct = {
+    isVisible: boolean,
+    image_url: string,
+    image_alt: string,
+}
+
+type AddProduct = {
+    isVisible: boolean
+}
+
+type TableProduct = {
+    isProductEmpty: boolean,
+    isAdmin: boolean,
+    category: string,
+    mapUserProducts: MapUserProduct[],
+    users: Users[]
+}
+
+type Navbar = {
+    category: string
 }

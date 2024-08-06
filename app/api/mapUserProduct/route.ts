@@ -1,6 +1,4 @@
 import { NextResponse, NextRequest } from "next/server";
-import User from '../models/userModel';
-import Product from "../models/productModel";
 import { supabase } from "@/utils/supabase";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -10,9 +8,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
         errorMessage: "",
         data: []
     }
+    let dataResult:MapUserProduct[] = [{
+        product_id: 0,
+        title: "",
+        price: 0,
+        quantity: 0,
+        category: "",
+        user_id: 0,
+        enroll_date: null,
+        user_id2: 0,
+        name: "",
+        email: "",
+        password: "",
+        gender: "",
+        role: "",
+    }];
     try {
-        const body:Users = await req.json();
-        let mapUserProducts: any[] = [];
+        const body:MapUserProduct = await req.json();
         const response = await supabase
             .from('users')
             .select()
@@ -26,39 +38,42 @@ export async function POST(req: NextRequest, res: NextResponse) {
         }
         const user:Users = response.data![0];
         if(user.role == "User"){
-            const { data, error } = await supabase.rpc('get_products_users', {
-                email_args: body.email
-            });
-                         
-            if(error != null){
+            let responseGetUserProduct :any;
+            console.log("category", body.category)
+            if(body.category == "Video"){
+                responseGetUserProduct = await supabase.rpc('get_products_users_video', {
+                    email_args: body.email
+                });
+            }else if(body.category == "Phone"){
+                responseGetUserProduct = await supabase.rpc('get_products_users_phone');
+            }
+             
+            if(responseGetUserProduct.error != null){
                 result.status = "Failed";
                 result.msg = "error fetching data";
-                result.errorMessage = error.message;
+                result.errorMessage = responseGetUserProduct.error.message;
                 return NextResponse.json(result, {status : 300});
-            }
-            mapUserProducts = data!;
-           
+            }      
+            dataResult = responseGetUserProduct.data!;
         }
         else{
             const { data, error } = await supabase.rpc('get_products_users_admin');
-            //console.log("data mapUserProducts admin", data)     
             if(error != null){
                 result.status = "Failed";
                 result.msg = "Error fetching data";
                 result.errorMessage = error.message;
                 return NextResponse.json(result, {status : 300});
             }
-            mapUserProducts = data!;
+            dataResult = data!;
            
         }
-        //console.log("mapUserProducts api", mapUserProducts)
         result.status = "OK";
         result.msg = "Get User Product";
-        result.data = mapUserProducts;
-        return NextResponse.json({status: "OK", msg: "Get User Product", mapUserProducts: mapUserProducts, user: user}, {status : 200});
+        result.data = dataResult;
+        return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult}, {status : 200});
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status : 400});
+        return NextResponse.json({status: "Failed", msg: "Failed POST MapUserProduct", errorMessage: error}, {status : 400});
     }
 }
 
@@ -81,6 +96,6 @@ export async function PATCH(req: NextRequest, res: NextResponse) {
      
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status: 300});
+        return NextResponse.json({status: "Failed", msg: "Failed PATCH MapUserProduct", errorMessage: error}, {status: 300});
     }
 }

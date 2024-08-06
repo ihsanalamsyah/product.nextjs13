@@ -18,35 +18,35 @@ export default function DeleteProduct(product: Products){
     
     async function handleDelete(product_id: number){
     
-    setIsMutating(true);
-    const response = await fetch(`${route}/products`,{
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ token
-        },
-        body: JSON.stringify({
-            id: product_id
-            
-        })
-    });
-    const content = await response.json();
-    if(content.status == "OK"){
-        setIsMutating(false);
-        router.refresh();
-        setModal(false);
-    }
-    else{
-        setIsMutating(false);
-        router.refresh();
-        setModal(false);
-        alert(content.msg);
-    }
+        setIsMutating(true);
+        const response = await fetch(`${route}/products`,{
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
+            },
+            body: JSON.stringify({
+                id: product_id
+                
+            })
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            setIsMutating(false);
+            router.refresh();
+            setModal(false);
+        }
+        else{
+            setIsMutating(false);
+            router.refresh();
+            setModal(false);
+            alert(content.msg);
+        }
    
     }
     return (
         <div>
-            <button className="btn btn-error btn-sm" onClick={handleChange}> Delete</button>
+            <button className="btn btn-error btn-sm mx-1" onClick={handleChange}> Delete</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
 

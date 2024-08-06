@@ -36,9 +36,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json(result,{ status: 200 } );
         }
     }
-    catch {
+    catch(error) {
         result.status = "Failed";
-        result.msg = "Error";
+        result.msg = "Failed Product Detail";
+        result.errorMessage = error as string; 
         return NextResponse.json(result);
     }
     return NextResponse.json(result);

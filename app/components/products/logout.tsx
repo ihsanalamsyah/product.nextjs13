@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCookie } from '@/utils/cookies';
+import { getCookie, deleteCookie } from '@/utils/cookies';
 
 
 export default function Logout(){
@@ -24,6 +24,9 @@ export default function Logout(){
         const content = await response.json();
         if(content.status == "OK"){
             setModal(false);
+            deleteCookie("token");
+            deleteCookie("email");
+            deleteCookie("category");
             return router.push("/");
         }
         else{       
@@ -34,7 +37,6 @@ export default function Logout(){
         
     }
    
-    
     return (
         <div>
             <button className="btn mx-2" onClick={handleChange}>Logout</button>

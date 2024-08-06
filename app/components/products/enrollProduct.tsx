@@ -49,14 +49,14 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
     }
     return (
         <div>
-            <button className="btn btn-info btn-sm" onClick={handleChange}>Enroll now</button>
+            <button className="btn btn-info btn-sm" onClick={handleChange}>Enroll Now</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
 
 
             <div className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure to enroll this {enrollProduct.product.title} ?</h3>
+                    <h3 className="font-bold text-lg">Are You Sure to Enroll This {enrollProduct.product.title} ?</h3>
                                         
                         <div className="modal-action">
                             <button type="button" className="btn" onClick={handleChange}>

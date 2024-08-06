@@ -8,7 +8,7 @@ Tech stack:
 - PostgreSQL (SQL progamming language)
 - Next (Framework)
 - Supabase (Database connection)
-- DaisyUI (Styling UI)
+- DaisyUI (Component UI)
 - Tailwind (Styling UI)
 - bycrpt (Token)
 - cors

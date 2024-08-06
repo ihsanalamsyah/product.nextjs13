@@ -1,42 +1,22 @@
 'use server'
-import Link from 'next/link';
+
 import { cookies } from 'next/headers'
-import { ChangeEvent } from 'react';
-import DetailProduct from '@/app/components/products/[...product_id]/detailProduct'
-import ImageComponent from '@/app/components/products/[...product_id]/imageProduct';
+import DetailProduct from '@/app/components/products/[...product_id]/detailProduct';
+import ImageProduct from '@/app/components/products/[...product_id]/imageProduct';
+import Navbar from "@/app/components/navbar";
 import { notFound } from "next/navigation";
 import { supabase } from '@/utils/supabase';
-import { redirect } from 'next/navigation';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-
-async function getImage(token: string,  product_id: number){
-  
-    let imageUrl = "";
-    try{
-        const response = await fetch(`${route}/images`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+ token
-            },
-            body: JSON.stringify({
-                product_id: product_id
-            })
-        });
-    }
-    catch(error){
-        console.error('Error fetching data:', error);
-    }
-    return imageUrl;
-}
 
 async function getProductById(token: string, product_id: number){
     let product: Products = {
        title: "",
        id: 0,
-       price: 0
+       category: "",
+       price: 0,
+       quantity: 0
     };
     try {
         
@@ -108,14 +88,50 @@ async function logout(token:string){
     }
     return isSuccessLogout;
 }
+
+async function getImageUrl(product_id:number){
+    let imageUrl:string = "";
+    const { data } = supabase.storage
+        .from('images')
+        .getPublicUrl(`Foto-product_id-${product_id}.png`)
+
+    if(data.publicUrl != ""){
+        imageUrl = data.publicUrl;
+    }
+    return imageUrl;
+}
+
+async function checkImageUrl(token:string, image_url:string){
+    let isSuccessImage = false;
+    try{
+        const response = await fetch(`${route}/checkImage`,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                image_url: image_url
+            })
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            isSuccessImage = true;
+        }
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return isSuccessImage;
+}
+
 export default async function ProductDetail({params}: {params: {product_id: number}}){
     const getSession = await supabase.auth.getSession();
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
-    const email = cookieStore.get('email');
+    const token = cookieStore.get('token')?.value ?? "";
+    const email = cookieStore.get('email')?.value ?? "";
     const product_id = Number(params.product_id);
     if (getSession.data.session == null){
-        const isSuccessLogout = await logout(token!.value);
+        const isSuccessLogout = await logout(token);
         if(isSuccessLogout){
             console.log("Gak ada session");
             //redirect('/');
@@ -125,45 +141,26 @@ export default async function ProductDetail({params}: {params: {product_id: numb
     if (product_id < 0  || isNaN(product_id)) {
       notFound();
     }
-   
+     
     let isAdmin = false;
-    const user:Users = await getUserByEmail(token!.value, email!.value);
+    const user:Users = await getUserByEmail(token, email);
     if(user.role! == "Admin"){
         isAdmin = true;
     }
-    const productDetail: Products = await getProductById(token!.value, params.product_id);
-    const imageUrl = await getImage(token!.value, params.product_id);
-    const imageId = `image-product-${params.product_id}`;
-    const imageAlt = `image product ${params.product_id}`;
+    const productDetail: Products = await getProductById(token, params.product_id);
+    
+    const imageUrl:string = await getImageUrl(params.product_id);
+    const altImage:string = `Foto-product_id-${product_id}`;
+    const isSuccessImage:boolean = await checkImageUrl(token, imageUrl);
     return(
         // <>
         // </>
-        <div>
-            {/* <ImageComponent isAdmin={isAdmin} product_id={params.product_id} token={token.value}> 
-                <div className="flex">
-                    <p>Image: </p>
-                    <div id="container" className="d-flex rounded-full w-40 h-40 relative overflow-hidden">
-                        <img className="object-cover" id={imageId} alt={imageAlt} src={imageUrl} />
-                    </div>
-                    
-                </div>
-            </ImageComponent> */}
-
-            <br></br>
-
-            <DetailProduct>
-                <div className='flex justify-evenly'>
-                    <p>Product title: {productDetail.title}</p>
-                    <p>Product price: {productDetail.price}</p>   
-                </div> 
-            </DetailProduct>
-
-            <br></br>
-            <div className='flex justify-evenly'>
-                <Link href="/products"><button className="btn btn-error btn-sm">Back to dashboard</button></Link>
-                <p></p>
-            </div>
-            
-        </div>
+        <>
+            <Navbar category={""} />
+            <div className='flex justify-around mt-16'>
+                <DetailProduct title={productDetail.title!} price={productDetail.price!} id={productDetail.id!} quantity={productDetail.quantity!} />     
+                <ImageProduct isVisible={isSuccessImage} image_url={imageUrl} image_alt={altImage} /> 
+            </div>    
+        </>
     )
 }

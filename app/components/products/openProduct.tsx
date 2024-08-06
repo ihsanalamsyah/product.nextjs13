@@ -2,9 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-
-
-export default function EnrollProduct(product: Products){
+export default function OpenProduct(product: Products){
     const router = useRouter();
     
     function handleOpen(product_id: number){
@@ -12,7 +10,7 @@ export default function EnrollProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-success btn-sm" onClick={()=> handleOpen(product.id!)}>Open detail product</button>
+            <button className="btn btn-success btn-sm mx-1" onClick={()=> handleOpen(product.id!)}>Open Detail Product</button>
         </div>
     )
 }
