@@ -1,8 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import DetailProduct from '@/app/components/products/[...product_id]/detailProduct';
+import DetailProductPhone from '@/app/components/products/[...product_id]/detailProductPhone';
+import DetailProductVideo from '@/app/components/products/[...product_id]/detailProductVideo';
 import ImageProduct from '@/app/components/products/[...product_id]/imageProduct';
+import VideoProduct from '@/app/components/products/[...product_id]/videoProduct';
 import Navbar from "@/app/components/navbar";
 import { notFound } from "next/navigation";
 import { supabase } from '@/utils/supabase';
@@ -101,6 +103,18 @@ async function getImageUrl(product_id:number){
     return imageUrl;
 }
 
+async function getVideoUrl(product_id:number){
+    let videoUrl:string = "";
+    const { data } = supabase.storage
+        .from('videos')
+        .getPublicUrl(`Video-product_id-${product_id}.mp4`)
+
+    if(data.publicUrl != ""){
+        videoUrl = data.publicUrl;
+    }
+    return videoUrl;
+}
+
 async function checkImageUrl(token:string, image_url:string){
     let isSuccessImage = false;
     try{
@@ -112,6 +126,29 @@ async function checkImageUrl(token:string, image_url:string){
             },
             body: JSON.stringify({
                 image_url: image_url
+            })
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            isSuccessImage = true;
+        }
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return isSuccessImage;
+}
+
+async function checkVideoUrl(token:string, video_url:string){
+    let isSuccessImage = false;
+    try{
+        const response = await fetch(`${route}/checkVideo`,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                video_url: video_url
             })
         });
         const content = await response.json();
@@ -142,24 +179,46 @@ export default async function ProductDetail({params}: {params: {product_id: numb
       notFound();
     }
      
-    let isAdmin = false;
+    let isAdmin:boolean = false;
+    let imageUrl:string = "";
+    let altImage:string = "";
+    let videoUrl:string = "";
+    let isSuccessImage:boolean = false;
+    let isSuccessVideo:boolean = false;
+
     const user:Users = await getUserByEmail(token, email);
     if(user.role! == "Admin"){
         isAdmin = true;
     }
     const productDetail: Products = await getProductById(token, params.product_id);
+    if(productDetail.category == "Video"){
+        videoUrl = await getVideoUrl(params.product_id);
+        isSuccessVideo = await checkVideoUrl(token, videoUrl);
+    }else{
+        imageUrl = await getImageUrl(params.product_id);
+        altImage = `Foto-product_id-${product_id}`;
+        isSuccessImage = await checkImageUrl(token, imageUrl);
+    }
     
-    const imageUrl:string = await getImageUrl(params.product_id);
-    const altImage:string = `Foto-product_id-${product_id}`;
-    const isSuccessImage:boolean = await checkImageUrl(token, imageUrl);
+    
+    
     return(
         // <>
         // </>
         <>
             <Navbar category={""} />
-            <div className='flex justify-around mt-16'>
-                <DetailProduct title={productDetail.title!} price={productDetail.price!} id={productDetail.id!} quantity={productDetail.quantity!} />     
-                <ImageProduct isVisible={isSuccessImage} image_url={imageUrl} image_alt={altImage} /> 
+            <div className='flex justify-around mt-16'>       
+                {productDetail.category == "Video" ? (
+                    <>
+                     <DetailProductVideo title={productDetail.title!} price={productDetail.price!} id={productDetail.id!} quantity={productDetail.quantity!} />
+                     <VideoProduct isVisible={true} video_url={videoUrl} /> 
+                    </>  
+                ) : (
+                    <>
+                     <DetailProductPhone title={productDetail.title!} price={productDetail.price!} id={productDetail.id!} quantity={productDetail.quantity!} />
+                     <ImageProduct isVisible={isSuccessImage} image_url={imageUrl} image_alt={altImage} /> 
+                    </>       
+                )}
             </div>    
         </>
     )

@@ -12,7 +12,7 @@ export default function ImageProduct(imageProduct: ImageProduct){
                 width={100}
                 height={100}/>
             ) : (
-            <div className="w-3/4 mx-auto my-44"></div>
+            <div className="w-3/4 mx-auto h-scren"></div>
             )}
         </div>      
     )

@@ -8,7 +8,7 @@ import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 import BackToDashboard from '@/app/components/products/[...product_id]/backToDashboard';
 
-export default function DetailProduct(detailProduct: DetailProduct){
+export default function DetailProductVideo(detailProductVideo: DetailProductPhone){
     const [modal, setModal] = useState(false);
     const [isMutating, setIsMutating] = useState(false);
     const [price, setPrice] = useState("");
@@ -16,13 +16,13 @@ export default function DetailProduct(detailProduct: DetailProduct){
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [quantity, setQuantity] = useState(detailProduct.quantity);
+    const [quantity, setQuantity] = useState(detailProductVideo.quantity);
     const route = process.env.NEXT_PUBLIC_ROUTE;
     const token = getCookie("token");
     const email = getCookie("email");
 
     useEffect(() => {
-        const price: number = detailProduct.price;
+        const price: number = detailProductVideo.price;
         let stringPrice:string = price.toString().replace(/\./g, '');
         stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         setPrice(stringPrice);
@@ -73,7 +73,7 @@ export default function DetailProduct(detailProduct: DetailProduct){
             },
             body: JSON.stringify({
                 email: email,
-                product_id: detailProduct.id,
+                product_id: detailProductVideo.id,
                 quantity: quantityBuy
             })
         });
@@ -107,12 +107,9 @@ export default function DetailProduct(detailProduct: DetailProduct){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
            
-            <p className="text-2xl font-medium tracking-wider underline underline-offset-1">Product Detail :</p>
-            <p className="text-5xl font-medium"><b>{detailProduct.title.toUpperCase()}</b></p>
-            <div className="flex justify-between">
-                <p className="text-2xl font-medium">Price : Rp. {price},00</p>
-                <p className="text-2xl font-medium">Quantity : {quantity}</p>
-            </div>  
+            <p className="text-5xl font-medium"><b>{detailProductVideo.title.toUpperCase()}</b></p>
+           
+            <br></br>
              
             <hr className="border-y-1 border-gray-700"></hr>
             <br></br>
@@ -125,47 +122,13 @@ export default function DetailProduct(detailProduct: DetailProduct){
             </p>
             <br></br>
             <hr className="border-y-1 border-gray-700 border-dashed"></hr>
-            <p className="text-2xl font-medium">Quantity :</p>
-            <br></br>
-            <div className="join">
-                <button className="btn join-item btn-md w-24" onClick={handleMinus}><p className='text-2xl'>-</p></button>
-                <button className="btn join-item no-animation btn-md w-96"><p className='text-2xl'>{quantityBuy}</p></button>
-                <button className="btn join-item btn-md w-24" onClick={handlePlus}><p className='text-2xl'>+</p></button>
-            </div>
-            <br></br>
-            {quantity > 0 ? (
-                <button className="btn btn-success btn-sm" disabled={false} onClick={handleModalBuy}>Buy</button>
-            ) :(
-                <button className="btn btn-success btn-sm" disabled={true} >Buy</button>
-            )}
-            
+               
             <br></br>
             <div className='flex'>
                 <BackToDashboard />
             </div>
 
-            <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
-            <div className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure want to buy {detailProduct.title} with quantity: {quantityBuy} ?</h3>
-                    <div className="modal-action">
-                        <button type="button" className="btn" onClick={handleModalBuy}>
-                            Close
-                        </button>
-                        {!isMutating ? (
-                        <button type="button" onClick={handleBuy} className="btn btn-primary">
-                            Buy
-                        </button>
-                        ) : (
-                        <button type="button" className="btn loading">
-                            Buying...
-                        </button>
-                        )}                 
-                    </div>
-                </div>
-            </div>
         </div> 
-
         
     )
 }

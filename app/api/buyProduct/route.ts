@@ -83,7 +83,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
         return NextResponse.json({ status: "OK", msg: `Success buy product ${body.product_id!} with qty: ${body.quantity!}`, data: responseUpdateQty.data}, { status: 200 });
     }
     catch (error){
-        console.error(error);
-        return NextResponse.json({status: "Failed", msg: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: "Failed Buy Product", errorMessage: error}, {status: 400});
     }
 }

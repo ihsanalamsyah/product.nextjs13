@@ -97,7 +97,6 @@ export default function TableProduct(){
         const fetchData =  async ()=>{
             
             const category = searchParam.get("category");
-            console.log("category1", category);
             const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!);
             const users:Users[] = await getUserDetail(token!, email!);
             setMapUserProducts(mapUserProducts);
@@ -197,7 +196,6 @@ export default function TableProduct(){
                                 </tr>)
                             }
                             else if (role == "User"){
-                                console.log(`dateDiff ${index}`, dateDiff)
                                 if(dateDiff > 3 && mapUserProduct.category == "Video"){
                                     const product: Products = {
                                         id: mapUserProduct.product_id!,

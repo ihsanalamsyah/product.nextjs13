@@ -35,46 +35,64 @@ export default function UpdateProduct(product: Products){
             const files = fileInput.files;
             if (files && files.length > 0) {
                 const file = files[0];
-                let respUpdateStorage:any;
+                let respUploadStorage: any;
                 if(product.category == "Video"){
-                    respUpdateStorage = await supabase.storage
+                    respUploadStorage = await supabase.storage
                     .from('videos')
                     .upload(`Video-product_id-${product.id}.mp4`, file!);
                 }else{
-                    respUpdateStorage = await supabase.storage
+                    respUploadStorage = await supabase.storage
                     .from('images')
                     .upload(`Foto-product_id-${product.id}.png`, file!);
                 }
 
-                if (respUpdateStorage.error != null) {
-                    if(respUpdateStorage.error.message == "The resource already exists"){
-                        const { data, error } = await supabase
-                            .storage
-                            .from('images')
-                            .update(`Foto-product_id-${product.id}.png`, file!, {
-                            cacheControl: '3600',
-                            upsert: true
-                        })
-                        if(error != null){
-                            setAlertMessage(error.message);
+                if (respUploadStorage.error != null) {
+                    if(respUploadStorage.error.message == "The resource already exists"){
+                        let respUpdateStorage: any;
+                        
+                        if(product.category == "Video"){
+                            respUpdateStorage = await supabase
+                                .storage
+                                .from('videos')
+                                .update(`Video-product_id-${product.id}.mp4`, file!, {
+                                cacheControl: '3600',
+                                upsert: true
+                            })
+                        }else{
+                            respUpdateStorage = await supabase
+                                .storage
+                                .from('images')
+                                .update(`Foto-product_id-${product.id}.png`, file!, {
+                                cacheControl: '3600',
+                                upsert: true
+                            })
+                        }
+                        
+                        if(respUpdateStorage.error != null){
+                            setAlertMessage(respUpdateStorage.error.message);
                             setAlertStatus("Failed");
                             setIsAlertVisible(true);
-                            return console.error(error.message);
+                            return console.error(respUpdateStorage.error.message);
                         }else{
                             setAlertMessage(`Success update image to product id ${product.id}`);
                             setAlertStatus("OK");
                             setIsAlertVisible(true);
                         }
                     }else{
-                        setAlertMessage(respUpdateStorage.error.message);
+                        setAlertMessage(respUploadStorage.error.message);
                         setAlertStatus("Failed");
                         setIsAlertVisible(true);
-                        return console.error(respUpdateStorage.error.message);
                     }               
                 }else{
-                    setAlertMessage(`Success upload image to product id ${product.id}`);
-                    setAlertStatus("OK");
-                    setIsAlertVisible(true);
+                    if(product.category == "Video"){
+                        setAlertMessage(`Success upload video to product id ${product.id}`);
+                        setAlertStatus("OK");
+                        setIsAlertVisible(true);
+                    }else{
+                        setAlertMessage(`Success upload image to product id ${product.id}`);
+                        setAlertStatus("OK");
+                        setIsAlertVisible(true);
+                    }
                 }            
             }
         } catch (error){
@@ -122,10 +140,7 @@ export default function UpdateProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-info btn-sm mx-1" onClick={handleChange}> 
-                Edit
-            </button>
-
+            <button className="btn btn-info btn-sm mx-1" onClick={handleChange}>Edit</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">

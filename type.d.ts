@@ -69,8 +69,10 @@ type ImageComponent = {
 type CheckImage = {
     image_url: string
 }
-
-type DetailProduct = {
+type CheckVideo = {
+    video_url: string
+}
+type DetailProductPhone = {
     id: number,
     title: string,
     price: number,
@@ -114,4 +116,9 @@ type TableProduct = {
 
 type Navbar = {
     category: string
+}
+
+type VideoProduct = {
+    isVisible: boolean,
+    video_url: string
 }
