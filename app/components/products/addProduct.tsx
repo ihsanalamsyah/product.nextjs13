@@ -3,7 +3,6 @@
 import { useState, SyntheticEvent } from "react";
 import { useRouter} from "next/navigation";
 import { getCookie } from '@/utils/cookies';
-import $ from 'jquery';
 import AlertSuccess from "@/app/components/alertSuccess";
 import AlertFailed from "@/app/components/alertFailed";
 
@@ -28,7 +27,6 @@ export default function AddProduct( addProduct: AddProduct){
         setPrice(0);
         setQuantity(0);
         setCategory("");
-        $(".select-category").val("")
     }
 
     function handleCategory(value: string){
@@ -115,7 +113,7 @@ export default function AddProduct( addProduct: AddProduct){
                     <form onSubmit={handleSubmit}>
                         <div>
                             <label className="label font-bold">Category</label>
-                            <select defaultValue={""} className="select select-bordered w-full max-w-lg select-category" onChange={(e)=> handleCategory(e.target.value)}>
+                            <select value={category} className="select select-bordered w-full max-w-lg select-category" onChange={(e)=> handleCategory(e.target.value)}>
                                 <option disabled value={""}>Choose Category</option>
                                 <option value={"Phone"}>Phone</option>
                                 <option value={"Video"}>Video</option>

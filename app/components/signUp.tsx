@@ -1,15 +1,11 @@
 'use client'
 
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import env from "dotenv";
-import $ from 'jquery'
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 
-env.config();
 const route = process.env.NEXT_PUBLIC_ROUTE;
-
 
 export default function SignUp(signUp:ContentToogle){
     const [name, setName] = useState("");
@@ -18,13 +14,13 @@ export default function SignUp(signUp:ContentToogle){
     const [role, setRole] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const router = useRouter();
+
     const [isMutating, setIsMutating] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
-
+    const router = useRouter();
 
     function resetForm(){
         setName("");
@@ -33,8 +29,6 @@ export default function SignUp(signUp:ContentToogle){
         setConfirmPassword("");
         setGender("");
         setRole("");
-        $(".select-role").val("");
-        $(".select-gender").val("");
     }
     function handleGender(value: string){
         setGender(value);   
@@ -88,9 +82,9 @@ export default function SignUp(signUp:ContentToogle){
         
     }
 
-    function handleShowPassword(){
-        const checkbox = $(".show-password-signup")
-        if(checkbox.is(':checked')){
+    function handleShowPassword(e: ChangeEvent<HTMLInputElement>){
+        const checkbox = e.target.checked;
+        if(checkbox){
             setIsShowPassword(true);
         }else{
             setIsShowPassword(false);
@@ -116,7 +110,7 @@ export default function SignUp(signUp:ContentToogle){
                         placeholder="Name"/>
                 </div>
                 <div className="my-2">
-                    <select defaultValue={""} className="select select-bordered w-full max-w-lg select-gender" onChange={(e)=> handleGender(e.target.value)}>
+                    <select value={gender} className="select select-bordered w-full max-w-lg select-gender" onChange={(e)=> handleGender(e.target.value)}>
                         <option disabled value={""}>Gender</option>
                         <option value={"Male"}>Male</option>
                         <option value={"Female"}>Female</option>
@@ -166,7 +160,7 @@ export default function SignUp(signUp:ContentToogle){
                     
                 </div>
                 <div className="my-2">
-                    <select defaultValue={""} className="select select-bordered w-full max-w-lg select-role" onChange={(e)=> handleRole(e.target.value)}>
+                    <select value={role} className="select select-bordered w-full max-w-lg select-role" onChange={(e)=> handleRole(e.target.value)}>
                         <option disabled value={""}>Role</option>
                         <option value={"Admin"}>Admin</option>
                         <option value={"User"}>User</option>

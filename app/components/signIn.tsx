@@ -1,23 +1,22 @@
 'use client'
 
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent } from "react";
 import { useRouter } from 'next/navigation';
 import { setCookie } from '@/utils/cookies';
-import $ from 'jquery';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 
+const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function SignIn(signIn: ContentToogle){
-    const route = process.env.NEXT_PUBLIC_ROUTE;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const router = useRouter();
 
     function resetForm(){
         setEmail("");
@@ -60,9 +59,9 @@ export default function SignIn(signIn: ContentToogle){
         
     }
 
-    function handleShowPassword(){
-        const checkbox = $(".show-password-signin")
-        if(checkbox.is(':checked')){
+    function handleShowPassword(e: ChangeEvent<HTMLInputElement>){
+        const checkbox = e.target.checked;
+        if(checkbox){
             setIsShowPassword(true);
         }else{
             setIsShowPassword(false);
