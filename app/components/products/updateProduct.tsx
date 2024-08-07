@@ -35,13 +35,19 @@ export default function UpdateProduct(product: Products){
             const files = fileInput.files;
             if (files && files.length > 0) {
                 const file = files[0];
-               
-                const { data, error } = await supabase.storage
+                let respUpdateStorage:any;
+                if(product.category == "Video"){
+                    respUpdateStorage = await supabase.storage
+                    .from('videos')
+                    .upload(`Video-product_id-${product.id}.mp4`, file!);
+                }else{
+                    respUpdateStorage = await supabase.storage
                     .from('images')
                     .upload(`Foto-product_id-${product.id}.png`, file!);
+                }
 
-                if (error != null) {
-                    if(error.message == "The resource already exists"){
+                if (respUpdateStorage.error != null) {
+                    if(respUpdateStorage.error.message == "The resource already exists"){
                         const { data, error } = await supabase
                             .storage
                             .from('images')
@@ -60,10 +66,10 @@ export default function UpdateProduct(product: Products){
                             setIsAlertVisible(true);
                         }
                     }else{
-                        setAlertMessage(error.message);
+                        setAlertMessage(respUpdateStorage.error.message);
                         setAlertStatus("Failed");
                         setIsAlertVisible(true);
-                        return console.error(error.message);
+                        return console.error(respUpdateStorage.error.message);
                     }               
                 }else{
                     setAlertMessage(`Success upload image to product id ${product.id}`);
@@ -175,10 +181,22 @@ export default function UpdateProduct(product: Products){
                             )}                                       
                         </div>
                         <div>
-                            <label className="label font-bold">Upload Image</label>
+                            {product.category == "Video" ? (
+                            <>
+                            <label className="label font-bold">Upload Video Product</label>
+                            <form method="post" encType="multipart/form-data">        
+                                <input className="" id="file_input" onChange={handleFileChange} type="file" name="video" accept="video/*"/>          
+                            </form>
+                            </>                 
+                            ) : (
+                            <>
+                            <label className="label font-bold">Upload Image Product</label>
                             <form method="post" encType="multipart/form-data">        
                                 <input className="" id="file_input" onChange={handleFileChange} type="file" name="image" accept="image/*"/>          
                             </form>
+                            </>
+                            )}
+                            
                         </div>   
                         <div className="modal-action">
                             <button type="button" className="btn" onClick={handleChange}>

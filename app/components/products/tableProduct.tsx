@@ -197,12 +197,7 @@ export default function TableProduct(){
                                 </tr>)
                             }
                             else if (role == "User"){
-                                if(mapUserProduct.category == "Video" && dateDiff > 3){
-                                    <></>
-                                }
-
-
-
+                                console.log(`dateDiff ${index}`, dateDiff)
                                 if(dateDiff > 3 && mapUserProduct.category == "Video"){
                                     const product: Products = {
                                         id: mapUserProduct.product_id!,

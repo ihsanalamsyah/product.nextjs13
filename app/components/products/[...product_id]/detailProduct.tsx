@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { getCookie } from '@/utils/cookies';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
+import BackToDashboard from '@/app/components/products/[...product_id]/backToDashboard';
 
 export default function DetailProduct(detailProduct: DetailProduct){
     const [modal, setModal] = useState(false);
@@ -140,9 +141,8 @@ export default function DetailProduct(detailProduct: DetailProduct){
             
             <br></br>
             <div className='flex'>
-                <Link href="/products"><button className="btn btn-outline btn-sm">&lt; Back To Dashboard</button></Link>
+                <BackToDashboard />
             </div>
-
 
             <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
             <div className="modal">

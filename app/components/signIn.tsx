@@ -46,7 +46,12 @@ export default function SignIn(signIn: ContentToogle){
             setIsAlertVisible(true);
             setAlertStatus(content.status);
             resetForm();
-            return router.push("/products?category=Phone");
+            if(content.data.role == "Admin"){
+                return router.push("/admin");
+            }else{
+                return router.push("/products?category=Phone");
+            }
+           
         }
         else{            
             setIsMutating(false);

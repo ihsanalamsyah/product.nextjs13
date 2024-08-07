@@ -70,6 +70,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         result.status = "OK";
         result.msg = "Get User Product";
         result.data = dataResult;
+        console.log("dataResult", dataResult)
         return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult}, {status : 200});
     }
     catch (error){

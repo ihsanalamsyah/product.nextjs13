@@ -1,23 +1,24 @@
 'use server'
 
-import AddProduct from "../components/products/addProduct";
-import TableProduct from "../components/products/tableProduct";
-import WelcomeMessage from "../components/products/welcomeMessage";
+'use server'
+
+import AddProduct from "@/app/components/products/addProduct";
+import TableProduct from "@/app/components/products/tableProduct";
+import WelcomeMessage from "@/app/components/products/welcomeMessage";
 import Navbar from "@/app/components/navbar";
 import { cookies } from "next/headers";
 import { supabase } from '@/utils/supabase';
 
-
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 
-export default async function Products(){
+export default async function Admin(){
     
     const cookiesStore = cookies();
     const token = cookiesStore.get("token");
     const email = cookiesStore.get("email");
     const category = cookiesStore.get("category");
-    let isAdmin = false;
+    let isAdmin = true;
     async function getUserDetail(token: string, email: string){
         let user: Users[] = [{
             id: 0,
@@ -78,9 +79,11 @@ export default async function Products(){
         // }
     }
     const users:Users[] = await getUserDetail(token!.value, email!.value);
-   
+    if(users[0].role == "Admin"){
+        isAdmin = true;
+    }
+    
     return (
-        //<></>
         <>
         <Navbar category={category!.value}/>
         <div className="py-10 px-10 mt-16">

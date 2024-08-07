@@ -10,7 +10,11 @@ export default function OpenProduct(product: Products){
     }
     return (
         <div>
+            {product.category == "Video" ? (
+            <button className="btn btn-success btn-sm mx-1" onClick={()=> handleOpen(product.id!)}>Watch Now</button>
+            ): (
             <button className="btn btn-success btn-sm mx-1" onClick={()=> handleOpen(product.id!)}>Open Detail Product</button>
+            )}
         </div>
     )
 }
