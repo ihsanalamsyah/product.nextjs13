@@ -4,19 +4,15 @@ import AddProduct from "../components/products/addProduct";
 import TableProduct from "../components/products/tableProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
 import Navbar from "@/app/components/navbar";
-import { cookies } from "next/headers";
 import { supabase } from '@/utils/supabase';
-
+import { cookies } from 'next/headers';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-
 export default async function Products(){
-    
-    const cookiesStore = cookies();
-    const token = cookiesStore.get("token");
-    const email = cookiesStore.get("email");
-    const category = cookiesStore.get("category");
+    const cookieStore = cookies();
+    const token = cookieStore.get('token')?.value ?? "";
+    const email = cookieStore.get('email')?.value ?? "";
     let isAdmin = false;
     async function getUserDetail(token: string, email: string){
         let user: Users[] = [{
@@ -25,7 +21,8 @@ export default async function Products(){
             email: "",
             password: "",
             gender: "",
-            role: ""
+            role: "",
+            phone: 0
         }];    
         try {             
             const response = await fetch(`${route}/userDetail`, {
@@ -48,51 +45,29 @@ export default async function Products(){
     
         return user;
     }
-    
-    async function logout(token: string){
-        let isSuccessLogout = false;
-        try{
-            const response = await fetch(`${route}/logout`,{
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                }
-            });
-            const content = await response.json();
-            if(content.status == "OK"){
-                isSuccessLogout = true;
-            }
-        }catch(error) {
-            console.error('Error fetching data:', error);
-        }
-        return isSuccessLogout;
-    }
+   
     const getSession = await supabase.auth.getSession();
     if (getSession.data.session == null){
         console.log("Gak ada session");
-        // const isSuccessLogout = await logout(token!.value);
-        // if(isSuccessLogout){
-        //     console.log("Gak ada session");
-        //     //redirect('/');
-        // }
     }
-    const users:Users[] = await getUserDetail(token!.value, email!.value);
-   
+    const users:Users[] = await getUserDetail(token!, email!);
+    if(users[0].role == "Admin"){
+        isAdmin = true;
+    }
     return (
         //<></>
         <>
-        <Navbar category={category!.value}/>
+        <Navbar users={users} />
         <div className="py-10 px-10 mt-16">
             <div className="flex justify-center my-2">
-                <WelcomeMessage name={users[0].name!} isAdmin={isAdmin} />
+                <WelcomeMessage name={users[0]?.name!} isAdmin={isAdmin} />
             </div> 
             <div className="py-2 flex">
                 <AddProduct isVisible={isAdmin}/>
             </div>
             <hr></hr>
             <div>
-                <TableProduct />  
+                <TableProduct users={users}/>
             </div>         
         </div> 
         </>

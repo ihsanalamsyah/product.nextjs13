@@ -54,6 +54,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 return NextResponse.json(result, {status : 300});
             }      
             dataResult = responseGetUserProduct.data!;
+
+            //console.log("data result user", dataResult)
         }
         else{
             const { data, error } = await supabase.rpc('get_products_users_admin');

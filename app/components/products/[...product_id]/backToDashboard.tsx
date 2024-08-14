@@ -20,7 +20,8 @@ export default function BackToDashboard(){
             email: "",
             password: "",
             gender: "",
-            role: ""
+            role: "",
+            phone: 0
         }];    
         try {             
             const response = await fetch(`${route}/userDetail`, {

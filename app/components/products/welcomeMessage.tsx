@@ -1,8 +1,6 @@
 'use client'
 
-
 export default function welcomeMessage(welcomeMessage: WelcomeMessage){
-  
     return (
         <>
             {welcomeMessage.isAdmin ? (

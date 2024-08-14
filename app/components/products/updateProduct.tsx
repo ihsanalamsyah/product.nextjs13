@@ -39,11 +39,11 @@ export default function UpdateProduct(product: Products){
                 if(product.category == "Video"){
                     respUploadStorage = await supabase.storage
                     .from('videos')
-                    .upload(`Video-product_id-${product.id}.mp4`, file!);
+                    .upload(`Video-product-product_id-${product.id}.mp4`, file!);
                 }else{
                     respUploadStorage = await supabase.storage
                     .from('images')
-                    .upload(`Foto-product_id-${product.id}.png`, file!);
+                    .upload(`Foto-product-product_id-${product.id}.png`, file!);
                 }
 
                 if (respUploadStorage.error != null) {
@@ -54,7 +54,7 @@ export default function UpdateProduct(product: Products){
                             respUpdateStorage = await supabase
                                 .storage
                                 .from('videos')
-                                .update(`Video-product_id-${product.id}.mp4`, file!, {
+                                .update(`Video-product-product_id-${product.id}.mp4`, file!, {
                                 cacheControl: '3600',
                                 upsert: true
                             })
@@ -62,7 +62,7 @@ export default function UpdateProduct(product: Products){
                             respUpdateStorage = await supabase
                                 .storage
                                 .from('images')
-                                .update(`Foto-product_id-${product.id}.png`, file!, {
+                                .update(`Foto-product-product_id-${product.id}.png`, file!, {
                                 cacheControl: '3600',
                                 upsert: true
                             })
@@ -195,24 +195,17 @@ export default function UpdateProduct(product: Products){
                                 </>
                             )}                                       
                         </div>
+                        {product.category == "Video" ? (
                         <div>
-                            {product.category == "Video" ? (
-                            <>
-                            <label className="label font-bold">Upload Video Product</label>
-                            <form method="post" encType="multipart/form-data">        
-                                <input className="" id="file_input" onChange={handleFileChange} type="file" name="video" accept="video/*"/>          
-                            </form>
-                            </>                 
-                            ) : (
-                            <>
-                            <label className="label font-bold">Upload Image Product</label>
-                            <form method="post" encType="multipart/form-data">        
-                                <input className="" id="file_input" onChange={handleFileChange} type="file" name="image" accept="image/*"/>          
-                            </form>
-                            </>
-                            )}
-                            
-                        </div>   
+                            <label className="label font-bold">Upload Video Product</label>              
+                            <input className="" id="file_input" onChange={handleFileChange} type="file" name="video" accept="video/*"/>         
+                        </div>
+                        ): (
+                        <div>
+                            <label className="label font-bold">Upload Image Product</label>          
+                            <input className="" id="file_input" onChange={handleFileChange} type="file" name="image" accept="image/*"/>     
+                        </div>
+                        )}       
                         <div className="modal-action">
                             <button type="button" className="btn" onClick={handleChange}>
                                 Close

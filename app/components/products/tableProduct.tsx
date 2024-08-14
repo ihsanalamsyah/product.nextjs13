@@ -7,17 +7,21 @@ import OpenProduct from "@/app/components/products/openProduct";
 import UpdateProduct from "@/app/components/products/updateProduct";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { setCookie, getCookie } from '@/utils/cookies';
-import { useRouter } from "next/router";
+import { getCookie } from '@/utils/cookies';
+
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
-export default function TableProduct(){
 
+export default function TableProduct(tableProduct: TableProduct){
+    const searchParam = useSearchParams();
     const [mapUserProducts, setMapUserProducts] = useState<MapUserProduct[]>([]);
-    const [users, setUsers] = useState<Users[]>([]);
-    const [category, setCategory] = useState("");
+    const [users, setUsers] = useState<Users[]>(tableProduct.users);
+    const category = searchParam.get("category")!;
     const [isAdmin, setIsAdmin] = useState(false);
     const [isProductEmpty, setIsProductEmpty] = useState(false);
+    const token = getCookie("token");
+    const email = getCookie("email");
+  
     async function getUserProduct(token: string, email: string, category: string) {
         let userAndProduct:MapUserProduct[] = [{
             product_id: 0,
@@ -57,60 +61,16 @@ export default function TableProduct(){
     
         return userAndProduct;
     };
-    
-    async function getUserDetail(token: string, email: string){
-        let user: Users[] = [{
-            id: 0,
-            name: "",
-            email: "",
-            password: "",
-            gender: "",
-            role: ""
-        }];    
-        try {             
-            const response = await fetch(`${route}/userDetail`, {
-                method: 'POST',
-                headers:{
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email
-                })
-            });
-            const content = await response.json();
-            
-            user = content.data;
-            
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-    
-        return user;
-    }
-    const token = getCookie("token");
-    const email = getCookie("email");
-    const searchParam = useSearchParams();
-    
-    useEffect(()=>{
-        
-        const fetchData =  async ()=>{
-            
-            const category = searchParam.get("category");
+    useEffect(()=>{    
+        const fetchData =  async ()=>{   
             const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!);
-            const users:Users[] = await getUserDetail(token!, email!);
             setMapUserProducts(mapUserProducts);
-            setUsers(users);
-            setCategory(category!);
-            if(users[0].role == "Admin"){
-                setIsAdmin(true);
-            }
             if(mapUserProducts.length <= 0){
                 setIsProductEmpty(true);
             }
         }
         fetchData();
-    }, []);
+    }, [category]);
    
     return (
         <>
@@ -231,14 +191,13 @@ export default function TableProduct(){
                                         </th>
                                         {
                                             isAdmin ? (
-                                                <th>{mapUserProduct.name ?? "No One"}</th>
+                                                <th>{"No One"}</th>
                                             ) : (
                                             category == "Video"  ? (
-                                                <th>{mapUserProduct.name ?? "No One"}</th>
+                                                <th>{"No One"}</th>
                                             ) : (
                                                 <></>
-                                            ) 
-                                            )
+                                            ))
                                         } 
                                     </tr>)
                                 }

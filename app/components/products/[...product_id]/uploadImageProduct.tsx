@@ -15,14 +15,14 @@ export default function UploadImageProduct(uploadImageProduct: UploadImageProduc
                
                 const { data, error } = await supabase.storage
                     .from('images')
-                    .upload(`Foto-product_id-${uploadImageProduct.product_id}.png`, file!);
+                    .upload(`Foto-product-product_id-${uploadImageProduct.product_id}.png`, file!);
 
                 if (error != null) {
                     if(error.message == "The resource already exists"){
                         const { data, error } = await supabase
                             .storage
                             .from('images')
-                            .update(`Foto-product_id-${uploadImageProduct.product_id}.png`, file!, {
+                            .update(`Foto-product-product_id-${uploadImageProduct.product_id}.png`, file!, {
                             cacheControl: '3600',
                             upsert: true
                         })

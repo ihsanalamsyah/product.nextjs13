@@ -7,7 +7,7 @@ export default function AlertSuccess(alertSuccess: Alert){
     }
     return (
         <> 
-            <div role="alert" className="alert alert-success">
+        <div role="alert" className="alert alert-success">
              <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 shrink-0 stroke-current"
@@ -23,8 +23,7 @@ export default function AlertSuccess(alertSuccess: Alert){
              <div>
                  <button className="btn btn-sm" onClick={alertSuccess.onClose}>Close</button>
              </div>
-            </div>
-       
+        </div> 
        </>
     )
 }

@@ -6,6 +6,7 @@ type Users = {
     password: string | null,
     gender: string | null,
     role: string | null,
+    phone: number | null
 }
 
 type Products = {
@@ -107,18 +108,27 @@ type AddProduct = {
 }
 
 type TableProduct = {
-    isProductEmpty: boolean,
-    isAdmin: boolean,
-    category: string,
-    mapUserProducts: MapUserProduct[],
     users: Users[]
 }
 
 type Navbar = {
-    category: string
+    users: Users[]
 }
 
 type VideoProduct = {
     isVisible: boolean,
     video_url: string
+}
+
+type Profile = {
+    modalProfile: boolean,
+    handleChangeProfile: any,
+    user_id: number,
+    name: string,
+    phone: number,
+}
+
+type Logout = {
+    modalLogout: boolean,
+    handleChangeLogout: any
 }
