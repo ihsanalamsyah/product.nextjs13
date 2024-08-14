@@ -28,9 +28,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
             id:  user.data![0].id,
             name:  user.data![0].name,
             password:  user.data![0].password,
-            role : user.data![0].role,
-            email : user.data![0].email,
-            gender : user.data![0].gender
+            role: user.data![0].role,
+            email: user.data![0].email,
+            gender: user.data![0].gender,
+            phone: user.data![0].phone,
         }
         return NextResponse.json({status: "OK", msg: "Success login", data: dataUser, token: data.session?.access_token}, {status: 200});
              

@@ -9,7 +9,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
             email: "",
             gender: "",
             password: "",
-            role: ""
+            role: "", 
+            phone: 0
         }];
         const body:Users = await req.json();
         if(body.email != "" || body.email != null){
