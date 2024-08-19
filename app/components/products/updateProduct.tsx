@@ -12,7 +12,10 @@ const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function UpdateProduct(product: Products){
     const [title, setTitle] = useState(product.title!);
-    const [price, setPrice] = useState(product.price!);
+    const priceProduct: number = product.price!;
+    let stringPrice:string = priceProduct.toString().replace(/\./g, '');
+    stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    const [price, setPrice] = useState(stringPrice);
     const [quantity, setQuantity] = useState(product.quantity!);
     const [modal, setModal] = useState(false);
     const router = useRouter();
@@ -24,7 +27,7 @@ export default function UpdateProduct(product: Products){
     function handleChange(){
         setModal(!modal);
         setTitle(product.title!)
-        setPrice(product.price!)
+        setPrice(stringPrice)
         setQuantity(product.quantity!)
     }
     
@@ -138,6 +141,11 @@ export default function UpdateProduct(product: Products){
     function handleCloseAlert(){
         setIsAlertVisible(false);
     }
+    function handlePrice(price:string){
+        let stringPrice:string = price.toString().replace(/\./g, '');
+        stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        setPrice(stringPrice);
+    }
     return (
         <div>
             <button className="btn btn-info btn-sm mx-1" onClick={handleChange}>Edit</button>
@@ -167,7 +175,7 @@ export default function UpdateProduct(product: Products){
                             <input 
                             type="text" 
                             value={price}
-                            onChange={(e)=> setPrice(Number(e.target.value))}
+                            onChange={(e)=> handlePrice(e.target.value)}
                             className="input w-full input-bordered" 
                             placeholder="Price" />
                         </div>

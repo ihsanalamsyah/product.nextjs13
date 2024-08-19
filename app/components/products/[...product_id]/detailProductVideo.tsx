@@ -48,7 +48,7 @@ export default function DetailProductVideo(detailProductVideo: DetailProductPhon
                
             <br></br>
             <div className='flex'>
-                <BackToDashboard />
+                <BackToDashboard category={"video"}/>
             </div>
 
         </div> 

@@ -22,6 +22,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         password: "",
         gender: "",
         role: "",
+        search: ""
     }];
     try {
         const body:MapUserProduct = await req.json();
@@ -36,26 +37,31 @@ export async function POST(req: NextRequest, res: NextResponse) {
             result.msg = "user not exists";
             return NextResponse.json(result, {status : 300});
         }
+        const search = body.search ?? "";
         const user:Users = response.data![0];
         if(user.role == "User"){
             let responseGetUserProduct :any;
-            if(body.category == "Video"){
+            if(body.category?.toLowerCase() == "video"){
                 responseGetUserProduct = await supabase.rpc('get_products_users_video', {
-                    email_args: body.email
+                    email_args: body.email,
+                    search_args: search
                 });
-            }else if(body.category == "Phone"){
-                responseGetUserProduct = await supabase.rpc('get_products_users_phone');
+            }else if(body.category?.toLowerCase() == "phone"){
+                responseGetUserProduct = await supabase.rpc('get_products_users_phone', {
+                    search_args: search
+                });
             }
-             
+
             if(responseGetUserProduct.error != null){
                 result.status = "Failed";
                 result.msg = "error fetching data";
                 result.errorMessage = responseGetUserProduct.error.message;
                 return NextResponse.json(result, {status : 300});
-            }      
+            }    
+            
             dataResult = responseGetUserProduct.data!;
 
-            //console.log("data result user", dataResult)
+            //console.log("data result user", dataResult)  
         }
         else{
             const { data, error } = await supabase.rpc('get_products_users_admin');

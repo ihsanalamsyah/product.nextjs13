@@ -4,7 +4,7 @@
 import AddProduct from "@/app/components/products/addProduct";
 import TableProduct from "@/app/components/products/tableProduct";
 import WelcomeMessage from "@/app/components/products/welcomeMessage";
-import Navbar from "@/app/components/navbar";
+import Navbar from "@/app/components/products/navbar";
 import { supabase } from '@/utils/supabase';
 import { cookies } from 'next/headers';
 const route = process.env.NEXT_PUBLIC_ROUTE;

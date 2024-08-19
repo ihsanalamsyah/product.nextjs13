@@ -3,7 +3,7 @@
 import AddProduct from "../components/products/addProduct";
 import TableProduct from "../components/products/tableProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
-import Navbar from "@/app/components/navbar";
+import Navbar from "@/app/components/products/navbar";
 import { supabase } from '@/utils/supabase';
 import { cookies } from 'next/headers';
 

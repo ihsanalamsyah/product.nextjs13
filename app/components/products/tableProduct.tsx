@@ -17,12 +17,13 @@ export default function TableProduct(tableProduct: TableProduct){
     const [mapUserProducts, setMapUserProducts] = useState<MapUserProduct[]>([]);
     const [users, setUsers] = useState<Users[]>(tableProduct.users);
     const category = searchParam.get("category")!;
+    const searchQuery = searchParam.get("search")!;
     const [isAdmin, setIsAdmin] = useState(false);
     const [isProductEmpty, setIsProductEmpty] = useState(false);
     const token = getCookie("token");
     const email = getCookie("email");
   
-    async function getUserProduct(token: string, email: string, category: string) {
+    async function getUserProduct(token: string, email: string, category: string, searchQuery: string) {
         let userAndProduct:MapUserProduct[] = [{
             product_id: 0,
             title: "",
@@ -37,6 +38,7 @@ export default function TableProduct(tableProduct: TableProduct){
             password: "",
             gender: "",
             role: "",
+            search: ""
         }];
         try {             
             const response = await fetch(`${route}/mapUserProduct`, {
@@ -48,7 +50,8 @@ export default function TableProduct(tableProduct: TableProduct){
                 },
                 body: JSON.stringify({
                     email: email,
-                    category: category
+                    category: category,
+                    search: searchQuery
                 })
             });
             const content = await response.json();
@@ -63,14 +66,17 @@ export default function TableProduct(tableProduct: TableProduct){
     };
     useEffect(()=>{    
         const fetchData =  async ()=>{   
-            const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!);
+            const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!, searchQuery!);
             setMapUserProducts(mapUserProducts);
             if(mapUserProducts.length <= 0){
                 setIsProductEmpty(true);
             }
+            if(tableProduct.users[0].role == "Admin"){
+                setIsAdmin(true);
+            }
         }
         fetchData();
-    }, [category]);
+    }, [category,searchQuery]);
    
     return (
         <>
@@ -129,7 +135,9 @@ export default function TableProduct(tableProduct: TableProduct){
                             if(mapUserProduct.enroll_date != null){
                                 dateDiff = formattedToday.diff(enroll_date, 'days');
                             }
-                                                    
+                            const price: number = mapUserProduct.price!;
+                            let stringPrice:string = price.toString().replace(/\./g, '');
+                            stringPrice = "Rp. "+ stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00";
                             if(role == "Admin"){
                                 return(<tr key={mapUserProduct.product_id!}>
                                     <th>{index + 1}</th>
@@ -141,7 +149,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                         )   
                                     }
                                     <th>{mapUserProduct.title!}</th>
-                                    <th>{mapUserProduct.price!}</th>
+                                    <th>{stringPrice}</th>
                                     <th>{mapUserProduct.quantity!}</th>
                                     <th className="flex">
                                         <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!}/>
@@ -174,7 +182,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )   
                                         }
                                         <th>{mapUserProduct.title!}</th>
-                                        <th>{mapUserProduct.price!}</th>
+                                        <th>{stringPrice}</th>
                                         {
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>
@@ -219,7 +227,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )   
                                         }
                                         <th>{mapUserProduct.title!}</th>
-                                        <th>{mapUserProduct.price!}</th>
+                                        <th>{stringPrice}</th>
                                         {
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>

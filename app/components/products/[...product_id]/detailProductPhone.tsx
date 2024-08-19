@@ -141,7 +141,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
             
             <br></br>
             <div className='flex'>
-                <BackToDashboard />
+                <BackToDashboard category={"phone"}/>
             </div>
 
             <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />

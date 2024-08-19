@@ -31,6 +31,7 @@ type MapUserProduct = {
     password: string | null,
     gender: string | null,
     role: string | null,
+    search: string | null
 }
 
 type GetMapUserProduct = {
@@ -131,4 +132,8 @@ type Profile = {
 type Logout = {
     modalLogout: boolean,
     handleChangeLogout: any
+}
+
+type BackToDashboard = {
+    category: string
 }

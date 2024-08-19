@@ -5,7 +5,7 @@ import DetailProductPhone from '@/app/components/products/[...product_id]/detail
 import DetailProductVideo from '@/app/components/products/[...product_id]/detailProductVideo';
 import ImageProduct from '@/app/components/products/[...product_id]/imageProduct';
 import VideoProduct from '@/app/components/products/[...product_id]/videoProduct';
-import Navbar from "@/app/components/navbar";
+import Navbar from "@/app/components/products/navbar";
 import { notFound } from "next/navigation";
 import { supabase } from '@/utils/supabase';
 
@@ -89,7 +89,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
         let imageUrl:string = "";
         const { data } = supabase.storage
             .from('images')
-            .getPublicUrl(`Foto-product_id-${product_id}.png`)
+            .getPublicUrl(`Foto-product-product_id-${product_id}.png`)
     
         if(data.publicUrl != ""){
             imageUrl = data.publicUrl;
@@ -122,6 +122,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
                     image_url: image_url
                 })
             });
+            
             const content = await response.json();
             if(content.status == "OK"){
                 isSuccessImage = true;
@@ -171,11 +172,9 @@ export default async function ProductDetail({params}: {params: {product_id: numb
         isSuccessVideo = await checkVideoUrl(token, videoUrl);
     }else{
         imageUrl = await getImageUrl(params.product_id);
-        altImage = `Foto-product_id-${product_id}`;
+        altImage = `Foto-product-product_id-${product_id}`;
         isSuccessImage = await checkImageUrl(token, imageUrl);
     }
-    
-    
     
     return(
         // <>
@@ -191,7 +190,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
                 ) : (
                     <>
                      <DetailProductPhone title={productDetail.title!} price={productDetail.price!} id={productDetail.id!} quantity={productDetail.quantity!} />
-                     <ImageProduct isVisible={isSuccessImage} image_url={imageUrl} image_alt={altImage} /> 
+                     <ImageProduct isVisible={true} image_url={imageUrl} image_alt={altImage} /> 
                     </>       
                 )}
             </div>    

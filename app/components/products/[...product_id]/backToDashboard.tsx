@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-export default function BackToDashboard(){
+export default function BackToDashboard(backToDashboard: BackToDashboard){
     const [users, setUsers] = useState<Users[]>([]);
     const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
@@ -48,7 +48,11 @@ export default function BackToDashboard(){
         if(isAdmin){
             return router.push("/admin");
         }else{
-            return router.push("/products?category=Phone");
+            if(backToDashboard.category == "phone"){
+                return router.push("/products?category=phone");
+            }else{
+                return router.push("/products?category=video");
+            }   
         }
         
     }

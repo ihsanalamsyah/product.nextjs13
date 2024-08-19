@@ -81,7 +81,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 export async function PATCH(req: NextRequest, res: NextResponse){
     try {
         const body:Products = await req.json();
-        const price = body.price as number;
+        let price = body.price as number;
+        let stringPrice:string = price.toString().replace(/\./g, '');
+        price = Number(stringPrice);
         const quantity = body.quantity as number;
         const today = new Date();
         if (isNaN(price)){

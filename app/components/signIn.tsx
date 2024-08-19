@@ -49,7 +49,7 @@ export default function SignIn(signIn: ContentToogle){
             if(content.data.role == "Admin"){
                 return router.push("/admin");
             }else{
-                return router.push("/products?category=Phone");
+                return router.push("/products?category=phone");
             }
            
         }

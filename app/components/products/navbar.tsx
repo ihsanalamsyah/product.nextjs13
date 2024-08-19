@@ -2,40 +2,53 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import Profile from "@/app/components/profile";
+import { useState, useEffect, useRef } from "react";
+import Profile from "@/app/components/products/profile";
 import Logout from "@/app/components/logout";
 import { supabase } from '@/utils/supabase';
+import { getCookie } from '@/utils/cookies';
+import { useSearchParams } from "next/navigation";
 
+const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function Navbar(navbar: Navbar){
+    const searchParam = useSearchParams();
+    const detailsRef = useRef<HTMLDetailsElement>(null);
     const [modalLogout, setModalLogout] = useState(false);
     const [modalProfile, setModalProfile] = useState(false);
     const [urlImageProfile, setUrlImageProfile] = useState("");
     const [users, setUsers] = useState<Users[]>(navbar.users);
+    const category = searchParam.get("category")!;
     const router = useRouter();
+    const token = getCookie("token");
+    const email = getCookie("email");
+    const [isSuccessImage, setIsSuccessImage] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
 
     function handleHomePage(){
-        if(users[0].role == "Admin"){
+        if(users[0].role == "Admin"){         
             return router.push("/admin");
         }else{
-            return router.push("/products?category=Phone");
+            return router.push("/products?category=phone");
         }
         
     }
     function handleCategoryPhone(){
+        detailsRef.current!.removeAttribute("open");
         if(users[0].role == "Admin"){
             return router.push("/admin");
         }else{
-            return router.push("/products?category=Phone");
+            return router.push("/products?category=phone");
         }
         
     }
-    function handleCategoryVideo(){
+    function handleCategoryVideo(){ 
+        detailsRef.current!.removeAttribute("open");
         if(users[0].role == "Admin"){
             return router.push("/admin");
         }else{
-            return router.push("/products?category=Video");
+            return router.push("/products?category=video");
         }
         
     } 
@@ -45,6 +58,15 @@ export default function Navbar(navbar: Navbar){
     function handleChangeLogout(){
         setModalLogout(!modalLogout);
     }
+    const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            if(searchQuery != ""){
+                return router.push(`/products?category=${category}&search=${searchQuery}`);
+            }else{
+                return router.push(`/products?category=${category}`);
+            }        
+        }
+    };
     async function getImageUrl(user_id:number){
         let imageUrl:string = "";
         const { data } = supabase.storage
@@ -56,11 +78,35 @@ export default function Navbar(navbar: Navbar){
         }
         return imageUrl;
     }
+    async function checkImageUrl(token:string, image_url:string){
+        let isSuccessImage = false;
+        try{
+            const response = await fetch(`${route}/checkImage`,{
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer '+ token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image_url: image_url
+                })
+            });
+            const content = await response.json();
+            if(content.status == "OK"){
+                isSuccessImage = true;
+            }
+        }catch(error) {
+            console.error('Error fetching data:', error);
+        }
+        return isSuccessImage;
+    }
     useEffect(()=>{
         
         const fetchData =  async ()=>{
             const imageUrl:string = await getImageUrl(users[0]?.id!);
             setUrlImageProfile(imageUrl);
+            const isSuccessImage = await checkImageUrl(token!, imageUrl);
+            setIsSuccessImage(isSuccessImage);
         }
         fetchData();
     }, []);
@@ -86,14 +132,18 @@ export default function Navbar(navbar: Navbar){
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                        <li className="text-white"><a><b>Home</b></a></li>
-                        <li className="text-white">
-                            <a><b>Category</b></a>
-                            <ul className="p-2">
-                                <li className="text-white"><a onClick={handleCategoryPhone}>Phone</a></li>
-                                <li className="text-white"><a onClick={handleCategoryVideo}>Video</a></li>
-                            </ul>
-                        </li>
+                        <li className="text-white"><a onClick={handleHomePage}><b>Home</b></a></li>
+                        {users[0].role == "User" ? (
+                            <li className="text-white">
+                                <a><b>Category</b></a>
+                                <ul className="p-2">
+                                    <li className="text-white"><a onClick={handleCategoryPhone}>Phone</a></li>
+                                    <li className="text-white"><a onClick={handleCategoryVideo}>Video</a></li>
+                                </ul>
+                            </li>
+                        ) : (
+                            <></>
+                        )}        
                     </ul>
                 </div>
                 <a className="btn btn-ghost text-xl text-white" onClick={handleHomePage}>Produku.id</a>
@@ -101,22 +151,29 @@ export default function Navbar(navbar: Navbar){
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
                 <li className="text-white"><a onClick={handleHomePage}><b>Home</b></a></li>
-                <li>
-                    <details>
+                {users[0].role == "User" ? (
+                    <li>
+                    <details ref={detailsRef}>
                         <summary className="text-white"><b>Category</b></summary>
                         <ul className="p-2">
                             <li><a onClick={handleCategoryPhone}>Phone</a></li>
                             <li><a onClick={handleCategoryVideo}>Video</a></li>
                         </ul>
                     </details>
-                </li>
+                    </li>
+                ) : (
+                    <></>
+                )}
                 </ul>
             </div>
             <div className="navbar-end">
+                <div className="form-control">
+                    <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
+                </div>
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full border-white">
-                            {urlImageProfile != "" ? (
+                            {isSuccessImage ? (
                             <Image
                                 alt="Image User"
                                 src={urlImageProfile}
