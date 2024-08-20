@@ -20,11 +20,8 @@ export default function Navbar(navbar: Navbar){
     const [users, setUsers] = useState<Users[]>(navbar.users);
     const category = searchParam.get("category")!;
     const router = useRouter();
-    const token = getCookie("token");
-    const email = getCookie("email");
     const [isSuccessImage, setIsSuccessImage] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-
+    const [searchQuery, setSearchQuery] = useState(searchParam.get("search")! ?? "");
 
     function handleHomePage(){
         if(users[0].role == "Admin"){         
@@ -61,9 +58,17 @@ export default function Navbar(navbar: Navbar){
     const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             if(searchQuery != ""){
-                return router.push(`/products?category=${category}&search=${searchQuery}`);
+                if(users[0].role == "Admin"){
+                    return router.push(`/products?search=${searchQuery}`);
+                }else{
+                    return router.push(`/products?category=${category}&search=${searchQuery}`);
+                }   
             }else{
-                return router.push(`/products?category=${category}`);
+                if(users[0].role == "Admin"){
+                    return router.push(`/admin`);
+                }else{
+                    return router.push(`/products?category=${category}`);
+                } 
             }        
         }
     };
@@ -103,13 +108,15 @@ export default function Navbar(navbar: Navbar){
     useEffect(()=>{
         
         const fetchData =  async ()=>{
+            
+            const token = getCookie("token");
             const imageUrl:string = await getImageUrl(users[0]?.id!);
             setUrlImageProfile(imageUrl);
             const isSuccessImage = await checkImageUrl(token!, imageUrl);
             setIsSuccessImage(isSuccessImage);
         }
         fetchData();
-    }, []);
+    }, [users]);
     return (
         <>
         <div className="navbar bg-black fixed top-0 left-0 w-full">
@@ -168,7 +175,7 @@ export default function Navbar(navbar: Navbar){
             </div>
             <div className="navbar-end">
                 <div className="form-control">
-                    <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
+                    <input type="text" placeholder="Search" value={searchQuery} className="input input-bordered w-24 md:w-auto" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
                 </div>
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">

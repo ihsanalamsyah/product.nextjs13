@@ -10,9 +10,7 @@ export default function BackToDashboard(backToDashboard: BackToDashboard){
     const [users, setUsers] = useState<Users[]>([]);
     const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
-    const token = getCookie("token");
-    const email = getCookie("email");
-
+    
     async function getUserDetail(token: string, email: string){
         let user: Users[] = [{
             id: 0,
@@ -59,7 +57,8 @@ export default function BackToDashboard(backToDashboard: BackToDashboard){
     useEffect(()=>{
         
         const fetchData =  async ()=>{
-            
+            const token = getCookie("token");
+            const email = getCookie("email");
             const users:Users[] = await getUserDetail(token!, email!);
             setUsers(users);
             if(users[0].role == "Admin"){

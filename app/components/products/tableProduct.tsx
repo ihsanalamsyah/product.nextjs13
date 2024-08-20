@@ -20,8 +20,6 @@ export default function TableProduct(tableProduct: TableProduct){
     const searchQuery = searchParam.get("search")!;
     const [isAdmin, setIsAdmin] = useState(false);
     const [isProductEmpty, setIsProductEmpty] = useState(false);
-    const token = getCookie("token");
-    const email = getCookie("email");
   
     async function getUserProduct(token: string, email: string, category: string, searchQuery: string) {
         let userAndProduct:MapUserProduct[] = [{
@@ -65,7 +63,9 @@ export default function TableProduct(tableProduct: TableProduct){
         return userAndProduct;
     };
     useEffect(()=>{    
-        const fetchData =  async ()=>{   
+        const fetchData =  async ()=>{    
+            const token = getCookie("token");
+            const email = getCookie("email");
             const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!, searchQuery!);
             setMapUserProducts(mapUserProducts);
             if(mapUserProducts.length <= 0){
@@ -76,7 +76,7 @@ export default function TableProduct(tableProduct: TableProduct){
             }
         }
         fetchData();
-    }, [category,searchQuery]);
+    }, [category,searchQuery,tableProduct.users]);
    
     return (
         <>

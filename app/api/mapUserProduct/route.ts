@@ -57,14 +57,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 result.msg = "error fetching data";
                 result.errorMessage = responseGetUserProduct.error.message;
                 return NextResponse.json(result, {status : 300});
-            }    
-            
-            dataResult = responseGetUserProduct.data!;
-
-            //console.log("data result user", dataResult)  
+            }             
+            dataResult = responseGetUserProduct.data!;       
         }
         else{
-            const { data, error } = await supabase.rpc('get_products_users_admin');
+            const { data, error } = await supabase.rpc('get_products_users_admin', {
+                search_args: search
+            });
             if(error != null){
                 result.status = "Failed";
                 result.msg = "Error fetching data";
@@ -77,6 +76,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         result.status = "OK";
         result.msg = "Get User Product";
         result.data = dataResult;
+        //console.log("data result user", dataResult)  
         return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult}, {status : 200});
     }
     catch (error){

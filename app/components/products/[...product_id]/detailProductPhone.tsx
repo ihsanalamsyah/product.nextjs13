@@ -26,7 +26,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
         let stringPrice:string = price.toString().replace(/\./g, '');
         stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         setPrice(stringPrice);
-    }, []);
+    }, [detailProductPhone.price]);
 
     function resetForm(){
         setQuantityBuy(0);

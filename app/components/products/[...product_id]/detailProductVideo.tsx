@@ -17,7 +17,7 @@ export default function DetailProductVideo(detailProductVideo: DetailProductPhon
         let stringPrice:string = price.toString().replace(/\./g, '');
         stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         setPrice(stringPrice);
-    }, []);
+    }, [detailProductVideo.price]);
 
     function handleCloseAlert(){
         setIsAlertVisible(false);
