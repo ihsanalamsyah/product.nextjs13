@@ -1,6 +1,6 @@
 
 =======
-# enroll.product.next 13
+# product next 13
 
 Aplikasi product dan dapat dimapping product dan user dapat di mapping kembali saat > 3 hari, ada User dan Admin, ada detail product
 
@@ -20,7 +20,7 @@ Tech stack:
   
 Website sudah di deploy dengan vercel berikut url-nya:
 
-https://enroll-product-nextjs13.vercel.app/
+https://product-nextjs13.vercel.app/
 
 Thank you selamat mencoba
 =======
