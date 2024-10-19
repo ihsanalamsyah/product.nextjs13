@@ -192,7 +192,7 @@ export default function SignUp(signUp:ContentToogle){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">You have an Account? <a className="underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign-In</a> Here.</p>
+                <p className="text-white lg:text-base text-xs">You have an Account? <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign-In</a> Here.</p>
             </div>
         </>
     )

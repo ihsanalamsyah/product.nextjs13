@@ -124,18 +124,20 @@ export default function SignIn(signIn: ContentToogleSignIn){
                         </button>
                         )}       
                     </div>
-                    <div className="lg:mr-4 lg:flex hidden">
-                        <p className="text-white lg:text-base text-xs"><a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
-                    </div>
-                    <div>
-                        <label className="label cursor-pointer lg:px-1 lg:py-1 px-1 py-0">                
-                            <input type="checkbox" className="checkbox mx-1 lg:checkbox-sm checkbox-xs show-password-signin border-white [--chkbg:white] [--chkfg:green]" onChange={handleShowPassword}/>
-                            <p className="mx-1 text-white lg:text-base text-xs">Show Password</p>
-                        </label>
+                    <div className="flex justify-end">
+                        <div className="lg:block hidden">
+                            <p className="text-white lg:text-base text-xs"><a className="hover:underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
+                        </div>
+                        <div>
+                            <label className="label cursor-pointer lg:px-1 lg:py-1 px-1 py-0">                
+                                <input type="checkbox" className="checkbox mx-1 lg:checkbox-sm checkbox-xs show-password-signin border-white [--chkbg:white] [--chkfg:green]" onChange={handleShowPassword}/>
+                                <p className="mx-1 text-white lg:text-base text-xs">Show Password</p>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div className="lg:hidden">
-                    <p className="text-white lg:text-base text-xs"><a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
+                    <p className="text-white lg:text-base text-xs"><a className="hover:underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
                 </div>
             </form>
             {alertStatus == "Failed" ? (
@@ -144,7 +146,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">If you don&#39;t have Account yet, Please <a className="underline text-blue-300 cursor-pointer" onClick={handleClickSignUp}>Sign-Up</a> Here.</p>
+                <p className="text-white lg:text-base text-xs">If you don&#39;t have Account yet, Please <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignUp}>Sign-Up</a> Here.</p>
             </div>
         </>
     )

@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, SyntheticEvent, ChangeEvent } from "react";
-import { useRouter } from 'next/navigation';
-import { setCookie } from '@/utils/cookies';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 
@@ -14,7 +12,6 @@ export default function ResetPassword(resetPassword: ContentToogle){
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const router = useRouter();
 
     function resetForm(){
         setEmail("");
@@ -38,9 +35,7 @@ export default function ResetPassword(resetPassword: ContentToogle){
             setAlertMessage(content.msg);
             setIsAlertVisible(true);
             setAlertStatus(content.status);
-            resetForm();
-            return router.push("/");
-           
+            resetForm();         
         }
         else{            
             setIsMutating(false);
@@ -75,11 +70,11 @@ export default function ResetPassword(resetPassword: ContentToogle){
                     <div>
                         {!isMutating ? (
                         <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Reset Password
+                            Submit
                         </button>
                         ) : (
                         <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Reset Password...
+                            Submit...
                         </button>
                         )}       
                     </div>
@@ -91,7 +86,7 @@ export default function ResetPassword(resetPassword: ContentToogle){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">Click <a className="underline text-blue-300 cursor-pointer" onClick={handleHomePage}>here</a> to go back to the homepage.</p>
+                <p className="text-white lg:text-base text-xs">Click <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleHomePage}>here</a> to go back to the homepage.</p>
             </div>
         </>
     )

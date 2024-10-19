@@ -1,25 +1,22 @@
 
 # PRODUCT NEXT 13
 
-Aplikasi product dan dapat dimapping product dan user dapat di mapping kembali saat > 3 hari, ada User dan Admin, ada detail product
+Sebuah website product berupa akses video dan pembelian item.
+Mempunyai dashboard untuk Admin.
+Mempunyai validasi berupa, video hanya bisa diakses kurang dari 3 hari setelah pembelian video.
 
-Tech stack:
-- PostgreSQL (SQL progamming language)
-- Next (Framework)
-- Supabase (Database connection)
+Technology yang digunakan:
+- NextJS
+- TypeScript
+- Supabase (PostgreSQL)
 - DaisyUI (Component UI)
-- Tailwind (Styling UI)
-- bycrpt (Token)
-- cors
-- dotenv (Environment)
-- sequelize (ORM [not used])
-- JSON Web Token (Token)
-- Cookie (Store data)
-- Vercel (Deployment)
-  
-Website sudah di deploy dengan vercel berikut url-nya:
+- Tailwind
+- Token (JWT)
+- Vercel
+
+Website dapat diakses dengan alamat url sebagai berikut:
 
 https://product-nextjs13.vercel.app/
 
-Thank you selamat mencoba
+Thank you Terima Kasih
 =======

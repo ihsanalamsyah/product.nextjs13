@@ -29,7 +29,7 @@ export default function Home() {
           <div className="w-1/3 relative lg:right-24 right-2">
             {isShowSignIn ? ( isResetPassword ?
               (<ResetPassword onToogle={toogleResetPassword}/>) : 
-              ( <SignIn onToogle={toogleSignIn} onToogleResetPassword={toogleResetPassword}/>)): 
+              (<SignIn onToogle={toogleSignIn} onToogleResetPassword={toogleResetPassword}/>)): 
               (<SignUp onToogle={toogleSignIn}/>)
             }
           </div>

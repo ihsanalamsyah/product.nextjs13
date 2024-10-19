@@ -52,10 +52,10 @@ type WelcomeMessage = {
 }
 
 type DynamicResult = {
-    status: string,
-    msg: string,
-    errorMessage: string,
-    data: any
+    status: string | null,
+    msg: string | null,
+    errorMessage: string | null,
+    data: any | null
 }
 type GetImage = {
     image: File,

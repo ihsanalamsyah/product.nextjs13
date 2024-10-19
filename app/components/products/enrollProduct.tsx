@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import moment from 'moment';
 
-
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function EnrollProduct(enrollProduct: EnrollProduct){

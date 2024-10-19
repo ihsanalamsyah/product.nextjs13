@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { setCookie } from '@/utils/cookies';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
-
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function FormResetPassword(resetPassword: ContentToogle){
@@ -22,14 +21,19 @@ export default function FormResetPassword(resetPassword: ContentToogle){
         setPassword("");
         setConfirmPassword("");
     }
-   
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.substring(1));
+    const token = params.get("access_token");
+    const refreshToken = params.get("refresh_token")!;
+    setCookie("refreshToken", refreshToken, 7);
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
-        setIsMutating(true);
+        setIsMutating(true); 
         const response = await fetch(`${route}/updateUser`,{
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            headers:{
+                'Authorization': 'Bearer '+ token ,
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 password: password,
@@ -39,15 +43,11 @@ export default function FormResetPassword(resetPassword: ContentToogle){
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            setCookie("token", content.token, 7);
-            setCookie("email", content.data.email, 7);
-            setCookie("category", "Video", 7);
             setAlertMessage(content.msg);
             setIsAlertVisible(true);
             setAlertStatus(content.status);
             resetForm();
             return router.push("/");
-           
         }
         else{            
             setIsMutating(false);
@@ -116,11 +116,11 @@ export default function FormResetPassword(resetPassword: ContentToogle){
                     <div>
                         {!isMutating ? (
                         <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Reset Password
+                            Submit
                         </button>
                         ) : (
                         <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Reset Password...
+                            Submit...
                         </button>
                         )}       
                     </div>
@@ -137,9 +137,6 @@ export default function FormResetPassword(resetPassword: ContentToogle){
             ): (
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
-            <div className="my-1">
-                <p className="text-white lg:text-base text-xs">Click <a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>here</a> to go back to the homepage.</p>
-            </div>
         </>
     )
 }
