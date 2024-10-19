@@ -3,7 +3,7 @@ import { supabase } from '@/utils/supabase';
 export async function POST(req: NextRequest, res: NextResponse) {
 
     try {
-        const route = process.env.ROUTE;
+        const routeRedirect = process.env.ROUTE_REDIRECT;
         const body:ResetPassword = await req.json();
         const user = await supabase
             .from("users")
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "Failed", msg: "Email not exists"}, {status: 404});
         }
         const resetPassword = await supabase.auth.resetPasswordForEmail(user.data[0].email, {
-            redirectTo: `https://product-nextjs13.vercel.app/resetpassword`,
+            redirectTo: `${routeRedirect}/resetpassword`,
         })
         if(resetPassword.error != null){
             return NextResponse.json({status: "Failed", msg: "Failed redirect"}, {status: 404});
