@@ -3,7 +3,7 @@ import { supabase } from '@/utils/supabase';
 export async function POST(req: NextRequest, res: NextResponse) {
 
     try {
-        const routeRedirect = process.env.ROUTE_REDIRECT;
+        const routeRedirect = process.env.NEXT_PUBLIC_ROUTE_REDIRECT;
         const body:ResetPassword = await req.json();
         const user = await supabase
             .from("users")
