@@ -46,10 +46,9 @@ export default function DeleteProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-error btn-sm mx-1" onClick={handleChange}> Delete</button>
+            <button className="btn btn-error btn-sm mx-1 w-max" onClick={handleChange}> Delete</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
-
 
             <div className="modal">
                 <div className="modal-box">

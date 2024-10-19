@@ -148,7 +148,7 @@ export default function UpdateProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-info btn-sm mx-1" onClick={handleChange}>Edit</button>
+            <button className="btn btn-info btn-sm mx-1 w-max" onClick={handleChange}>Edit</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">

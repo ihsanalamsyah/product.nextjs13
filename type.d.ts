@@ -98,6 +98,15 @@ type Alert = {
 type ContentToogle = {
     onToogle: any
 }
+type ContentToogleSignIn = {
+    onToogle: any,
+    onToogleResetPassword: any
+}
+type ResetPassword = {
+    email: "",
+    password: "",
+    confirmPassword: ""
+}
 type ImageProduct = {
     isVisible: boolean,
     image_url: string,

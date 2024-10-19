@@ -98,19 +98,19 @@ export default function SignUp(signUp:ContentToogle){
     }
     return (
         <>
-            <h1 className="text-4xl text-white">Sign-Up.</h1>
-            <h1 className="text-white my-1">Please Enter Your Identity Correctly :</h1>
+            <h1 className="lg:text-4xl text-xl text-white">Sign-Up.</h1>
+            <h1 className="text-white my-1 lg:text-base text-xs">Please Enter Your Identity Correctly :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">
                     <input 
                         type="text" 
                         value={name}
                         onChange={(e)=> setName(e.target.value)}
-                        className="input input-md w-full max-w-lg"  
+                        className="input lg:input-md input-sm w-full max-w-lg"  
                         placeholder="Name"/>
                 </div>
                 <div className="my-2">
-                    <select value={gender} className="select select-bordered w-full max-w-lg select-gender" onChange={(e)=> handleGender(e.target.value)}>
+                    <select value={gender} className="select select-bordered lg:select-md select-sm w-full max-w-lg select-gender" onChange={(e)=> handleGender(e.target.value)}>
                         <option disabled value={""}>Gender</option>
                         <option value={"Male"}>Male</option>
                         <option value={"Female"}>Female</option>
@@ -121,7 +121,7 @@ export default function SignUp(signUp:ContentToogle){
                         type="text" 
                         value={email}
                         onChange={(e)=> setEmail(e.target.value)}
-                        className="input input-md w-full max-w-lg" 
+                        className="input lg:input-md input-sm w-full max-w-lg" 
                         placeholder="Email" />
                 </div>                              
                 <div className="form-control my-2">
@@ -130,14 +130,14 @@ export default function SignUp(signUp:ContentToogle){
                         type="text" 
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
-                        className="input input-md w-full max-w-lg" 
+                        className="input lg:input-md input-sm w-full max-w-lg" 
                         placeholder="Password" />
                     ) : (
                     <input 
                         type="password" 
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
-                        className="input input-md w-full max-w-lg" 
+                        className="input lg:input-md input-sm w-full max-w-lg" 
                         placeholder="Password" />
                     )}                          
                 </div>
@@ -147,20 +147,20 @@ export default function SignUp(signUp:ContentToogle){
                         type="text" 
                         value={confirmPassword}
                         onChange={(e)=> setConfirmPassword(e.target.value)}
-                        className="input input-md w-full max-w-lg" 
+                        className="input lg:input-md input-sm w-full max-w-lg" 
                         placeholder="Confirm Password" />
                     ) : (
                     <input 
                         type="password" 
                         value={confirmPassword}
                         onChange={(e)=> setConfirmPassword(e.target.value)}
-                        className="input input-md w-full max-w-lg" 
+                        className="input lg:input-md input-sm w-full max-w-lg" 
                         placeholder="Confirm Password" />
                     )}
                     
                 </div>
                 <div className="my-2">
-                    <select value={role} className="select select-bordered w-full max-w-lg select-role" onChange={(e)=> handleRole(e.target.value)}>
+                    <select value={role} className="select select-bordered lg:select-md select-sm w-full max-w-lg select-role" onChange={(e)=> handleRole(e.target.value)}>
                         <option disabled value={""}>Role</option>
                         <option value={"Admin"}>Admin</option>
                         <option value={"User"}>User</option>
@@ -169,19 +169,19 @@ export default function SignUp(signUp:ContentToogle){
                 <div className="flex justify-between my-2">
                     <div>
                         {!isMutating ? (
-                        <button type="submit" className="btn btn-success btn-sm px-6 pb-6 pt-2 text-white">
+                        <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
                             Submit
                         </button>
                         ) : (
-                        <button type="button" className="btn loading btn-sm px-6 pb-6 pt-2 text-white">
+                        <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
                             Submit...
                         </button>
                         )}       
                     </div>
                     <div>
-                        <label className="label cursor-pointer">                
-                            <input type="checkbox" className="checkbox mx-1 show-password-signup border-white [--chkbg:white] [--chkfg:green]" onChange={handleShowPassword}/>
-                            <span className="label-text mx-1 text-white">Show Password</span>
+                        <label className="label cursor-pointer lg:px-1 lg:py-1 px-1 py-0">                
+                            <input type="checkbox" className="checkbox mx-1 lg:checkbox-sm checkbox-xs show-password-signup border-white [--chkbg:white] [--chkfg:green]" onChange={handleShowPassword}/>
+                            <p className="mx-1 text-white lg:text-base text-xs">Show Password</p>
                         </label>
                     </div>
                 </div>                      
@@ -192,7 +192,7 @@ export default function SignUp(signUp:ContentToogle){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white">You have an Account? <a className="underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign-In</a> Here.</p>
+                <p className="text-white lg:text-base text-xs">You have an Account? <a className="underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign-In</a> Here.</p>
             </div>
         </>
     )

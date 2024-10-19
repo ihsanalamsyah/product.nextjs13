@@ -20,9 +20,10 @@ export default function RootLayout({
       <head>
         <meta
           name="google-signin-client_id"
-          content="507909387104-c04gsjipd57or5uuoeie1d95kqb60s3d.apps.googleusercontent.com"
+          content="382388236597-cm20345fj4bqid3el0mt9ut3vogl52nt.apps.googleusercontent.com"
         ></meta>
-         <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+         <script src="https://accounts.google.com/gsi/client" async></script>
       </head>
       <body className={inter.className}>
       

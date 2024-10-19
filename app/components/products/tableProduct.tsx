@@ -87,7 +87,7 @@ export default function TableProduct(tableProduct: TableProduct){
                     <div className="flex justify-center my-2"><p>Product is empty, Please contact <b>admin</b> to add some </p></div>
                 )              
                 ) : (
-                    <table className="table w-full">
+                    <table className="table w-screen whitespace-nowrap">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -99,7 +99,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                     )   
                                 } 
                                 <th>Product Name</th>
-                                <th>Price</th>
+                                <th className="w-fit">Price</th>
                                 {
                                     isAdmin ? (
                                         <th>Quantity</th>
@@ -149,7 +149,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                         )   
                                     }
                                     <th>{mapUserProduct.title!}</th>
-                                    <th>{stringPrice}</th>
+                                    <th className="w-fit">{stringPrice}</th>
                                     <th>{mapUserProduct.quantity!}</th>
                                     <th className="flex">
                                         <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!}/>
@@ -182,7 +182,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )   
                                         }
                                         <th>{mapUserProduct.title!}</th>
-                                        <th>{stringPrice}</th>
+                                        <th className="w-fit">{stringPrice}</th>
                                         {
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>
@@ -227,7 +227,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )   
                                         }
                                         <th>{mapUserProduct.title!}</th>
-                                        <th>{stringPrice}</th>
+                                        <th className="w-fit">{stringPrice}</th>
                                         {
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>

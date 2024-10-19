@@ -70,9 +70,6 @@ export default async function Products(){
                 <TableProduct users={users}/>
             </div>         
         </div> 
-        </>
-        
-    )
-
-    
+        </> 
+    ) 
 }

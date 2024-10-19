@@ -9,7 +9,7 @@ export async function GET() {
         data: []
     }
     try {
-        const {data, error} = await supabase
+        const { data, error } = await supabase
                 .from('products')
                 .select()
         if(error != null){

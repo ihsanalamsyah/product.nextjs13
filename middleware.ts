@@ -21,5 +21,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: '/api((?!/login|/signUp).*)',
+    matcher: '/api((?!/login|/signUp|/resetPassword|/updateUser).*)',
 }

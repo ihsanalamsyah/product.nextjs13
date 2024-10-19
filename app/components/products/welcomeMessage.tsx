@@ -8,7 +8,6 @@ export default function welcomeMessage(welcomeMessage: WelcomeMessage){
             ) : (
             <p><b>Welcome to Dashboard User {welcomeMessage.name} </b></p>
             )}
-        </>
-                
+        </>               
     )
 }

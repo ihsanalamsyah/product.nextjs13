@@ -12,7 +12,7 @@ export async function GET() {
             role: "",
             phone: 0
         }]
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from('users')
             .select("*")
         if(error != null){

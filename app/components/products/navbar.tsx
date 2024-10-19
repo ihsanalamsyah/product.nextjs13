@@ -128,7 +128,7 @@ export default function Navbar(navbar: Navbar){
                             className="h-5 w-5"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke="currentColor">
+                            stroke="white">
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -139,13 +139,13 @@ export default function Navbar(navbar: Navbar){
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                        <li className="text-white"><a onClick={handleHomePage}><b>Home</b></a></li>
+                        <li className="text-black"><a onClick={handleHomePage}><b>Home</b></a></li>
                         {users[0].role == "User" ? (
-                            <li className="text-white">
+                            <li className="text-black">
                                 <a><b>Category</b></a>
                                 <ul className="p-2">
-                                    <li className="text-white"><a onClick={handleCategoryPhone}>Phone</a></li>
-                                    <li className="text-white"><a onClick={handleCategoryVideo}>Video</a></li>
+                                    <li className="text-black"><a onClick={handleCategoryPhone}>Phone</a></li>
+                                    <li className="text-black"><a onClick={handleCategoryVideo}>Video</a></li>
                                 </ul>
                             </li>
                         ) : (
