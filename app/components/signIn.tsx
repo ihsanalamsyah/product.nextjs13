@@ -125,7 +125,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                         )}       
                     </div>
                     <div className="lg:mr-4 lg:flex hidden">
-                        <p className="text-white lg:text-base text-xs">Forgot Password? Reset it <a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>here</a>.</p>
+                        <p className="text-white lg:text-base text-xs"><a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
                     </div>
                     <div>
                         <label className="label cursor-pointer lg:px-1 lg:py-1 px-1 py-0">                
@@ -135,7 +135,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                     </div>
                 </div>
                 <div className="lg:hidden">
-                    <p className="text-white lg:text-base text-xs">Forgot Password? Reset it <a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>here</a>.</p>
+                    <p className="text-white lg:text-base text-xs"><a className="underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
                 </div>
             </form>
             {alertStatus == "Failed" ? (
