@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             return NextResponse.json({status: "Failed", msg: "Email not exists"}, {status: 404});
         }
         const resetPassword = await supabase.auth.resetPasswordForEmail(user.data[0].email, {
-            redirectTo: `${route}/resetpassword`,
+            redirectTo: `https://product-nextjs13.vercel.app/resetpassword`,
         })
         if(resetPassword.error != null){
             return NextResponse.json({status: "Failed", msg: "Failed redirect"}, {status: 404});
