@@ -7,7 +7,7 @@ import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-export default function FormResetPassword(resetPassword: ContentToogle){
+export default function FormResetPassword(){
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isMutating, setIsMutating] = useState(false);
@@ -21,14 +21,16 @@ export default function FormResetPassword(resetPassword: ContentToogle){
         setPassword("");
         setConfirmPassword("");
     }
-    const hash = window.location.hash;
-    const params = new URLSearchParams(hash.substring(1));
-    const token = params.get("access_token");
-    const refreshToken = params.get("refresh_token")!;
-    setCookie("refreshToken", refreshToken, 7);
+      
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
         setIsMutating(true); 
+        const hash = window?.location.hash; 
+        const params = new URLSearchParams(hash.substring(1));
+        const token = params.get("access_token")!;
+        const refreshToken = params.get("refresh_token")!;
+        setCookie("refreshToken", refreshToken, 7);
+     
         const response = await fetch(`${route}/updateUser`,{
             method: 'POST',
             headers:{
