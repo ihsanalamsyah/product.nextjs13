@@ -57,7 +57,7 @@ export default function Logout(logout: Logout){
                         Close
                     </button>
                     <button type="button" onClick={handleLogout} className="btn btn-primary">
-                        Yes
+                        Logout
                     </button>                                                       
                 </div>
             </div>

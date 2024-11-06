@@ -148,89 +148,105 @@ export default function UpdateProduct(product: Products){
     }
     return (
         <div>
-            <button className="btn btn-info btn-sm mx-1 w-max" onClick={handleChange}>Edit</button>
+            <button className="btn btn-info btn-sm mx-1 w-max" onClick={handleChange}>Update</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Edit {product.title}</h3>
-                    <h1 className="font-bold text-md">Category : {product.category}</h1>
-                    {alertStatus == "Failed" ? (
-                        <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>         
-                    ): (
-                        <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
-                    )}  
-                    <form onSubmit={handleUpdate}>
+                <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
+                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Update {product.title}</h3>
+                    <h1 className="text-md font-semibold text-gray-600 mb-6">Category: {product.category}</h1>
+                    {alertStatus === "Failed" ? (
+                        <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} />         
+                    ) : (
+                        <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} />
+                    )}
+                    <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="form-control">
-                            <label className="label font-bold">Title</label>
+                            <label className="label font-semibold text-gray-700 mb-1">Title</label>
                             <input 
-                            type="text" 
-                            value={title}
-                            onChange={(e)=> setTitle(e.target.value)}
-                            className="input w-full input-bordered"  
-                            placeholder="Product Name"/>
+                                type="text" 
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="input w-full input-bordered border-gray-300 rounded-md"  
+                                placeholder="Product Name"
+                            />
                         </div>
                         <div className="form-control">
-                            <label className="label font-bold">Price</label>
+                            <label className="label font-semibold text-gray-700 mb-1">Price</label>
                             <input 
-                            type="text" 
-                            value={price}
-                            onChange={(e)=> handlePrice(e.target.value)}
-                            className="input w-full input-bordered" 
-                            placeholder="Price" />
+                                type="text" 
+                                value={price}
+                                onChange={(e) => handlePrice(e.target.value)}
+                                className="input w-full input-bordered border-gray-300 rounded-md" 
+                                placeholder="Price"
+                            />
                         </div>
                         <div className="form-control">
-                            <label className="label font-bold">Quantity</label>
-                            {product.category == "Video" ? (
-                               <>
+                            <label className="label font-semibold text-gray-700 mb-1">Quantity</label>
+                            <input 
+                                type="text"
+                                value={quantity}
+                                onChange={(e) => setQuantity(Number(e.target.value))}
+                                className="input w-full input-bordered border-gray-300 rounded-md"
+                                placeholder="Quantity" 
+                                disabled={product.category === "Video"}
+                            />
+                        </div>
+
+                        {product.category === "Video" ? (
+                            <div className="form-control">
+                                <label className="label font-semibold text-gray-700 mb-1">Upload Video Product</label>              
                                 <input 
-                                    type="text"
-                                    value={quantity}
-                                    onChange={(e)=> setQuantity(Number(e.target.value))}
-                                    className="input w-full input-bordered" 
-                                    placeholder="Quantity" 
-                                    disabled={true}/>
-                               </>
-                            ) : (
-                                <>                         
+                                    className="file-input file-input-bordered w-full border-gray-300 rounded-md"
+                                    id="file_input" 
+                                    onChange={handleFileChange} 
+                                    type="file" 
+                                    name="video" 
+                                    accept="video/*"
+                                />         
+                            </div>
+                        ) : (
+                            <div className="form-control">
+                                <label className="label font-semibold text-gray-700 mb-1">Upload Image Product</label>          
                                 <input 
-                                    type="text"
-                                    value={quantity}
-                                    onChange={(e)=> setQuantity(Number(e.target.value))}
-                                    className="input w-full input-bordered" 
-                                    placeholder="Quantity" 
-                                    disabled={false}/>
-                                </>
-                            )}                                       
-                        </div>
-                        {product.category == "Video" ? (
-                        <div>
-                            <label className="label font-bold">Upload Video Product</label>              
-                            <input className="" id="file_input" onChange={handleFileChange} type="file" name="video" accept="video/*"/>         
-                        </div>
-                        ): (
-                        <div>
-                            <label className="label font-bold">Upload Image Product</label>          
-                            <input className="" id="file_input" onChange={handleFileChange} type="file" name="image" accept="image/*"/>     
-                        </div>
-                        )}       
-                        <div className="modal-action">
-                            <button type="button" className="btn" onClick={handleChange}>
+                                    className="file-input file-input-bordered w-full border-gray-300 rounded-md"
+                                    id="file_input" 
+                                    onChange={handleFileChange} 
+                                    type="file" 
+                                    name="image" 
+                                    accept="image/*"
+                                />     
+                            </div>
+                        )}
+
+                        <div className="modal-action mt-6 flex justify-end space-x-2">
+                            <button 
+                                type="button" 
+                                className="btn bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                                onClick={handleChange}
+                            >
                                 Close
                             </button>
                             {!isMutating ? (
-                            <button type="submit" className="btn btn-primary">
-                                Update
-                            </button>
+                                <button 
+                                    type="submit" 
+                                    className="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                                >
+                                    Update
+                                </button>
                             ) : (
-                            <button type="button" className="btn loading">
-                                Updating...
-                            </button>
-                            )}                                        
+                                <button 
+                                    type="button" 
+                                    className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
+                                >
+                                    Updating...
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>
             </div>
+
         </div>
     )
 }

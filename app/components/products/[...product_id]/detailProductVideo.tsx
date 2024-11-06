@@ -6,7 +6,7 @@ import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 import BackToDashboard from '@/app/components/products/[...product_id]/backToDashboard';
 
-export default function DetailProductVideo(detailProductVideo: DetailProductPhone){
+export default function DetailProductVideo(detailProductVideo: DetailProductHandphone){
     const [price, setPrice] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
@@ -22,6 +22,11 @@ export default function DetailProductVideo(detailProductVideo: DetailProductPhon
     function handleCloseAlert(){
         setIsAlertVisible(false);
     }
+    {alertStatus == "Failed" ? (
+        <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+    ): (
+        <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+    )}
     return(
         <div className='flex flex-col justify-center w-1/2 m-16'>
             {alertStatus == "Failed" ? (
@@ -36,13 +41,28 @@ export default function DetailProductVideo(detailProductVideo: DetailProductPhon
              
             <hr className="border-y-1 border-gray-700"></hr>
             <br></br>
-            <p className='text-justify'>
-                Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
-                gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
-                Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
-                habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
-                Metus orci ultrices dignissim, feugiat dis amet suspendisse.
-            </p>
+            <div className="collapse collapse-arrow border-base-300 bg-base-200 border lg:hidden grid">
+                <input type="checkbox" />
+                <div className="collapse-title"><p className="text-md lg:text-xl">View Product Description</p></div>
+                <div className="collapse-content">
+                    <p className="text-justify lg:text-base text-sm">
+                        Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
+                        gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
+                        Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
+                        habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
+                        Metus orci ultrices dignissim, feugiat dis amet suspendisse.
+                    </p>
+                </div>
+            </div>
+            <div className="lg:block hidden">
+                <p className="text-justify lg:text-base text-sm">
+                    Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
+                    gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
+                    Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
+                    habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
+                    Metus orci ultrices dignissim, feugiat dis amet suspendisse.
+                </p>
+            </div>
             <br></br>
             <hr className="border-y-1 border-gray-700 border-dashed"></hr>
                

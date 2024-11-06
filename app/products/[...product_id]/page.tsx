@@ -9,6 +9,7 @@ import Navbar from "@/app/components/products/navbar";
 import { notFound } from "next/navigation";
 import { supabase } from '@/utils/supabase';
 
+
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default async function ProductDetail({params}: {params: {product_id: number}}){
@@ -21,8 +22,8 @@ export default async function ProductDetail({params}: {params: {product_id: numb
         console.log("Gak ada session");
     }  
     
-    if (product_id < 0  || isNaN(product_id)) {
-      notFound();
+    if (product_id <= 0  || isNaN(product_id)) {
+        notFound();
     }
     async function getProductById(token: string, product_id: number){
         let product: Products = {
@@ -30,7 +31,9 @@ export default async function ProductDetail({params}: {params: {product_id: numb
            id: 0,
            category: "",
            price: 0,
-           quantity: 0
+           quantity: 0,
+           image_url: "",
+           video_url: ""
         };
         try {
             
@@ -89,7 +92,7 @@ export default async function ProductDetail({params}: {params: {product_id: numb
         let imageUrl:string = "";
         const { data } = supabase.storage
             .from('images')
-            .getPublicUrl(`Foto-product-product_id-${product_id}.png`)
+            .getPublicUrl(`Foto-product-product_id-${product_id}.png`);
     
         if(data.publicUrl != ""){
             imageUrl = data.publicUrl;
@@ -159,8 +162,6 @@ export default async function ProductDetail({params}: {params: {product_id: numb
     let imageUrl:string = "";
     let altImage:string = "";
     let videoUrl:string = "";
-    let isSuccessImage:boolean = false;
-    let isSuccessVideo:boolean = false;
 
     const users:Users[] = await getUserDetail(token, email);
     if(users[0].role! == "Admin"){
@@ -169,11 +170,9 @@ export default async function ProductDetail({params}: {params: {product_id: numb
     const productDetail: Products = await getProductById(token, params.product_id);
     if(productDetail.category == "Video"){
         videoUrl = await getVideoUrl(params.product_id);
-        isSuccessVideo = await checkVideoUrl(token, videoUrl);
     }else{
         imageUrl = await getImageUrl(params.product_id);
         altImage = `Foto-product-product_id-${product_id}`;
-        isSuccessImage = await checkImageUrl(token, imageUrl);
     }
     
     return(

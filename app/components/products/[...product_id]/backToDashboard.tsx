@@ -12,15 +12,7 @@ export default function BackToDashboard(backToDashboard: BackToDashboard){
     const router = useRouter();
     
     async function getUserDetail(token: string, email: string){
-        let user: Users[] = [{
-            id: 0,
-            name: "",
-            email: "",
-            password: "",
-            gender: "",
-            role: "",
-            phone: 0
-        }];    
+        let user: Users[] = [];    
         try {             
             const response = await fetch(`${route}/userDetail`, {
                 method: 'POST',

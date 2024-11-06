@@ -2,12 +2,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { supabase } from "@/utils/supabase";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-    let result:DynamicResult =  {
-        status: "",
-        msg: "",
-        errorMessage: "",
-        data: []
-    }
     let dataResult:MapUserProduct[] = [{
         product_id: 0,
         title: "",
@@ -22,7 +16,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
         password: "",
         gender: "",
         role: "",
-        search: ""
+        search: "",
+        image_url: "",
+        video_url: ""
     }];
     try {
         const body:MapUserProduct = await req.json();
@@ -33,9 +29,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .limit(1)
 
         if(response.data?.length! <= 0){
-            result.status = "Failed";
-            result.msg = "user not exists";
-            return NextResponse.json(result, {status : 300});
+            return NextResponse.json({status: "Failed", msg: "User not exists"} as DynamicResult, {status : 300});
         }
         const search = body.search ?? "";
         const user:Users = response.data![0];
@@ -46,41 +40,46 @@ export async function POST(req: NextRequest, res: NextResponse) {
                     email_args: body.email,
                     search_args: search
                 });
-            }else if(body.category?.toLowerCase() == "phone"){
+                dataResult = responseGetUserProduct.data!;
+                for(let i = 0; i < dataResult.length; i++){
+                    const getImageUrl = supabase.storage
+                        .from('images')
+                        .getPublicUrl(`Video-product_id-${dataResult[i].product_id}.mp4`);
+                
+                    dataResult[i].video_url =  getImageUrl.data.publicUrl;
+                }
+            }else if(body.category?.toLowerCase() == "handphone"){
                 responseGetUserProduct = await supabase.rpc('get_products_users_phone', {
                     search_args: search
                 });
+                dataResult = responseGetUserProduct.data!;
+                for(let i = 0; i < dataResult.length; i++){
+                    const getImageUrl = supabase.storage
+                        .from('images')
+                        .getPublicUrl(`Foto-product-product_id-${dataResult[i].product_id}.png`);
+                
+                    dataResult[i].image_url =  getImageUrl.data.publicUrl;
+                }
             }
 
             if(responseGetUserProduct.error != null){
-                result.status = "Failed";
-                result.msg = "error fetching data";
-                result.errorMessage = responseGetUserProduct.error.message;
-                return NextResponse.json(result, {status : 300});
-            }             
-            dataResult = responseGetUserProduct.data!;       
+                return NextResponse.json({status: "Failed", msg: "Error fetching data", errorMessage: responseGetUserProduct.error.message} as DynamicResult, {status: 300});
+            }               
         }
         else{
             const { data, error } = await supabase.rpc('get_products_users_admin', {
                 search_args: search
             });
             if(error != null){
-                result.status = "Failed";
-                result.msg = "Error fetching data";
-                result.errorMessage = error.message;
-                return NextResponse.json(result, {status : 300});
+                return NextResponse.json({status: "Failed", msg: "Error fetching data", errorMessage: error.message} as DynamicResult, {status : 300});
             }
             dataResult = data!;
            
         }
-        result.status = "OK";
-        result.msg = "Get User Product";
-        result.data = dataResult;
-        //console.log("data result user", dataResult)  
-        return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult}, {status : 200});
+        return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult} as DynamicResult, {status : 200});
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: "Failed POST MapUserProduct", errorMessage: error}, {status : 400});
+        return NextResponse.json({status: "Failed", msg: "Failed POST MapUserProduct", errorMessage: error} as DynamicResult, {status : 400});
     }
 }
 
@@ -94,15 +93,15 @@ export async function PATCH(req: NextRequest, res: NextResponse) {
             .eq("id", body.product_id)
 
         if(error != null){
-            return NextResponse.json({status: "Failed", msg: `Error mapping user to product`}, {status: 300});
+            return NextResponse.json({status: "Failed", msg: `Error mapping user to product`} as DynamicResult, {status: 300});
         }
         if(count! <= 0 && count != null){
-            return NextResponse.json({status: "Failed", msg: `Data Product is not exists`}, {status: 300});
+            return NextResponse.json({status: "Failed", msg: `Data Product is not exists`} as DynamicResult, {status: 300});
         }
-        return NextResponse.json({status: "OK", msg: `Success mapping user: ${body.name} denagn id: ${body.user_id} to product: ${body.product_id}`, data: data}, {status: 200});
+        return NextResponse.json({status: "OK", msg: `Success mapping user: ${body.name} denagn id: ${body.user_id} to product: ${body.product_id}`, data: data} as DynamicResult, {status: 200});
      
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: "Failed PATCH MapUserProduct", errorMessage: error}, {status: 300});
+        return NextResponse.json({status: "Failed", msg: "Failed PATCH MapUserProduct", errorMessage: error} as DynamicResult, {status: 300});
     }
 }

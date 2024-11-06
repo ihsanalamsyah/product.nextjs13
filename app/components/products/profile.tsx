@@ -115,7 +115,7 @@ export default function Profile(profile: Profile){
             <input type="checkbox" checked={profile.modalProfile} onChange={profile.handleChangeProfile} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Edit Profile {name}</h3>
+                    <h3 className="font-bold text-lg">Update profile {name}</h3>
                     {alertStatus == "Failed" ? (
                         <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>         
                     ): (
@@ -124,13 +124,13 @@ export default function Profile(profile: Profile){
                     <div>
                         <form onSubmit={handleUpdate}>
                             <div className="form-control">
-                                <label className="label font-bold">Name</label>
+                                <label className="label font-bold">Username</label>
                                 <input 
                                     type="text" 
                                     value={name}
                                     onChange={(e)=> setName(e.target.value)}
                                     className="input w-full input-bordered"  
-                                    placeholder="Name User"/>
+                                    placeholder="Enter username"/>
                             </div>
                             <div className="form-control">
                                 <label className="label font-bold">Phone</label>
@@ -139,7 +139,7 @@ export default function Profile(profile: Profile){
                                     value={phone}
                                     onChange={(e)=> setPhone(Number(e.target.value))}
                                     className="input w-full input-bordered" 
-                                    placeholder="Phone" />
+                                    placeholder="Enter phone" />
                             </div>
                             <div>
                                 <label className="label font-bold">Upload Image User</label>      

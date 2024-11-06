@@ -1,14 +1,12 @@
 'use client'
 
-
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getCookie } from '@/utils/cookies';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
 import BackToDashboard from '@/app/components/products/[...product_id]/backToDashboard';
 
-export default function DetailProductPhone(detailProductPhone: DetailProductPhone){
+export default function DetailProductPhone(detailProductPhone: DetailProductHandphone){
     const [modal, setModal] = useState(false);
     const [isMutating, setIsMutating] = useState(false);
     const [price, setPrice] = useState("");
@@ -65,7 +63,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
     async function handleBuy(){
         setIsMutating(true);
     
-        const response = await fetch(`${route}/buyProduct`,{
+        const response = await fetch(`${route}/buyProductHandphone`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -100,13 +98,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
         setIsAlertVisible(false);
     }
     return(
-        <div className='flex flex-col justify-center w-1/2 m-16'>
-            {alertStatus == "Failed" ? (
-                <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
-            ): (
-                <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
-            )}
-           
+        <div className='flex flex-col justify-center w-1/2 m-16'>         
             <p className="text-2xl font-medium tracking-wider underline underline-offset-1">Product Detail :</p>
             <p className="text-5xl font-medium"><b>{detailProductPhone.title.toUpperCase()}</b></p>
             <div className="flex justify-between">
@@ -116,13 +108,28 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
              
             <hr className="border-y-1 border-gray-700"></hr>
             <br></br>
-            <p className='text-justify'>
-                Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
-                gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
-                Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
-                habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
-                Metus orci ultrices dignissim, feugiat dis amet suspendisse.
-            </p>
+            <div className="collapse collapse-arrow border-base-300 bg-base-200 border lg:hidden grid">
+                <input type="checkbox" />
+                <div className="collapse-title"><p className="text-md lg:text-xl">View Product Description</p></div>
+                <div className="collapse-content">
+                    <p className="text-justify lg:text-base text-sm">
+                        Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
+                        gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
+                        Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
+                        habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
+                        Metus orci ultrices dignissim, feugiat dis amet suspendisse.
+                    </p>
+                </div>
+            </div>
+            <div className="lg:block hidden">
+                <p className="text-justify lg:text-base text-sm">
+                    Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
+                    gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
+                    Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
+                    habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
+                    Metus orci ultrices dignissim, feugiat dis amet suspendisse.
+                </p>
+            </div>
             <br></br>
             <hr className="border-y-1 border-gray-700 border-dashed"></hr>
             <p className="text-2xl font-medium">Quantity :</p>
@@ -140,10 +147,15 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
             )}
             
             <br></br>
+            {alertStatus == "Failed" ? (
+                <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+            ): (
+                <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+            )}
+            <br></br>
             <div className='flex'>
-                <BackToDashboard category={"phone"}/>
+                <BackToDashboard category={"handphone"}/>
             </div>
-
             <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
@@ -164,8 +176,6 @@ export default function DetailProductPhone(detailProductPhone: DetailProductPhon
                     </div>
                 </div>
             </div>
-        </div> 
-
-        
+        </div>    
     )
 }

@@ -14,7 +14,9 @@ type Products = {
     category: string | null,
     title: string | null,
     price: number | null,
-    quantity: number | null
+    quantity: number | null,
+    image_url: string | null,
+    video_url: string | null
 }
 
 type MapUserProduct = {
@@ -31,7 +33,9 @@ type MapUserProduct = {
     password: string | null,
     gender: string | null,
     role: string | null,
-    search: string | null
+    search: string | null,
+    image_url: string | null,
+    video_url: string | null
 }
 
 type GetMapUserProduct = {
@@ -74,7 +78,7 @@ type CheckImage = {
 type CheckVideo = {
     video_url: string
 }
-type DetailProductPhone = {
+type DetailProductHandphone = {
     id: number,
     title: string,
     price: number,
@@ -93,7 +97,8 @@ type BuyProduct = {
 type Alert = {
     onClose: any,
     visible: boolean,
-    message: string
+    message: string,
+    duration?: number
 }
 type ContentToogle = {
     onToogle: any
@@ -112,7 +117,6 @@ type ImageProduct = {
     image_url: string,
     image_alt: string,
 }
-
 type AddProduct = {
     isVisible: boolean
 }
@@ -120,7 +124,9 @@ type AddProduct = {
 type TableProduct = {
     users: Users[]
 }
-
+type CardProduct = {
+    users: Users[]
+}
 type Navbar = {
     users: Users[]
 }
@@ -142,7 +148,22 @@ type Logout = {
     modalLogout: boolean,
     handleChangeLogout: any
 }
-
 type BackToDashboard = {
     category: string
+}
+type GetHistoryBuyProduct = {
+    product_id: number,
+    title: string,
+    total_quantity: number,
+    username: string,
+    format_created: string
+}
+type Datasets = {
+    label:string,
+    data:number[],
+    borderWidth: number
+}
+type MapTitleQtyDatasets = {
+    title:string,
+    quantity:number[]
 }

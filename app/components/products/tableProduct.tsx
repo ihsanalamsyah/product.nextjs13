@@ -22,22 +22,7 @@ export default function TableProduct(tableProduct: TableProduct){
     const [isProductEmpty, setIsProductEmpty] = useState(false);
   
     async function getUserProduct(token: string, email: string, category: string, searchQuery: string) {
-        let userAndProduct:MapUserProduct[] = [{
-            product_id: 0,
-            title: "",
-            price: 0,
-            quantity: 0,
-            category: "",
-            user_id: 0,
-            enroll_date: null,
-            user_id2: 0,
-            name: "",
-            email: "",
-            password: "",
-            gender: "",
-            role: "",
-            search: ""
-        }];
+        let userAndProduct:MapUserProduct[] = [];
         try {             
             const response = await fetch(`${route}/mapUserProduct`, {
                 method: 'POST',
@@ -87,10 +72,10 @@ export default function TableProduct(tableProduct: TableProduct){
                     <div className="flex justify-center my-2"><p>Product is empty, Please contact <b>admin</b> to add some </p></div>
                 )              
                 ) : (
-                    <table className="table w-screen whitespace-nowrap">
+                    <table className="table w-full whitespace-nowrap">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>No</th>
                                 {
                                  isAdmin ? (
                                     <th>Category</th>
@@ -104,7 +89,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                     isAdmin ? (
                                         <th>Quantity</th>
                                     ) : (
-                                    category == "Phone"  ? (
+                                    category == "Handphone"  ? (
                                         <th>Quantity</th>
                                     ) : (
                                         <></>
@@ -152,14 +137,14 @@ export default function TableProduct(tableProduct: TableProduct){
                                     <th className="w-fit">{stringPrice}</th>
                                     <th>{mapUserProduct.quantity!}</th>
                                     <th className="flex">
-                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!}/>
-                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!}/>
-                                        <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!}  category={mapUserProduct.category!}/>
+                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/>
+                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/>
+                                        <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!}  category={mapUserProduct.category!} video_url={""} image_url={""}/>
                                     </th>
                                     {mapUserProduct.category! == "Video" ? (
                                         <th>{mapUserProduct.name ?? "No One"}</th>
                                     ) :(
-                                        <th>This is Phone</th>
+                                        <th>Product handphone</th>
                                     )}             
                                 </tr>)
                             }
@@ -170,7 +155,9 @@ export default function TableProduct(tableProduct: TableProduct){
                                         category: "",
                                         price: mapUserProduct.price!,
                                         title: mapUserProduct.title!,
-                                        quantity: 0
+                                        quantity: 0,
+                                        image_url: "",
+                                        video_url: ""
                                     }
                                     return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
@@ -187,7 +174,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>
                                             ) : (
-                                            category == "Phone"  ? (
+                                            category == "Handphone"  ? (
                                                 <th>{mapUserProduct.quantity!}</th>
                                             ) : (
                                                 <></>
@@ -215,7 +202,9 @@ export default function TableProduct(tableProduct: TableProduct){
                                         category: "",
                                         price: mapUserProduct.price!,
                                         title: mapUserProduct.title!,
-                                        quantity: 0
+                                        quantity: 0,
+                                        image_url: "",
+                                        video_url: ""
                                     }
                                     return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
@@ -232,7 +221,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             isAdmin ? (
                                                 <th>{mapUserProduct.quantity!}</th>
                                             ) : (
-                                                category == "Phone"  ? (
+                                                category == "Handphone"  ? (
                                                     <th>{mapUserProduct.quantity!}</th>
                                                 ) : (
                                                 <></>
@@ -240,7 +229,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )
                                         }                            
                                         <th className="flex">
-                                            <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!}/>             
+                                            <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/> 
                                         </th>
                                         {
                                             isAdmin ? (

@@ -1,13 +1,21 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect } from "react";
 export default function AlertFailed(alertFailed: Alert){
     
-    const [message, setMessage] = useState(alertFailed.message)
-   
+    const { visible, message, onClose, duration = 3000 } = alertFailed;
     if(!alertFailed.visible){
         return null;
     }
+    useEffect(() => {
+        if (visible) {
+            const timer = setTimeout(() => {
+                onClose();
+            }, duration);
+
+            return () => clearTimeout(timer);
+        }
+    }, [visible, duration, onClose]);
     return (
         <> 
         <div role="alert" className="alert alert-error gap-0.5 lg:gap-1 p-2 lg:p-4">
@@ -24,7 +32,11 @@ export default function AlertFailed(alertFailed: Alert){
              </svg>
              <p className="lg:text-base text-xs">{message}</p>
              <div>
-                 <button className="btn lg:btn-sm btn-xs" onClick={alertFailed.onClose}>Close</button>
+                 <button className="text-black hover:text-white hover:bg-red-700 p-1 rounded-full" onClick={alertFailed.onClose}> <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
              </div>
         </div>
         </>

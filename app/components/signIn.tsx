@@ -49,7 +49,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
             if(content.data.role == "Admin"){
                 return router.push("/admin");
             }else{
-                return router.push("/products?category=phone");
+                return router.push("/products?category=handphone");
             }
            
         }
@@ -84,8 +84,8 @@ export default function SignIn(signIn: ContentToogleSignIn){
     }
     return (
         <>
-            <h1 className="lg:text-4xl text-xl text-white">Sign-In.</h1>
-            <h1 className="text-white my-1 lg:text-base text-xs">Please Enter Your Email and Password Correctly :</h1>
+            <h1 className="lg:text-4xl text-xl text-white">Sign in</h1>
+            <h1 className="text-white my-1 lg:text-base text-xs">Please enter your email and password :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">                      
                     <input 
@@ -93,7 +93,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                         value={email}
                         onChange={(e)=> setEmail(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg"  
-                        placeholder="Email"/>
+                        placeholder="Enter your email"/>
                 </div>                      
                 <div className="form-control my-2">
                     {isShowPassword ? (
@@ -102,17 +102,17 @@ export default function SignIn(signIn: ContentToogleSignIn){
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Password" />          
+                        placeholder="Enter your password" />          
                     ) : (
                     <input
                         type="password" 
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Password" />
+                        placeholder="Enter your password" />
                     )}
                 </div>
-                <div className="flex justify-between my-2">
+                <div className="flex justify-between my-4">
                     <div>
                         {!isMutating ? (
                         <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
@@ -124,7 +124,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                         </button>
                         )}       
                     </div>
-                    <div className="flex justify-end">
+                    <div className="flex justify-end items-center">
                         <div className="lg:block hidden">
                             <p className="text-white lg:text-base text-xs"><a className="hover:underline text-blue-300 cursor-pointer" onClick={handleForgotPassword}>Forgot Password?</a></p>
                         </div>
@@ -146,7 +146,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">If you don&#39;t have Account yet, Please <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignUp}>Sign-Up</a> Here.</p>
+                <p className="text-white lg:text-base text-xs">Don&#39;t have an Account? <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignUp}>Sign up</a></p>
             </div>
         </>
     )

@@ -1,0 +1,27 @@
+.drawerSideOn{
+    pointer-events: auto;
+    visibility: visible;
+    position: sticky;
+    display: block;
+    width: auto;
+    overscroll-behavior: auto;
+    overflow-y: auto;
+    
+}
+.drawer-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+.drawer-item:hover {
+    background-color: #374151; 
+    color: #fff;
+}
+
+.drawer-item.active {
+    background-color: #1f2937; 
+    font-weight: bold;
+}

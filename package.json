@@ -9,12 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^1.7.18",
-    "@heroicons/react": "^2.1.1",
+    "@heroicons/react": "^2.1.5",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/material": "^6.1.6",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.44.2",
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.6",
     "cookie": "^0.6.0",
     "dotenv": "^16.4.5",
     "jquery": "^3.7.1",

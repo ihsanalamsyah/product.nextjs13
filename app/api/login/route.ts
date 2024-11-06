@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             gender: user.data![0].gender,
             phone: user.data![0].phone,
         }
-        return NextResponse.json({status: "OK", msg: "Success login", data: dataUser, token: data.session?.access_token}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "Success login, redirecting to dashboard", data: dataUser, token: data.session?.access_token}, {status: 200});
              
     }
     catch (error){

@@ -7,7 +7,6 @@ import ResetPassword from "@/app/components/resetPassword";
 import BePartOfUs from "./components/bePartOfUs";
 import { useState } from "react";
 
-
 export default function Home() {
   const [isShowSignIn, setIsShowSignIn] = useState(true);
   const [isResetPassword, setIsResetPassword] = useState(false);
@@ -24,8 +23,7 @@ export default function Home() {
           <div className="w-1/3 relative lg:left-72 left-4">
             <BePartOfUs />
           </div> 
-          <div className="border-r-2 border-white h-1/2">   
-          </div>     
+          <div className="divider divider-horizontal divider-neutral h-1/2 mt-[25vh] before:bg-white after:bg-white"></div>    
           <div className="w-1/3 relative lg:right-24 right-2">
             {isShowSignIn ? ( isResetPassword ?
               (<ResetPassword onToogle={toogleResetPassword}/>) : 

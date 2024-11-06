@@ -98,8 +98,8 @@ export default function SignUp(signUp:ContentToogle){
     }
     return (
         <>
-            <h1 className="lg:text-4xl text-xl text-white">Sign-Up.</h1>
-            <h1 className="text-white my-1 lg:text-base text-xs">Please Enter Your Identity Correctly :</h1>
+            <h1 className="lg:text-4xl text-xl text-white">Sign up</h1>
+            <h1 className="text-white my-1 lg:text-base text-xs">Please enter your identity :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">
                     <input 
@@ -107,7 +107,7 @@ export default function SignUp(signUp:ContentToogle){
                         value={name}
                         onChange={(e)=> setName(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg"  
-                        placeholder="Name"/>
+                        placeholder="Enter your name"/>
                 </div>
                 <div className="my-2">
                     <select value={gender} className="select select-bordered lg:select-md select-sm w-full max-w-lg select-gender" onChange={(e)=> handleGender(e.target.value)}>
@@ -122,7 +122,7 @@ export default function SignUp(signUp:ContentToogle){
                         value={email}
                         onChange={(e)=> setEmail(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Email" />
+                        placeholder="Enter your email" />
                 </div>                              
                 <div className="form-control my-2">
                     {isShowPassword ? (
@@ -131,14 +131,14 @@ export default function SignUp(signUp:ContentToogle){
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Password" />
+                        placeholder="Enter your password" />
                     ) : (
                     <input 
                         type="password" 
                         value={password}
                         onChange={(e)=> setPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Password" />
+                        placeholder="Enter your password" />
                     )}                          
                 </div>
                 <div className="form-control my-2">
@@ -148,14 +148,14 @@ export default function SignUp(signUp:ContentToogle){
                         value={confirmPassword}
                         onChange={(e)=> setConfirmPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Confirm Password" />
+                        placeholder="Confirm password" />
                     ) : (
                     <input 
                         type="password" 
                         value={confirmPassword}
                         onChange={(e)=> setConfirmPassword(e.target.value)}
                         className="input lg:input-md input-sm w-full max-w-lg" 
-                        placeholder="Confirm Password" />
+                        placeholder="Confirm password" />
                     )}
                     
                 </div>
@@ -166,15 +166,15 @@ export default function SignUp(signUp:ContentToogle){
                         <option value={"User"}>User</option>
                     </select>
                 </div>
-                <div className="flex justify-between my-2">
+                <div className="flex justify-between my-4">
                     <div>
                         {!isMutating ? (
                         <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Submit
+                            Sign up
                         </button>
                         ) : (
                         <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Submit...
+                            Sign up...
                         </button>
                         )}       
                     </div>
@@ -192,7 +192,7 @@ export default function SignUp(signUp:ContentToogle){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">You have an Account? <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign-In</a> Here.</p>
+                <p className="text-white lg:text-base text-xs">Already have an Account? <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleClickSignIn}>Sign in</a></p>
             </div>
         </>
     )

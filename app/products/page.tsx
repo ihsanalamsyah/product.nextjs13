@@ -1,29 +1,23 @@
 'use server'
 
 import AddProduct from "../components/products/addProduct";
-import TableProduct from "../components/products/tableProduct";
+import CardProduct from "../components/products/cardProduct";
 import WelcomeMessage from "../components/products/welcomeMessage";
 import Navbar from "@/app/components/products/navbar";
 import { supabase } from '@/utils/supabase';
 import { cookies } from 'next/headers';
 
+
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default async function Products(){
+    
     const cookieStore = cookies();
     const token = cookieStore.get('token')?.value ?? "";
     const email = cookieStore.get('email')?.value ?? "";
     let isAdmin = false;
     async function getUserDetail(token: string, email: string){
-        let user: Users[] = [{
-            id: 0,
-            name: "",
-            email: "",
-            password: "",
-            gender: "",
-            role: "",
-            phone: 0
-        }];    
+        let user: Users[] = [];    
         try {             
             const response = await fetch(`${route}/userDetail`, {
                 method: 'POST',
@@ -67,7 +61,8 @@ export default async function Products(){
             </div>
             <hr></hr>
             <div>
-                <TableProduct users={users}/>
+                <CardProduct users={users}/>
+                {/* <TableProduct users={users}/> */}
             </div>         
         </div> 
         </> 

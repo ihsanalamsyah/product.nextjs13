@@ -8,6 +8,9 @@ import Logout from "@/app/components/logout";
 import { supabase } from '@/utils/supabase';
 import { getCookie } from '@/utils/cookies';
 import { useSearchParams } from "next/navigation";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
@@ -27,7 +30,7 @@ export default function Navbar(navbar: Navbar){
         if(users[0].role == "Admin"){         
             return router.push("/admin");
         }else{
-            return router.push("/products?category=phone");
+            return router.push("/products?category=handphone");
         }
         
     }
@@ -36,7 +39,7 @@ export default function Navbar(navbar: Navbar){
         if(users[0].role == "Admin"){
             return router.push("/admin");
         }else{
-            return router.push("/products?category=phone");
+            return router.push("/products?category=handphone");
         }
         
     }
@@ -144,8 +147,8 @@ export default function Navbar(navbar: Navbar){
                             <li className="text-black">
                                 <a><b>Category</b></a>
                                 <ul className="p-2">
-                                    <li className="text-black"><a onClick={handleCategoryPhone}>Phone</a></li>
-                                    <li className="text-black"><a onClick={handleCategoryVideo}>Video</a></li>
+                                    <li className="text-black"><a onClick={handleCategoryPhone}><p>Handphone</p></a></li>
+                                    <li className="text-black"><a onClick={handleCategoryVideo}><p>Video</p></a></li>
                                 </ul>
                             </li>
                         ) : (
@@ -153,7 +156,7 @@ export default function Navbar(navbar: Navbar){
                         )}        
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl text-white" onClick={handleHomePage}>Produku.id</a>
+                <a className="btn btn-ghost text-xl text-white" onClick={handleHomePage}><InventoryIcon className="text-gray-300" /><p>Produku.id</p></a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -163,7 +166,7 @@ export default function Navbar(navbar: Navbar){
                     <details ref={detailsRef}>
                         <summary className="text-white"><b>Category</b></summary>
                         <ul className="p-2">
-                            <li><a onClick={handleCategoryPhone}>Phone</a></li>
+                            <li><a onClick={handleCategoryPhone}>Handphone</a></li>
                             <li><a onClick={handleCategoryVideo}>Video</a></li>
                         </ul>
                     </details>
@@ -199,23 +202,18 @@ export default function Navbar(navbar: Navbar){
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between" onClick={handleChangeProfile}>Profile</a>
+                            <a onClick={handleChangeProfile}><AccountCircleIcon/><p>Profile</p></a>
                         </li>
                         <li>
-                            <a onClick={handleChangeLogout}>Logout</a>
+                            <a onClick={handleChangeLogout}><LogoutIcon/><p>Logout</p></a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
        
-        <Logout modalLogout={modalLogout} handleChangeLogout={handleChangeLogout}/>
-        {
-        users.length > 0 
-        && 
-        <Profile modalProfile={modalProfile} handleChangeProfile={handleChangeProfile} name={users[0].name!} phone={users[0].phone!} user_id={users[0].id!}/> 
-        }
-             
+        <Logout modalLogout={modalLogout} handleChangeLogout={handleChangeLogout}/> 
+        <Profile modalProfile={modalProfile} handleChangeProfile={handleChangeProfile} name={users[0].name!} phone={users[0].phone!} user_id={users[0].id!}/>     
         </>   
     )
 }

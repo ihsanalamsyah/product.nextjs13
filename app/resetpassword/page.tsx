@@ -1,9 +1,8 @@
-'use client'
+'use server'
 
 import FormResetPassword from "@/app/components/formResetPassword";
 
-export default function ResetPassword() {
-
+export default async function ResetPassword() {
   return (
     <>
       <div className="lg:w-screen w-full h-screen bg-gradient-to-b from-gray-400 to-gray-900 ">

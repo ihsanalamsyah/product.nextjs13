@@ -54,7 +54,7 @@ export default function ResetPassword(resetPassword: ContentToogle){
     }
     return (
         <>
-            <h1 className="lg:text-4xl text-xl text-white">Reset Password.</h1>
+            <h1 className="lg:text-4xl text-xl text-white">Enter Email.</h1>
             <h1 className="text-white my-1 lg:text-base text-xs">Please Enter Email Correctly :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">

@@ -98,7 +98,7 @@ export default function AddProduct( addProduct: AddProduct){
     }
     return (
         <div>
-            <button className="btn mx-2" onClick={handleChange}>Add New</button>
+            <button className="btn mx-2" onClick={handleChange}>+ Add New</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
 
@@ -115,18 +115,18 @@ export default function AddProduct( addProduct: AddProduct){
                             <label className="label font-bold">Category</label>
                             <select value={category} className="select select-bordered w-full max-w-lg select-category" onChange={(e)=> handleCategory(e.target.value)}>
                                 <option disabled value={""}>Choose Category</option>
-                                <option value={"Phone"}>Phone</option>
+                                <option value={"Handphone"}>Handphone</option>
                                 <option value={"Video"}>Video</option>
                             </select>
                         </div>
                         <div className="form-control">
-                            <label className="label font-bold">Title</label>
+                            <label className="label font-bold">Product Name</label>
                             <input 
                             type="text" 
                             value={title}
                             onChange={(e)=> setTitle(e.target.value)}
                             className="input w-full input-bordered"  
-                            placeholder="Product Name"/>
+                            placeholder="Enter product name"/>
                         </div>
                         <div className="form-control">
                             <label className="label font-bold">Price</label>
@@ -135,7 +135,7 @@ export default function AddProduct( addProduct: AddProduct){
                                 value={price}
                                 onChange={(e)=> handlePrice(Number(e.target.value))}
                                 className="input w-full input-bordered" 
-                                placeholder="Price" />
+                                placeholder="Enter price" />
                         </div>
                         <div className="form-control">
                             <label className="label font-bold">Quantity</label>
@@ -144,7 +144,7 @@ export default function AddProduct( addProduct: AddProduct){
                                 value={quantity}
                                 onChange={(e)=>handleQuantity(Number(e.target.value))}
                                 className="input w-full input-bordered" 
-                                placeholder="Quantity" />
+                                placeholder="Enter quantity" />
                         </div>
                         <div className="modal-action">
                             <button type="button" className="btn" onClick={handleChange}>

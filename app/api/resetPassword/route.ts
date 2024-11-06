@@ -20,7 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if(resetPassword.error != null){
             return NextResponse.json({status: "Failed", msg: "Failed redirect"}, {status: 404});
         } 
-        return NextResponse.json({status: "OK", msg: "Success Check Email for Reset Password"}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "Success, please check your email"}, {status: 200});
              
     }
     catch (error){
