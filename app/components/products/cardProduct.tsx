@@ -1,14 +1,12 @@
 'use client'
 
 import moment from "moment";
-import DeleteProduct from "@/app/components/products/deleteProduct";
 import EnrollProduct from "@/app/components/products/enrollProduct";
-import OpenProduct from "@/app/components/products/openProduct";
-import UpdateProduct from "@/app/components/products/updateProduct";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
@@ -100,9 +98,11 @@ export default function CardProduct(cardProduct: CardProduct){
                                 }
                                 return(<div className="card static bg-base-100 lg:w-80 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
                                     <figure className="h-44 w-full bg-gray-200 flex">
-                                        <img
+                                        <Image
                                             src={product.video_url!}
-                                            alt="Shoes" />
+                                            alt={`Product Image ${product.id}`}
+                                            width={300}
+                                            height={250}/>
                                     </figure>
                                     <div className="card-body">
                                         <h2 className="card-title">
@@ -128,13 +128,17 @@ export default function CardProduct(cardProduct: CardProduct){
                                 return(<div className="card static bg-base-100 lg:w-80 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
                                     <figure className="h-44 w-full bg-gray-200">
                                         {product.category == "Video" ? (
-                                            <img
+                                            <Image
                                                 src={product.video_url!}
-                                                alt="Shoes" />
+                                                alt={`Product Image ${product.id}`}
+                                                width={300}
+                                                height={250}/>
                                         ) : (
-                                            <img
+                                            <Image
                                                 src={product.image_url!}
-                                                alt="Product Image"/>
+                                                alt={`Product Image ${product.id}`}
+                                                width={300}
+                                                height={250}/>
                                         )}
                                     </figure>
                                     <div className="card-body">

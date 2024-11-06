@@ -1,7 +1,7 @@
 'use client'
 import { useSearchParams } from "next/navigation";
 
-export default function welcomeMessage(welcomeMessage: WelcomeMessage){
+export default function WelcomeMessage(welcomeMessage: WelcomeMessage){
     const searchParam = useSearchParams();
     const category = searchParam.get("category")!;
     return (

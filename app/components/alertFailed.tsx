@@ -7,15 +7,13 @@ export default function AlertFailed(alertFailed: Alert){
     if(!alertFailed.visible){
         return null;
     }
-    useEffect(() => {
-        if (visible) {
-            const timer = setTimeout(() => {
-                onClose();
-            }, duration);
+    if (visible) {
+        const timer = setTimeout(() => {
+            onClose();
+        }, duration);
 
-            return () => clearTimeout(timer);
-        }
-    }, [visible, duration, onClose]);
+        clearTimeout(timer);
+    }
     return (
         <> 
         <div role="alert" className="alert alert-error gap-0.5 lg:gap-1 p-2 lg:p-4">
