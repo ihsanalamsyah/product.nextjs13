@@ -104,7 +104,7 @@ export default function Drawer(navbar: Navbar){
     }
     useEffect(()=>{
         const fetchData =  async ()=>{ 
-           
+            const token = getCookie("token");
             const imageUrl:string = await getImageUrl(users[0]?.id!);
             setUrlImageProfile(imageUrl);
             const isSuccessImage = await checkImageUrl(token!, imageUrl);
