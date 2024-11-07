@@ -2,24 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { supabase } from "@/utils/supabase";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-    let dataResult:MapUserProduct[] = [{
-        product_id: 0,
-        title: "",
-        price: 0,
-        quantity: 0,
-        category: "",
-        user_id: 0,
-        enroll_date: null,
-        user_id2: 0,
-        name: "",
-        email: "",
-        password: "",
-        gender: "",
-        role: "",
-        search: "",
-        image_url: "",
-        video_url: ""
-    }];
+    let dataResult:MapUserProduct[] = [];
     try {
         const body:MapUserProduct = await req.json();
         const response = await supabase

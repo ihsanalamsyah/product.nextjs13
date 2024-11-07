@@ -39,14 +39,14 @@ export default function SignIn(signIn: ContentToogleSignIn){
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            setCookie("token", content.token, 7);
-            setCookie("email", content.data.email, 7);
+            setCookie("token", content.data.token, 7);
+            setCookie("email", content.data.user.email, 7);
             setCookie("category", "Video", 7);
             setAlertMessage(content.msg);
             setIsAlertVisible(true);
             setAlertStatus(content.status);
             resetForm();
-            if(content.data.role == "Admin"){
+            if(content.data.user.role == "Admin"){
                 return router.push("/admin");
             }else{
                 return router.push("/products?category=handphone");
@@ -64,7 +64,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
         
     }
 
-    function handleShowPassword(e: ChangeEvent<HTMLInputElement>){
+    function handleShowPassword(e: ChangeEvent<HTMLInputElement>){ 
         const checkbox = e.target.checked;
         if(checkbox){
             setIsShowPassword(true);

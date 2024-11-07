@@ -2,12 +2,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { supabase } from '@/utils/supabase';
 
 export async function POST(req: NextRequest, res: NextResponse) {
-    let result:DynamicResult =  {
-        status: "",
-        msg: "",
-        errorMessage: "",
-        data: []
-    }
     try {
         const url = new URL(req.url);
         const searchParams = new URLSearchParams(url.searchParams);
@@ -20,27 +14,18 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 .eq('row_status', true)
                 .limit(1)
             if(error != null){
-                result.status = "Failed";
-                result.msg = "Error fetch product";
-                result.errorMessage = error?.message;
-                return NextResponse.json(result, { status: 400 });
+                return NextResponse.json({status: "Failed", msg: "Error fetch product", errorMessage: error.message} as DynamicResult, {status: 400});
             }
             if(data.length <= 0){
-                result.status = "Failed";
-                result.msg = "Product is not exists";
-                return NextResponse.json(result, { status: 400 });
+                return NextResponse.json({status: "Failed", msg: "Product is not exists", errorMessage: "Product is not exists"} as DynamicResult, {status: 400}); 
             }
-            result.status = "OK";
-            result.msg = `Get Product ${id}`;
-            result.data = data;
-            return NextResponse.json(result,{ status: 200 } );
+            return NextResponse.json({status: "OK", msg: `Get Product ${id}`, data: data} as DynamicResult, {status: 200});
+        }else{
+            return NextResponse.json({status: "OK", msg: "Search param not exists", errorMessage: "Search param not exists"} as DynamicResult, {status: 400});
         }
     }
     catch(error) {
-        result.status = "Failed";
-        result.msg = "Failed Product Detail";
-        result.errorMessage = error as string; 
-        return NextResponse.json(result);
+        return NextResponse.json({status: "Failed", msg: "Failed Product Detail", errorMessage: error} as DynamicResult, {status: 400});
+      
     }
-    return NextResponse.json(result);
 }

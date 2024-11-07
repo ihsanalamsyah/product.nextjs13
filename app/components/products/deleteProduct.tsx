@@ -51,8 +51,8 @@ export default function DeleteProduct(product: Products){
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
-                    <h3 className="font-bold text-2xl text-gray-800 mb-4">
-                        Are you sure you want to delete {product.title}?
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">
+                        Are you sure delete {product.title}?
                     </h3>
                     
                     <div className="modal-action mt-6 flex justify-end space-x-2">
@@ -69,7 +69,7 @@ export default function DeleteProduct(product: Products){
                                 onClick={() => handleDelete(product.id!)} 
                                 className="btn bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
                             >
-                                Delete
+                                Yes
                             </button>
                         ) : (
                             <button 

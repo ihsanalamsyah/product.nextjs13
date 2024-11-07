@@ -101,7 +101,7 @@ export default function Tracker() {
   }, []);
   return (
     <>
-      <div>
+      <div className='w-auto'>
           <canvas ref={canvasRef}></canvas>
       </div>     
     </>

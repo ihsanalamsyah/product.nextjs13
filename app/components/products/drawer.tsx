@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import Profile from "@/app/components/products/profile";
-import Logout from "@/app/components/logout";
 import { supabase } from '@/utils/supabase';
-import { getCookie } from '@/utils/cookies';
+import { getCookie, deleteCookie } from '@/utils/cookies';
 import WelcomeMessage from "@/app/components/products/welcomeMessage";
 import AddProduct from "@/app/components/products/addProduct";
 import TableProduct from "@/app/components/products/tableProduct";
@@ -28,6 +27,7 @@ export default function Drawer(navbar: Navbar){
     const [urlImageProfile, setUrlImageProfile] = useState("");
     const [users, setUsers] = useState<Users[]>(navbar.users);
     const router = useRouter();
+    const token = getCookie("token");
     const [isSuccessImage, setIsSuccessImage] = useState(false);
     const [page, setPage] = useState("");
     const [isDrawerOpen, setDrawerOpen] = useState(true);
@@ -45,7 +45,7 @@ export default function Drawer(navbar: Navbar){
         setModalProfile(!modalProfile);
     }
     function handleChangeLogout(){
-        setModalLogout(!modalLogout);
+        handleLogout(token!);
     }
     const toggleDrawer = () => {
         setDrawerOpen(!isDrawerOpen);
@@ -83,9 +83,28 @@ export default function Drawer(navbar: Navbar){
         }
         return isSuccessImage;
     }
+    async function handleLogout(token:string){
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            deleteCookie("token");
+            deleteCookie("email");
+            deleteCookie("category");
+            return router.push("/");
+        }
+        else{
+            return router.push("/products");   
+        }
+    }
     useEffect(()=>{
         const fetchData =  async ()=>{ 
-            const token = getCookie("token");
+           
             const imageUrl:string = await getImageUrl(users[0]?.id!);
             setUrlImageProfile(imageUrl);
             const isSuccessImage = await checkImageUrl(token!, imageUrl);
@@ -99,12 +118,12 @@ export default function Drawer(navbar: Navbar){
     }, [users, isAdmin]);
     return (
         <>
-        <div className="drawer">
+        <div className="drawer lg:drawer-open">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggleDrawer}/>
             <div className="drawer-content flex flex-col items-center">
                 <div className="navbar">
                     <div className="navbar-start">
-                        <label htmlFor="my-drawer" className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition" onChange={toggleDrawer}>
+                        <label htmlFor="my-drawer" className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition block lg:hidden" onChange={toggleDrawer}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-6 w-6 text-gray-700"
@@ -224,8 +243,7 @@ export default function Drawer(navbar: Navbar){
                     )}  
                 </ul>
             </div>
-        </div>   
-        <Logout modalLogout={modalLogout} handleChangeLogout={handleChangeLogout}/>
+        </div>
         <Profile modalProfile={modalProfile} handleChangeProfile={handleChangeProfile} name={users[0].name!} phone={users[0].phone!} user_id={users[0].id!}/>
         </>   
     )

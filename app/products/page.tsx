@@ -1,8 +1,8 @@
 'use server'
 
-import AddProduct from "../components/products/addProduct";
-import CardProduct from "../components/products/cardProduct";
-import WelcomeMessage from "../components/products/welcomeMessage";
+import AddProduct from "@/app/components/products/addProduct";
+import CardProduct from "@/app/components/products/cardProduct";
+import WelcomeMessage from "@/app/components/products/welcomeMessage";
 import Navbar from "@/app/components/products/navbar";
 import { supabase } from '@/utils/supabase';
 import { cookies } from 'next/headers';

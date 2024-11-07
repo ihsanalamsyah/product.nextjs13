@@ -13,10 +13,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
         // if (error != null) {
         //     return NextResponse.json({ status: "error", msg: "Error get images", errorMessage: error.message }, { status: 400 });
         // }
-        return NextResponse.json({status: "OK", msg: "Success get image"}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "Success get image"} as DynamicResult, {status: 200});
              
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: error} as DynamicResult, {status: 400});
     }
 }

@@ -7,11 +7,11 @@ export default function WelcomeMessage(welcomeMessage: WelcomeMessage){
     return (
         <>
             {welcomeMessage.isAdmin ? (
-            <p><b>Welcome to the Admin Dashboard, {welcomeMessage.name}! </b></p>
+            <p><b>Welcome to Admin Dashboard, {welcomeMessage.name}! </b></p>
             ) : category.toLowerCase() == "handphone" ? (
-            <p><b>Welcome to the handphone products, {welcomeMessage.name}!</b></p>
+            <p><b>Welcome to handphone products, {welcomeMessage.name}!</b></p>
             ) : category.toLowerCase() == "video" ? (
-            <p><b>Welcome to the video products, {welcomeMessage.name}!</b></p>
+            <p><b>Welcome to video products, {welcomeMessage.name}!</b></p>
             ) : 
             <></>
             }

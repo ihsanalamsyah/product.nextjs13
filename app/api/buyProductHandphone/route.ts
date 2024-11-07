@@ -14,7 +14,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .eq("email", body.email!)
             .limit(1)
         if(user.error != null){
-            return NextResponse.json({ status: "Failed", msg: "Error fetch product", errorMessage: user.error?.message }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: "Error fetch product", errorMessage: user.error?.message } as DynamicResult, { status: 400 });
         }
         const user_id:number = user.data[0].id;
         const product = await supabase
@@ -23,13 +23,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .eq("id", body.product_id!)
             .limit(1)
         if(product.error != null){
-                return NextResponse.json({ status: "Failed", msg: "Error fetch product", errorMessage: product.error?.message }, { status: 400 });
+                return NextResponse.json({ status: "Failed", msg: "Error fetch product", errorMessage: product.error?.message } as DynamicResult, { status: 400 });
         }
         let quantityProduct: number = product.data[0].quantity;
         quantityProduct = quantityProduct - body.quantity!;
 
         if(quantityProduct < 0){
-            return NextResponse.json({ status: "Failed", msg: "Product cannot < 0", errorMessage: "Product quantity cannot < 0" }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: "Product quantity < 0", errorMessage: "Product quantity < 0" } as DynamicResult, { status: 400 });
         }
 
         const updateQty = await supabase
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .eq("id", body.product_id!)
             .select()
         if(updateQty.error != null){
-            return NextResponse.json({ status: "Failed", msg: "Error update qty product", errorMessage: updateQty.error?.message }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: "Error update qty product", errorMessage: updateQty.error?.message } as DynamicResult, { status: 400 });
         }
         
         const getMapUserProduct = await supabase
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .eq("user_id", user_id)
             .limit(1)
         if(getMapUserProduct.error != null){
-            return NextResponse.json({ status: "Failed", msg: "Error get map user product", errorMessage: getMapUserProduct.error?.message }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: "Error get map user product", errorMessage: getMapUserProduct.error?.message } as DynamicResult, { status: 400 });
         }
         
         if(getMapUserProduct.data?.length! > 0){

@@ -3,15 +3,7 @@ import { supabase } from '@/utils/supabase';
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
-        let result:Users[] = [{
-            id: 0,
-            name : "",
-            email: "",
-            gender: "",
-            password: "",
-            role: "", 
-            phone: 0
-        }];
+        let result:Users[] = [];
         const body:Users = await req.json();
         if(body.email != "" || body.email != null){
             const {data, error} = await supabase
@@ -20,7 +12,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 .eq("email", body.email)
                 .limit(1)
             if(error != null){
-                return NextResponse.json({ status: "Failed",  msg: "Error fetch user", errorMessage: error?.message}, { status: 400 });
+                return NextResponse.json({ status: "Failed",  msg: "Error fetch user", errorMessage: error.message} as DynamicResult, { status: 400 });
             }
             result = data;
         }else{
@@ -28,13 +20,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
                 .from('users')
                 .select("*")
             if(error != null){
-                return NextResponse.json({ status: "Failed", msg: "Error fetch user", errorMessage: error?.message }, { status: 400 });
+                return NextResponse.json({ status: "Failed", msg: "Error fetch user", errorMessage: error.message } as DynamicResult, { status: 400 });
             }
             result = data;
         }
-        return NextResponse.json({status: "OK", msg: "Get all user", data: result}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "Get all user", data: result} as DynamicResult, {status: 200});
     }
     catch(error) {
-        return NextResponse.json({status: "Failed", msg: "Failed User Detail", errorMessage: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: "Failed post user detail", errorMessage: error} as DynamicResult, {status: 400});
     }
 }

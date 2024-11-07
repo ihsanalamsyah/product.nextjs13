@@ -1,10 +1,10 @@
 'use client'
 
-import SignUp from "./components/signUp";
-import SignIn from "./components/signIn";
-import GoogleSignIn from "./components/googleSignIn";
+import SignUp from "@/app/components/signUp";
+import SignIn from "@/app/components/signIn";
+import GoogleSignIn from "@/app/components/googleSignIn";
 import ResetPassword from "@/app/components/resetPassword";
-import BePartOfUs from "./components/bePartOfUs";
+import BePartOfUs from "@/app/components/bePartOfUs";
 import { useState } from "react";
 
 export default function Home() {

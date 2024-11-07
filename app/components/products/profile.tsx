@@ -114,8 +114,8 @@ export default function Profile(profile: Profile){
         <>
             <input type="checkbox" checked={profile.modalProfile} onChange={profile.handleChangeProfile} className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Update profile {name}</h3>
+                <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
+                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Update profile {name}</h3>
                     {alertStatus == "Failed" ? (
                         <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>         
                     ): (
@@ -124,37 +124,54 @@ export default function Profile(profile: Profile){
                     <div>
                         <form onSubmit={handleUpdate}>
                             <div className="form-control">
-                                <label className="label font-bold">Username</label>
+                                <label className="label font-semibold text-gray-700 mb-1">Username</label>
                                 <input 
                                     type="text" 
                                     value={name}
                                     onChange={(e)=> setName(e.target.value)}
-                                    className="input w-full input-bordered"  
-                                    placeholder="Enter username"/>
+                                    className="input w-full input-bordered border-gray-300 rounded-md"  
+                                    placeholder="Username"/>
                             </div>
                             <div className="form-control">
-                                <label className="label font-bold">Phone</label>
+                                <label className="label font-semibold text-gray-700 mb-1">Phone</label>
                                 <input 
                                     type="text" 
                                     value={phone}
                                     onChange={(e)=> setPhone(Number(e.target.value))}
-                                    className="input w-full input-bordered" 
-                                    placeholder="Enter phone" />
+                                    className="input w-full input-bordered border-gray-300 rounded-md" 
+                                    placeholder="Phone Number" />
                             </div>
-                            <div>
-                                <label className="label font-bold">Upload Image User</label>      
-                                <input className="" id="file_input" onChange={handleFileChange} type="file" name="image" accept="image/*"/>          
+                            <div className="form-control">
+                                <label className="label font-semibold text-gray-700 mb-1">Upload Image User</label>      
+                                <input 
+                                    className="file-input file-input-bordered w-full border-gray-300 rounded-md" 
+                                    id="file_input" 
+                                    onChange={handleFileChange}
+                                    type="file" 
+                                    name="image" 
+                                    accept="image/*"
+                                 />          
                             </div>   
-                            <div className="modal-action">
-                                <button type="button" className="btn" onClick={profile.handleChangeProfile}>
+                            <div className="modal-action mt-6 flex justify-end space-x-2">
+                                <button
+                                    type="button" 
+                                    className="btn bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300" 
+                                    onClick={profile.handleChangeProfile}
+                                 >
                                     Close
                                 </button>
                                 {!isMutating ? (
-                                <button type="submit" className="btn btn-primary">
+                                <button 
+                                    type="submit"
+                                    className="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                                 >
                                     Update
                                 </button>
                                 ) : (
-                                <button type="button" className="btn loading">
+                                <button 
+                                    type="button"
+                                    className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
+                                 >
                                     Updating...
                                 </button>
                                 )}                                        

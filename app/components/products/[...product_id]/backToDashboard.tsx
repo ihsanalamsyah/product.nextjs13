@@ -38,8 +38,8 @@ export default function BackToDashboard(backToDashboard: BackToDashboard){
         if(isAdmin){
             return router.push("/admin");
         }else{
-            if(backToDashboard.category == "phone"){
-                return router.push("/products?category=phone");
+            if(backToDashboard.category == "handphone"){
+                return router.push("/products?category=handphone");
             }else{
                 return router.push("/products?category=video");
             }   

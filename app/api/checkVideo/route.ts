@@ -7,13 +7,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
         const response = await fetch(body.video_url);
         if(response.ok){
-            return NextResponse.json({status: "OK", msg: "Success check image"}, {status: 200});
+            return NextResponse.json({status: "OK", msg: "Success check video"} as DynamicResult, {status: 200});
         }else{
-            return NextResponse.json({status: "Failed", msg: "Failed check image, Image is not exists"}, {status: 404});
+            return NextResponse.json({status: "Failed", msg: "Video not exists"} as DynamicResult, {status: 404});
         }
              
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: error} as DynamicResult, {status: 400});
     }
 }

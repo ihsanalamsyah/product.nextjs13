@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import Profile from "@/app/components/products/profile";
-import Logout from "@/app/components/logout";
 import { supabase } from '@/utils/supabase';
-import { getCookie } from '@/utils/cookies';
+import { getCookie, deleteCookie } from '@/utils/cookies';
 import { useSearchParams } from "next/navigation";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -23,6 +22,7 @@ export default function Navbar(navbar: Navbar){
     const [users, setUsers] = useState<Users[]>(navbar.users);
     const category = searchParam.get("category")!;
     const router = useRouter();
+    const token = getCookie("token");
     const [isSuccessImage, setIsSuccessImage] = useState(false);
     const [searchQuery, setSearchQuery] = useState(searchParam.get("search")! ?? "");
 
@@ -56,7 +56,7 @@ export default function Navbar(navbar: Navbar){
         setModalProfile(!modalProfile);
     }
     function handleChangeLogout(){
-        setModalLogout(!modalLogout);
+        handleLogout(token!);
     }
     const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -107,6 +107,25 @@ export default function Navbar(navbar: Navbar){
             console.error('Error fetching data:', error);
         }
         return isSuccessImage;
+    }
+    async function handleLogout(token:string){
+        const response = await fetch(`${route}/logout`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ token
+            }
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            deleteCookie("token");
+            deleteCookie("email");
+            deleteCookie("category");
+            return router.push("/");
+        }
+        else{
+            return router.push("/products");   
+        }
     }
     useEffect(()=>{
         
@@ -177,9 +196,13 @@ export default function Navbar(navbar: Navbar){
                 </ul>
             </div>
             <div className="navbar-end">
-                <div className="form-control">
-                    <input type="text" placeholder="Search" value={searchQuery} className="input input-bordered w-24 md:w-auto" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
-                </div>
+                {users[0].role == "User" ? (
+                    <div className="form-control">
+                        <input type="text" placeholder="Search" value={searchQuery} className="input input-bordered w-24 md:w-auto" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full border-white">
@@ -211,8 +234,6 @@ export default function Navbar(navbar: Navbar){
                 </div>
             </div>
         </div>
-       
-        <Logout modalLogout={modalLogout} handleChangeLogout={handleChangeLogout}/> 
         <Profile modalProfile={modalProfile} handleChangeProfile={handleChangeProfile} name={users[0].name!} phone={users[0].phone!} user_id={users[0].id!}/>     
         </>   
     )

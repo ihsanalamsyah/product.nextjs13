@@ -19,26 +19,26 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .select("*")
             .eq('email', body.email)
         if (resultAlreadyExists.data!.length! > 0){
-            return NextResponse.json({status: "Failed",  msg: "Email already exist", data: resultAlreadyExists.data!}, {status: 400});
+            return NextResponse.json({status: "Failed",  msg: "Email already exist", data: resultAlreadyExists.data!} as DynamicResult, {status: 400});
         }
-        const resultInsert  = await supabase
+        const insertUsers  = await supabase
             .from('users')
             .insert(result)
-        if (resultInsert.error != null){
-            return NextResponse.json({ status: "Failed", msg: "Error insert new user",  errorMessage: resultInsert.error?.message}, { status: 400 });
+        if (insertUsers.error != null){
+            return NextResponse.json({ status: "Failed", msg: "Error insert new user",  errorMessage: insertUsers.error.message} as DynamicResult, { status: 400 });
         }
         let { data, error } = await supabase.auth.signUp({
             email: body.email!,
             password: body.password!
         })
         if(error != null){
-            return NextResponse.json({ status: "Failed", msg: "Error sign up", erorrMessage: error?.message }, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: "Error sign up", errorMessage: error.message} as DynamicResult, { status: 400 });
         }
         
-        return NextResponse.json({status: "OK", msg: "User success created. Please check your email, confirm and then login"}, {status: 200});
+        return NextResponse.json({status: "OK", msg: "User success created. Check your email"} as DynamicResult, {status: 200});
      
     }
     catch (error){
-        return NextResponse.json({status: "Failed", msg: "Failed Sign Up", errorMessage: error}, {status: 400});
+        return NextResponse.json({status: "Failed", msg: "Failed Sign Up", errorMessage: error} as DynamicResult, {status: 400});
     }
 }
