@@ -2,14 +2,39 @@
 
 import moment from "moment";
 import EnrollProduct from "@/app/components/products/enrollProduct";
+import OpenProduct from "@/app/components/products/openProduct";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
-import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
-
+async function GetUserProduct(token: string, email: string, category: string, searchQuery: string):Promise<MapUserProduct[]> {
+    let userAndProduct:MapUserProduct[] = [];
+    try {             
+        const response = await fetch(`${route}/mapUserProduct`, {
+            method: 'POST',
+            cache: 'no-store',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                category: category,
+                search: searchQuery
+            })
+        });
+        const content = await response.json();
+        
+        userAndProduct = content.data;
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    return userAndProduct;
+};
 export default function CardProduct(cardProduct: CardProduct){
     const searchParam = useSearchParams();
     const [mapUserProducts, setMapUserProducts] = useState<MapUserProduct[]>([]);
@@ -20,40 +45,11 @@ export default function CardProduct(cardProduct: CardProduct){
     const [isProductEmpty, setIsProductEmpty] = useState(false);
     const router = useRouter();
 
-    async function getUserProduct(token: string, email: string, category: string, searchQuery: string) {
-        let userAndProduct:MapUserProduct[] = [];
-        try {             
-            const response = await fetch(`${route}/mapUserProduct`, {
-                method: 'POST',
-                cache: 'no-store',
-                headers:{
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    category: category,
-                    search: searchQuery
-                })
-            });
-            const content = await response.json();
-            
-            userAndProduct = content.data;
-            
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-    
-        return userAndProduct;
-    };
-    function handleOpen(product_id: number){
-        return router.push(`products/${product_id}`); 
-     }
     useEffect(()=>{    
         const fetchData =  async ()=>{    
             const token = getCookie("token");
             const email = getCookie("email");
-            const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!, searchQuery!);
+            const mapUserProducts: MapUserProduct[] = await GetUserProduct(token!, email!, category!, searchQuery!);
             setMapUserProducts(mapUserProducts);
             if(mapUserProducts.length <= 0){
                 setIsProductEmpty(true);
@@ -64,7 +60,9 @@ export default function CardProduct(cardProduct: CardProduct){
         }
         fetchData();
     }, [category,searchQuery,cardProduct.users]);
-   
+    function handleOpen(product_id: number, category:string){
+        return router.push(`products/${product_id}?category=${category?.toLowerCase()}`); 
+     }
     return (
         <>
           {isProductEmpty ? (
@@ -74,7 +72,7 @@ export default function CardProduct(cardProduct: CardProduct){
                     <div className="flex justify-center my-2"><p>Product is empty, Please contact <b>admin</b> to add some </p></div>
                 )              
                 ) : (
-                    <div className="grid gap-x-8 gap-y-4 lg:grid-cols-4 grid-cols-1">   
+                    <div className="grid gap-x-5 gap-y-4 lg:grid-cols-5 grid-cols-2">   
                          {mapUserProducts.map((mapUserProduct)=>{
                             const today = new Date();
                             const enroll_date = mapUserProduct.enroll_date;            
@@ -85,35 +83,36 @@ export default function CardProduct(cardProduct: CardProduct){
                             }
                             const price: number = mapUserProduct.price!;
                             let stringPrice:string = price.toString().replace(/\./g, '');
-                            stringPrice = "Rp. "+ stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00";
+                            stringPrice = "Rp" + stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                             if(dateDiff > 3 && mapUserProduct.category == "Video"){
                                 const product: Products = {
                                     id: mapUserProduct.product_id!,
                                     category: mapUserProduct.category,
                                     price: mapUserProduct.price!,
                                     title: mapUserProduct.title!,
+                                    description: mapUserProduct.description,
                                     quantity: mapUserProduct.quantity,
                                     image_url: mapUserProduct.image_url,
                                     video_url: mapUserProduct.video_url
                                 }
-                                return(<div className="card static bg-base-100 lg:w-80 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
-                                    <figure className="h-44 w-full bg-gray-200 flex">
+                                return(
+                                <div className="card static bg-base-100 lg:w-64 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
+                                    <figure className="lg:min-h-44 min-h-36 w-full bg-gray-200">
                                         <Image
-                                            src={product.video_url!}
-                                            alt={`Product Image ${product.id}`}
+                                            src={product.image_url!}
+                                            alt={product.image_url! ? `Product Image ${product.id}` : ""}
+                                            className="min-w-full min-h-full max-w-full max-h-full p-0 box-border border-none m-auto w-0 h-0"
                                             width={300}
                                             height={250}/>
                                     </figure>
-                                    <div className="card-body">
-                                        <h2 className="card-title">
-                                        {product.title}
-                                        </h2>
-                                        <p>Price: {stringPrice}</p>
+                                    <div className="card-body lg:min-h-44 min-h-36 p-3">
+                                        <p className="lg:text-base text-xs">{product.title}</p>
+                                        <p className="lg:text-base text-xs font-bold">{stringPrice}</p>
                                         <div className="card-actions justify-end">
                                             <EnrollProduct user={users[0]} product={product}/>
                                         </div>
-                                    </div>
-                                    </div>)
+                                    </div> 
+                                </div>)
                             }
                             else{
                                 const product: Products = {
@@ -121,42 +120,44 @@ export default function CardProduct(cardProduct: CardProduct){
                                     category: mapUserProduct.category,
                                     price: mapUserProduct.price!,
                                     title: mapUserProduct.title!,
+                                    description: mapUserProduct.description,
                                     quantity: mapUserProduct.quantity,
                                     image_url: mapUserProduct.image_url,
                                     video_url: mapUserProduct.video_url
                                 }
-                                return(<div className="card static bg-base-100 lg:w-80 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
-                                    <figure className="h-44 w-full bg-gray-200">
-                                        {product.category == "Video" ? (
-                                            <Image
-                                                src={product.video_url!}
-                                                alt={`Product Image ${product.id}`}
-                                                width={300}
-                                                height={250}/>
-                                        ) : (
-                                            <Image
-                                                src={product.image_url!}
-                                                alt={`Product Image ${product.id}`}
-                                                width={300}
-                                                height={250}/>
-                                        )}
+                                return(
+                                <div className="card static bg-base-100 lg:w-64 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
+                                    <figure title={product.category == "Video" ? "Watch Now" : "Open Detail"} className="lg:min-h-44 min-h-36 w-full bg-gray-200">
+                                        <Image
+                                            src={product.image_url!}
+                                            alt={product.image_url! != "" ? `Product Image ${product.id}` : ""}
+                                            className="min-w-full min-h-full max-w-full max-h-full p-0 box-border border-none m-auto w-0 h-0 cursor-pointer"
+                                            onClick={()=> handleOpen(product.id!, product.category!)}
+                                            width={300}
+                                            height={250}/>
                                     </figure>
-                                    <div className="card-body">
-                                        <h2 className="card-title">
+                                    <div className="card-body lg:min-h-44 min-h-36 p-3">
+                                        <p className="lg:text-base text-xs">
                                         {product.title}
                                         {product.category == "Video" ? (
-                                            <div className="badge badge-secondary">Enrolled</div>
+                                            <div className="badge gap-2 px-3 py-1 text-xs font-semibold text-white bg-pink-500 rounded-lg shadow-md">Enrolled</div>
                                         ) : (
                                             <></>
                                         )}
-                                        </h2>
-                                        <p>Price: {stringPrice}</p>
-                                        <div className="card-actions justify-end">
+                                        </p>
+                                        <p className="lg:text-base text-xs font-bold">{stringPrice}</p>
                                         {product.category == "Video" ? (
-                                            <button className="btn btn-success mx-1 w-max" onClick={()=> handleOpen(product.id!)}>Watch Now</button>
+                                        <>
+                                        </>
                                         ) : (
-                                            <button className="btn btn-success mx-1 w-max" onClick={()=> handleOpen(product.id!)}>Open Product</button>
-                                        )}  
+                                        <div className="flex items-center">
+                                            <div className="lg:text-base text-xs">{product.quantity} qty</div>
+                                            <span className="w-1 h-1 block mx-1 rounded-full bg-gray-400"></span>
+                                            <div className="lg:text-base text-xs">{mapUserProduct.sold_out} terjual</div>
+                                        </div>
+                                        )}
+                                        <div className="card-actions justify-end">
+                                            <OpenProduct id={product.id!} title={product.title!} price={product.price!} quantity={product.quantity!} description={product.description!} category={product.category!} video_url={""} image_url={""}/>  
                                         </div>
                                     </div>
                                 </div>)

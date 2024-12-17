@@ -69,16 +69,12 @@ export default function FormResetPassword(){
             setIsShowPassword(false);
         }
     }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
-    function handleForgotPassword(){
-        router.push(`/`);
-    }
+    const handleCloseAlert = () => setIsAlertVisible(false);
+    
     return (
         <>
             <h1 className="lg:text-4xl text-xl text-white">Reset Password</h1>
-            <h1 className="text-white my-1 lg:text-base text-xs">Update Your Password Correctly :</h1>
+            <h1 className="text-white my-1 lg:text-base text-xs">Update your password :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">
                 {isShowPassword ? (
@@ -117,12 +113,17 @@ export default function FormResetPassword(){
                 <div className="flex justify-between my-2">
                     <div>
                         {!isMutating ? (
-                        <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
+                        <button 
+                            type="submit" 
+                            className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                             Submit
                         </button>
                         ) : (
-                        <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Submit...
+                        <button 
+                            type="button" 
+                            className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                         </button>
                         )}       
                     </div>

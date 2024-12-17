@@ -1,15 +1,13 @@
 'use client'
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
-
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-export default function DeleteProduct(product: Products){
+export default function DeleteProduct(product: EditProduct){
     const [modal, setModal] = useState(false);
-    const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
     const token = getCookie("token");
     function handleChange(){
@@ -17,7 +15,6 @@ export default function DeleteProduct(product: Products){
     }
     
     async function handleDelete(product_id: number){
-    
         setIsMutating(true);
         const response = await fetch(`${route}/products`,{
             method: 'DELETE',
@@ -33,13 +30,11 @@ export default function DeleteProduct(product: Products){
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            router.refresh();
+            product.onUpdateTable();
             setModal(false);
         }
         else{
             setIsMutating(false);
-            router.refresh();
-            setModal(false);
             alert(content.msg);
         }
    
@@ -76,15 +71,11 @@ export default function DeleteProduct(product: Products){
                                 type="button" 
                                 className="btn bg-red-600 text-white px-4 py-2 rounded-md loading"
                             >
-                                Deleting...
                             </button>
                         )}
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     )
 }

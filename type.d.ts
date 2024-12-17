@@ -14,6 +14,7 @@ type Products = {
     category: string | null,
     title: string | null,
     price: number | null,
+    description: string | null,
     quantity: number | null,
     image_url: string | null,
     video_url: string | null
@@ -25,6 +26,7 @@ type MapUserProduct = {
     price: number | null,
     quantity: number | null,
     category: string | null,
+    description: string | null,
     user_id: number | null,
     enroll_date: Date | null,
     user_id2: number | null,
@@ -35,7 +37,11 @@ type MapUserProduct = {
     role: string | null,
     search: string | null,
     image_url: string | null,
-    video_url: string | null
+    video_url: string | null,
+    sold_out: number | null,
+    order_by1: string | null,
+    order_by2: string | null,
+    order_direction: string | null
 }
 
 type GetMapUserProduct = {
@@ -51,8 +57,8 @@ type GetUserProduct = {
     mapUserProducts: MapUserProduct[];
 }
 type WelcomeMessage = {
+    isAdmin: boolean,
     name: string,
-    isAdmin: boolean
 }
 
 type DynamicResult = {
@@ -71,18 +77,29 @@ type ImageComponent = {
     isAdmin: boolean,
     product_id: number
 }
-
-type CheckImage = {
-    image_url: string
+type EditProduct = {
+    id: number | null,
+    category: string | null,
+    title: string | null,
+    price: number | null,
+    description: string | null,
+    quantity: number | null,
+    image_url: string | null,
+    video_url: string | null,
+    onUpdateTable: any
+}
+type CheckContentProduct = {
+    content_url: string
 }
 type CheckVideo = {
     video_url: string
 }
-type DetailProductHandphone = {
+type DetailProduct = {
     id: number,
     title: string,
     price: number,
-    quantity: number
+    quantity: number,
+    description: string
 }
 
 type UploadImageProduct = {
@@ -118,11 +135,14 @@ type ImageProduct = {
     image_alt: string,
 }
 type AddProduct = {
-    isVisible: boolean
+    isVisible: boolean,
+    onUpdateTable: any
 }
 
 type TableProduct = {
-    users: Users[]
+    users: Users[],
+    onUpdateTable: any,
+    isUpdateTable: boolean
 }
 type CardProduct = {
     users: Users[]
@@ -133,7 +153,8 @@ type Navbar = {
 
 type VideoProduct = {
     isVisible: boolean,
-    video_url: string
+    video_url: string,
+    image_url: string
 }
 
 type Profile = {
@@ -142,6 +163,7 @@ type Profile = {
     user_id: number,
     name: string,
     phone: number,
+    onUpdateTable: any,
 }
 
 type Logout = {
@@ -166,4 +188,12 @@ type Datasets = {
 type MapTitleQtyDatasets = {
     title:string,
     quantity:number[]
+}
+
+type Upload={
+    file:File
+}
+
+type UploadThumbnail={
+    product_id: number,
 }

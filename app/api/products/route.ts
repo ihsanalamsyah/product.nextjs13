@@ -22,10 +22,14 @@ export async function GET() {
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
         const body:Products = await req.json();
-        const price = body.price as number;
+        let price = body.price!;
+        let stringPrice:string = price.toString().replace(/\./g, '');
+        price = Number(stringPrice);
         const quantity = body.quantity as number;
         const title = body.title as string;
         const category = body.category as string;
+        //jika undefined " " atau "" adalah false maka null
+        const description = !body.description?.trim() ? null : body.description;
         if(isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is not number"} as DynamicResult, {status: 400});
         }
@@ -42,6 +46,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             title: title,
             price: price,
             quantity: quantity,
+            description: description,
             user_id: null,
             enroll_date: null,
             row_status: true,
@@ -52,7 +57,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             .insert(dataProduct)
             .select()
         if(error != null){
-            return NextResponse.json({ status: "Failed", msg: error.message, errorMessage: error.message } as DynamicResult, { status: 400 });
+            return NextResponse.json({ status: "Failed", msg: error!.message, errorMessage: error!.message } as DynamicResult, { status: 400 });
         }
         return NextResponse.json({status: "OK", msg: "Product Created", data: data} as DynamicResult, {status: 200});
     }
@@ -64,17 +69,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
 export async function PATCH(req: NextRequest, res: NextResponse){
     try {
         const body:Products = await req.json();
-        let price = body.price as number;
+        let price = body.price!;
         let stringPrice:string = price.toString().replace(/\./g, '');
         price = Number(stringPrice);
         const quantity = body.quantity as number;
         const today = new Date();
+         //jika undefined " " atau "" adalah false maka null
+         const description = !body.description?.trim() ? null : body.description;
         if (isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price NaN"} as DynamicResult, {status: 400});
         }
         const { data, error } = await supabase
             .from("products")
-            .update({ title: body.title, price: price, quantity: quantity, row_status: true, updated_date: today})
+            .update({ title: body.title, price: price, quantity: quantity, description: description, row_status: true, updated_date: today})
             .eq("id", body.id)
             .select()
 

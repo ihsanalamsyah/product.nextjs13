@@ -8,9 +8,10 @@ Mempunyai validasi berupa, video hanya bisa diakses kurang dari 3 hari setelah p
 Technology yang digunakan:
 - NextJS
 - TypeScript
+- DaisyUI (Component Framework)
+- Tailwind (CSS)
+- MUI Icons (Icon)
 - Supabase (PostgreSQL)
-- DaisyUI (Component UI)
-- Tailwind
 - Token (JWT)
 - Vercel
 

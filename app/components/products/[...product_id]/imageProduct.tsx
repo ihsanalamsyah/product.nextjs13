@@ -4,18 +4,20 @@ import Image from "next/image";
 export default function ImageProduct(imageProduct: ImageProduct){
 
     return (          
-        <div className="w-1/2 h-screen bg-gradient-to-b from-gray-400 to-gray-900 flex">
+        <div className="flex lg:w-1/2 lg:h-screen bg-gradient-to-b from-gray-400 to-gray-900">
             {imageProduct.isVisible ? (
-            <figure className="bg-gray-200 w-3/4 mx-auto my-44 flex">
-                <Image
-                    src={imageProduct.image_url}
-                    alt={imageProduct.image_alt}
-                    width={300}
-                    height={200}
-                    className="m-auto"></Image>
-            </figure>
+            <div className="bg-inherit mx-auto lg:my-44 flex justify-center">
+                <div className="lg:w-[350px] w-[400px] lg:h-[350px] h-[400px] overflow-hidden rounded-md">
+                    <Image
+                        src={imageProduct.image_url}
+                        alt={imageProduct.image_alt}
+                        width={400}
+                        height={400}
+                        className="object-cover w-full h-full"></Image>
+                </div>
+            </div>
             ) : (
-            <div className="w-3/4 mx-auto h-screen"></div>
+            <div className="bg-inherit mx-auto lg:my-44 flex justify-center"></div>
             )}
         </div>      
     )

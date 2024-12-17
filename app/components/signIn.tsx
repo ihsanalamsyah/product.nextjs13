@@ -50,8 +50,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
                 return router.push("/admin");
             }else{
                 return router.push("/products?category=handphone");
-            }
-           
+            }       
         }
         else{            
             setIsMutating(false);
@@ -60,8 +59,7 @@ export default function SignIn(signIn: ContentToogleSignIn){
             setAlertStatus(content.status);
             resetForm();
             return router.push("/");
-        }
-        
+        }    
     }
 
     function handleShowPassword(e: ChangeEvent<HTMLInputElement>){ 
@@ -73,15 +71,12 @@ export default function SignIn(signIn: ContentToogleSignIn){
         }
     }
 
-    function handleClickSignUp(){
-        signIn.onToogle();
-    }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
-    function handleForgotPassword(){
-        signIn.onToogleResetPassword();
-    }
+    const handleClickSignUp = ()=> signIn.onToogle();
+    
+    const handleCloseAlert = () => setIsAlertVisible(false);
+
+    const handleForgotPassword = () => signIn.onToogleResetPassword();
+
     return (
         <>
             <h1 className="lg:text-4xl text-xl text-white">Sign in</h1>
@@ -115,12 +110,17 @@ export default function SignIn(signIn: ContentToogleSignIn){
                 <div className="flex justify-between my-4">
                     <div>
                         {!isMutating ? (
-                        <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
+                        <button 
+                            type="submit" 
+                            className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                             Continue
                         </button>
                         ) : (
-                        <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Continue...
+                        <button 
+                            type="button" 
+                            className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                         </button>
                         )}       
                     </div>

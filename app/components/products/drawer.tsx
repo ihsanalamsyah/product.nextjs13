@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, createContext } from "react";
 import Profile from "@/app/components/products/profile";
 import { supabase } from '@/utils/supabase';
 import { getCookie, deleteCookie } from '@/utils/cookies';
@@ -16,73 +16,99 @@ import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import styles from '@/app/styles/drawer.module.css';
-import InventoryIcon from '@mui/icons-material/Inventory';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
+async function GetUserDetail(token: string, email: string){
+    let user: Users[] = [];    
+    try {             
+        const response = await fetch(`${route}/userDetail`, {
+            method: 'POST',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        });
+        const content = await response.json();
+        
+        user = content.data;
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    return user;
+}
+async function GetImageUrl(user_id:number){
+    let imageUrl:string = "";
+    const { data } = supabase.storage
+        .from('images')
+        .getPublicUrl(`Foto-user-user_id-${user_id}.png`)
 
-export default function Drawer(navbar: Navbar){
-    const [modalLogout, setModalLogout] = useState(false);
+    if(data.publicUrl != ""){
+        imageUrl = data.publicUrl;
+    }
+    return imageUrl;
+}
+async function CheckImageUrl(token:string, image_url:string){
+    let isSuccessImage = false;
+    try{
+        const response = await fetch(`${route}/checkContentProduct`,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                content_url: image_url
+            })
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            isSuccessImage = true;
+        }
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return isSuccessImage;
+}
+
+export default function Drawer(){
     const [modalProfile, setModalProfile] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [urlImageProfile, setUrlImageProfile] = useState("");
-    const [users, setUsers] = useState<Users[]>(navbar.users);
+    const [users, setUsers] = useState<Users[]>([]);
+    const [tableDataUpdated, setTableDataUpdated] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
     const token = getCookie("token");
     const [isSuccessImage, setIsSuccessImage] = useState(false);
     const [page, setPage] = useState("");
     const [isDrawerOpen, setDrawerOpen] = useState(true);
     function handleHomePage(){
-        if(users[0].role == "Admin")       
+        if(users[0].role == "Admin"){
             return router.push("/admin");
-        else
+        }     
+        else{
             return router.push("/products?category=handphone");
-         
+        }    
     }
     function handleTrackerPage(){
         return router.push("/tracker");
     }
-    function handleChangeProfile(){
-        setModalProfile(!modalProfile);
-    }
-    function handleChangeLogout(){
-        handleLogout(token!);
-    }
-    const toggleDrawer = () => {
-        setDrawerOpen(!isDrawerOpen);
-    };
-    async function getImageUrl(user_id:number){
-        let imageUrl:string = "";
-        const { data } = supabase.storage
-            .from('images')
-            .getPublicUrl(`Foto-user-user_id-${user_id}.png`)
-    
-        if(data.publicUrl != ""){
-            imageUrl = data.publicUrl;
-        }
-        return imageUrl;
-    }
-    async function checkImageUrl(token:string, image_url:string){
-        let isSuccessImage = false;
-        try{
-            const response = await fetch(`${route}/checkImage`,{
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    image_url: image_url
-                })
-            });
-            const content = await response.json();
-            if(content.status == "OK"){
-                isSuccessImage = true;
-            }
-        }catch(error) {
-            console.error('Error fetching data:', error);
-        }
-        return isSuccessImage;
-    }
+    const handleChangeProfile = () => setModalProfile(!modalProfile);
+
+    const handleChangeLogout = () => handleLogout(token!);
+
+    const handleMouseEnter = () => setIsHovered(true);
+
+    const handleMouseLeave = () => setIsHovered(false);
+
+    const toggleDrawer = () => setDrawerOpen(!isDrawerOpen);
+
+    const handleUpdateTable = () => setTableDataUpdated(!tableDataUpdated);
+
     async function handleLogout(token:string){
         const response = await fetch(`${route}/logout`,{
             method: 'POST',
@@ -105,17 +131,20 @@ export default function Drawer(navbar: Navbar){
     useEffect(()=>{
         const fetchData =  async ()=>{ 
             const token = getCookie("token");
-            const imageUrl:string = await getImageUrl(users[0]?.id!);
+            const email = getCookie("email");
+            const user = await GetUserDetail(token!, email!);
+            const imageUrl:string = await GetImageUrl(user[0]?.id!);
             setUrlImageProfile(imageUrl);
-            const isSuccessImage = await checkImageUrl(token!, imageUrl);
+            const isSuccessImage = await CheckImageUrl(token!, imageUrl);
             setIsSuccessImage(isSuccessImage);
-            if(users[0]?.role == "Admin")
+            if(user[0]?.role == "Admin")
                 setIsAdmin(true);
 
             setPage(window.location.pathname.replace("/",""));
+            setUsers(user);
         }
         fetchData();
-    }, [users, isAdmin]);
+    }, [isAdmin, tableDataUpdated]);
     return (
         <>
         <div className="drawer lg:drawer-open">
@@ -171,14 +200,14 @@ export default function Drawer(navbar: Navbar){
                 { page == "admin" ? (
                     <div className="py-10 px-10 mt-2 w-full">
                         <div className="flex justify-center my-2">
-                            <WelcomeMessage name={users[0]?.name!} isAdmin={isAdmin}/>
+                            <WelcomeMessage name={users[0].name!} isAdmin={isAdmin}/>  
                         </div> 
                         <div className="py-2 flex flex-row-reverse">
-                            <AddProduct isVisible={isAdmin}/>
+                            <AddProduct isVisible={isAdmin} onUpdateTable={handleUpdateTable}/>
                         </div>
                         <hr></hr>
                         <div>
-                            <TableProduct users={users} />
+                            <TableProduct users={users} onUpdateTable={handleUpdateTable} isUpdateTable={tableDataUpdated}/>
                         </div>         
                     </div> 
                 ) : page == "tracker" ? ( 
@@ -190,9 +219,8 @@ export default function Drawer(navbar: Navbar){
             <div className={`drawer-side ${isDrawerOpen ? styles.drawerSideOn : ''}`}>
                 <ul className="menu bg-gray-800 text-white min-h-full w-56 p-4 space-y-4 shadow-lg">                 
                     <li>
-                        <a onClick={handleHomePage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
-                        <InventoryIcon className="text-gray-300" />
-                        <p className="text-lg font-semibold">Produku.id</p>
+                        <a onClick={handleHomePage} className={`flex items-center ${styles.activeNone}`}>
+                            <p className="text-xl font-semibold">Produku.id</p>
                         </a>
                     </li>
                     {page == "admin" ? (
@@ -200,34 +228,52 @@ export default function Drawer(navbar: Navbar){
                         <li>
                             <a onClick={handleHomePage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
                                 <HomeIcon className="text-white" />
-                                <p className="text-lg font-extrabold">Home</p>
+                                <p className="text-lg font-extrabold hover:font-extrabold">Home</p>
                             </a>
                         </li>
                         <li>
-                            <a onClick={handleTrackerPage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
-                                <TimelineOutlinedIcon className="text-gray-300" />
-                                <p className="text-lg">Tracker Handphone</p>
+                            <a 
+                                onClick={handleTrackerPage} 
+                                className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2"
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                {isHovered ? (
+                                    <TimelineOutlinedIcon className="text-white" />
+                                ) : (
+                                    <TimelineOutlinedIcon className="text-gray-300" />
+                                )}
+                                <p className="text-lg hover:font-extrabold">Tracker Handphone</p>
                             </a>
                         </li>
                     </>
                     ): page == "tracker"? (
                     <>
                         <li>
-                            <a onClick={handleHomePage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
-                                <HomeOutlinedIcon className="text-gray-300" />
-                                <p className="text-lg">Home</p>
+                            <a 
+                                onClick={handleHomePage} 
+                                className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2"
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                {isHovered ? (
+                                   <HomeIcon className="text-white" />
+                                ) : (
+                                    <HomeOutlinedIcon className="text-gray-300" />
+                                )}
+                                <p className="text-lg hover:font-extrabold">Home</p>
                             </a>
                         </li>
                         <li>
                             <a onClick={handleTrackerPage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
                                 <TimelineOutlinedIcon className="text-white" />
-                                <p className="text-lg font-extrabold">Tracker Handphone</p>
+                                <p className="text-lg font-extrabold hover:font-extrabold">Tracker Handphone</p>
                             </a>
                         </li>
                     </>
                     ): (
                     <>
-                            <li>
+                        <li>
                             <a onClick={handleHomePage} className="flex items-center space-x-2 hover:bg-gray-700 rounded-lg p-2">
                                 <HomeOutlinedIcon className="text-gray-300" />
                                 <p className="text-lg">Home</p>
@@ -244,7 +290,16 @@ export default function Drawer(navbar: Navbar){
                 </ul>
             </div>
         </div>
-        <Profile modalProfile={modalProfile} handleChangeProfile={handleChangeProfile} name={users[0].name!} phone={users[0].phone!} user_id={users[0].id!}/>
+        {users.length > 0 && 
+        <Profile
+            modalProfile={modalProfile} 
+            handleChangeProfile={handleChangeProfile} 
+            name={users[0]?.name!} 
+            phone={users[0]?.phone!} 
+            user_id={users[0]?.id!}
+            onUpdateTable={handleUpdateTable}
+        />
+        }
         </>   
     )
 }

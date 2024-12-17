@@ -30,12 +30,9 @@ export default function SignUp(signUp:ContentToogle){
         setGender("");
         setRole("");
     }
-    function handleGender(value: string){
-        setGender(value);   
-    }
-    function handleRole(value: string){
-        setRole(value);    
-    }
+    const handleGender = (value: string) => setGender(value);
+
+    const handleRole = (value: string)=> setRole(value);
   
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
@@ -90,12 +87,10 @@ export default function SignUp(signUp:ContentToogle){
             setIsShowPassword(false);
         }
     }
-    function handleClickSignIn(){
-        signUp.onToogle();
-    }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
+    const handleClickSignIn = () => signUp.onToogle();
+
+    const handleCloseAlert = () => setIsAlertVisible(false);
+    
     return (
         <>
             <h1 className="lg:text-4xl text-xl text-white">Sign up</h1>
@@ -169,12 +164,17 @@ export default function SignUp(signUp:ContentToogle){
                 <div className="flex justify-between my-4">
                     <div>
                         {!isMutating ? (
-                        <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
+                        <button 
+                            type="submit" 
+                            className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                             Sign up
                         </button>
                         ) : (
-                        <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Sign up...
+                        <button 
+                            type="button" 
+                            className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white"
+                        >
                         </button>
                         )}       
                     </div>

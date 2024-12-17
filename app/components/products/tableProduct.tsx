@@ -8,10 +8,38 @@ import UpdateProduct from "@/app/components/products/updateProduct";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
-
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
-
+async function GetUserProduct(token: string, email: string, category: string, searchQuery: string, orderBy1:string, orderBy2:string, orderDirection:string):Promise<MapUserProduct[]> {
+    let userAndProduct:MapUserProduct[] = [];
+    try {           
+        const response = await fetch(`${route}/mapUserProduct`, {
+            method: 'POST',
+            cache: 'no-store',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                category: category,
+                search: searchQuery,
+                order_by1: orderBy1,
+                order_by2: orderBy2,
+                order_direction: orderDirection
+            })
+        });
+        const content = await response.json();
+        
+        userAndProduct = content.data;
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    return userAndProduct;
+};
 export default function TableProduct(tableProduct: TableProduct){
     const searchParam = useSearchParams();
     const [mapUserProducts, setMapUserProducts] = useState<MapUserProduct[]>([]);
@@ -20,38 +48,15 @@ export default function TableProduct(tableProduct: TableProduct){
     const searchQuery = searchParam.get("search")!;
     const [isAdmin, setIsAdmin] = useState(false);
     const [isProductEmpty, setIsProductEmpty] = useState(false);
-  
-    async function getUserProduct(token: string, email: string, category: string, searchQuery: string) {
-        let userAndProduct:MapUserProduct[] = [];
-        try {             
-            const response = await fetch(`${route}/mapUserProduct`, {
-                method: 'POST',
-                cache: 'no-store',
-                headers:{
-                    'Authorization': 'Bearer '+ token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    category: category,
-                    search: searchQuery
-                })
-            });
-            const content = await response.json();
-            
-            userAndProduct = content.data;
-            
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-    
-        return userAndProduct;
-    };
+    const [orderBy1, setOrderBy1] = useState("category");
+    const [orderBy2, setOrderBy2] = useState("title");
+    const [orderDirection, setOrderDirection] = useState(true);
+
     useEffect(()=>{    
         const fetchData =  async ()=>{    
             const token = getCookie("token");
             const email = getCookie("email");
-            const mapUserProducts: MapUserProduct[] = await getUserProduct(token!, email!, category!, searchQuery!);
+            const mapUserProducts: MapUserProduct[] = await GetUserProduct(token!, email!, category!, searchQuery!, orderBy1, orderBy2, orderDirection ? "asc" : "desc");
             setMapUserProducts(mapUserProducts);
             if(mapUserProducts.length <= 0){
                 setIsProductEmpty(true);
@@ -61,8 +66,26 @@ export default function TableProduct(tableProduct: TableProduct){
             }
         }
         fetchData();
-    }, [category,searchQuery,tableProduct.users]);
-   
+    }, [category, searchQuery, orderBy1, orderBy2, orderDirection, tableProduct.users, tableProduct.isUpdateTable]);
+
+    const handleUpdateTable = () => tableProduct.onUpdateTable();
+    
+    function handleSort(sortByParam1:string, sortByParam2:string){
+        setOrderBy1(sortByParam1);
+        setOrderBy2(sortByParam2);
+        setOrderDirection(!orderDirection);
+    }
+    function SortIcon({ orderByParam }){
+        if(orderByParam == orderBy1){
+            if(orderDirection){
+                return(<ArrowUpwardIcon className="w-4 h-4 inline-block ml-1" />)
+            }else{
+                return(<ArrowDownwardIcon className="w-4 h-4 inline-block ml-1" />)
+            }
+        }else{
+            return(<ArrowUpwardIcon className="w-4 h-4 inline-block ml-1" />)
+        }
+    };
     return (
         <>
           {isProductEmpty ? (
@@ -76,38 +99,18 @@ export default function TableProduct(tableProduct: TableProduct){
                         <thead>
                             <tr>
                                 <th>No</th>
-                                {
-                                 isAdmin ? (
-                                    <th>Category</th>
-                                    ) : (
-                                    <></>
-                                    )   
-                                } 
-                                <th>Product Name</th>
-                                <th className="w-fit">Price</th>
-                                {
-                                    isAdmin ? (
-                                        <th>Quantity</th>
-                                    ) : (
-                                    category == "Handphone"  ? (
-                                        <th>Quantity</th>
-                                    ) : (
-                                        <></>
-                                    ) 
-                                    )
-                                }                  
+                                {isAdmin && 
+                                    <th title="Order By Category"><button onClick={() => handleSort("category", "title")}>Category <SortIcon orderByParam="category" /></button></th>
+                                }
+                                <th title="Order By Product Name"><button onClick={() => handleSort("title", "category")}>Product Name <SortIcon orderByParam="title" /></button></th>
+                                <th>Price</th>
+                                {(isAdmin || category === "Handphone") && 
+                                    <th>Quantity</th>
+                                }
                                 <th>Action</th>
-                                {
-                                    isAdmin ? (
-                                        <th>Enrolled By</th>
-                                    ) : (
-                                    category == "Video"  ? (
-                                        <th>Enrolled By</th>
-                                    ) : (
-                                        <></>
-                                    ) 
-                                    )
-                                }              
+                                {(isAdmin || category === "Video") && 
+                                    <th>Enrolled By</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>                 
@@ -122,7 +125,7 @@ export default function TableProduct(tableProduct: TableProduct){
                             }
                             const price: number = mapUserProduct.price!;
                             let stringPrice:string = price.toString().replace(/\./g, '');
-                            stringPrice = "Rp. "+ stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00";
+                            stringPrice = "Rp"+ stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                             if(role == "Admin"){
                                 return(<tr key={mapUserProduct.product_id!}>
                                     <th>{index + 1}</th>
@@ -137,12 +140,13 @@ export default function TableProduct(tableProduct: TableProduct){
                                     <th className="w-fit">{stringPrice}</th>
                                     <th>{mapUserProduct.quantity!}</th>
                                     <th className="flex">
-                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/>
-                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/>
-                                        <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!}  category={mapUserProduct.category!} video_url={""} image_url={""}/>
+                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable}/>
+                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable}/>
+                                        <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!}  category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""}/>
                                     </th>
+
                                     {mapUserProduct.category! == "Video" ? (
-                                        <th>{mapUserProduct.name ?? "No One"}</th>
+                                        <th>{dateDiff > 3 || mapUserProduct.name != null ? "No One" : mapUserProduct.name }</th>
                                     ) :(
                                         <th>Product handphone</th>
                                     )}             
@@ -155,6 +159,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                         category: "",
                                         price: mapUserProduct.price!,
                                         title: mapUserProduct.title!,
+                                        description: mapUserProduct.description,
                                         quantity: 0,
                                         image_url: "",
                                         video_url: ""
@@ -197,15 +202,6 @@ export default function TableProduct(tableProduct: TableProduct){
                                     </tr>)
                                 }
                                 else{
-                                    const product: Products = {
-                                        id: mapUserProduct.product_id!,
-                                        category: "",
-                                        price: mapUserProduct.price!,
-                                        title: mapUserProduct.title!,
-                                        quantity: 0,
-                                        image_url: "",
-                                        video_url: ""
-                                    }
                                     return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
                                         {
@@ -229,7 +225,7 @@ export default function TableProduct(tableProduct: TableProduct){
                                             )
                                         }                            
                                         <th className="flex">
-                                            <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} video_url={""} image_url={""}/> 
+                                            <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""}/> 
                                         </th>
                                         {
                                             isAdmin ? (

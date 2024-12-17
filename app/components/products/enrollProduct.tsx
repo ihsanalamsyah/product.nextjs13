@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import moment from 'moment';
 
@@ -48,26 +48,39 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
     }
     return (
         <div>
-            <button className="btn btn-info btn-sm mx-1 w-max" onClick={handleChange}>Enroll Now</button>
+            <button className="btn btn-info lg:btn-sm btn-xs mx-1 w-max" onClick={handleChange}>Enroll Now</button>
 
             <input type="checkbox" checked={modal} onChange={handleChange} className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are You Sure to Enroll This {enrollProduct.product.title} ?</h3>                                      
-                        <div className="modal-action">
-                            <button type="button" className="btn" onClick={handleChange}>
-                                Close
-                            </button>
-                            {!isMutating ? (
-                            <button type="button" onClick={()=> handleEnroll(enrollProduct.product.id!, enrollProduct.user.id!)} className="btn btn-primary">
-                                Enroll
-                            </button>
-                            ) : (
-                            <button type="button" className="btn loading">
-                                Enrolling...
-                            </button>
-                            )}                                         
-                        </div>              
+                <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
+                    <h3 className="font-bold text-lg">
+                        Are you sure enroll this {enrollProduct.product.title} ?
+                    </h3>
+                    <div className="modal-action mt-6 flex justify-end space-x-2">
+                        <button 
+                            type="button" 
+                            className="btn bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300" 
+                            onClick={handleChange}
+                        >
+                            Close
+                        </button>
+                        {!isMutating ? (
+                        <button 
+                            type="button" 
+                            onClick={()=> handleEnroll(enrollProduct.product.id!, enrollProduct.user.id!)}
+                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                            >
+                            Yes
+                        </button>
+                        ) : (
+                        <button 
+                            type="button" 
+                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
+                        >
+                            Enrolling...
+                        </button>
+                        )}                                         
+                    </div>              
                 </div>
             </div>
 

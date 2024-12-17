@@ -4,14 +4,13 @@ import { useState, SyntheticEvent } from "react";
 import { useRouter} from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import { ChangeEvent } from "react";
-import { supabase } from '@/utils/supabase';
 import AlertSuccess from "@/app/components/alertSuccess";
 import AlertFailed from "@/app/components/alertFailed";
-
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
-export default function UpdateProduct(product: Products){
+export default function UpdateProduct(product: EditProduct){
     const [title, setTitle] = useState(product.title!);
+    const [description, setDescription] = useState(product.description! ?? "");
     const priceProduct: number = product.price!;
     let stringPrice:string = priceProduct.toString().replace(/\./g, '');
     stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -21,93 +20,102 @@ export default function UpdateProduct(product: Products){
     const router = useRouter();
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
+    const [alertDuration, setAlertDuration] = useState(3000);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [isMutating, setIsMutating] = useState(false);
     const token = getCookie("token");
     function handleChange(){
         setModal(!modal);
-        setTitle(product.title!)
-        setPrice(stringPrice)
-        setQuantity(product.quantity!)
+        setTitle(product.title!);
+        setPrice(stringPrice);
+        setQuantity(product.quantity!);
+        setDescription(product.description! ?? "");
     }
     
-    const handleFileChange = async (e:ChangeEvent<HTMLInputElement>) => {
-
+    async function handleFileChange(e:ChangeEvent<HTMLInputElement>) {
         try{
             const fileInput = e.target;
             const files = fileInput.files;
             if (files && files.length > 0) {
                 const file = files[0];
-                let respUploadStorage: any;
-                if(product.category == "Video"){
-                    respUploadStorage = await supabase.storage
-                    .from('videos')
-                    .upload(`Video-product-product_id-${product.id}.mp4`, file!);
-                }else{
-                    respUploadStorage = await supabase.storage
-                    .from('images')
-                    .upload(`Foto-product-product_id-${product.id}.png`, file!);
-                }
-
-                if (respUploadStorage.error != null) {
-                    if(respUploadStorage.error.message == "The resource already exists"){
-                        let respUpdateStorage: any;
-                        
-                        if(product.category == "Video"){
-                            respUpdateStorage = await supabase
-                                .storage
-                                .from('videos')
-                                .update(`Video-product-product_id-${product.id}.mp4`, file!, {
-                                cacheControl: '3600',
-                                upsert: true
-                            })
-                        }else{
-                            respUpdateStorage = await supabase
-                                .storage
-                                .from('images')
-                                .update(`Foto-product-product_id-${product.id}.png`, file!, {
-                                cacheControl: '3600',
-                                upsert: true
-                            })
-                        }
-                        
-                        if(respUpdateStorage.error != null){
-                            setAlertMessage(respUpdateStorage.error.message);
-                            setAlertStatus("Failed");
-                            setIsAlertVisible(true);
-                            return console.error(respUpdateStorage.error.message);
-                        }else{
-                            setAlertMessage(`Success update image to product id ${product.id}`);
-                            setAlertStatus("OK");
-                            setIsAlertVisible(true);
-                        }
-                    }else{
-                        setAlertMessage(respUploadStorage.error.message);
-                        setAlertStatus("Failed");
-                        setIsAlertVisible(true);
-                    }               
-                }else{
-                    if(product.category == "Video"){
-                        setAlertMessage(`Success upload video to product id ${product.id}`);
-                        setAlertStatus("OK");
+                const product_id = product.id!.toString();
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('category', product.category!);
+                formData.append('product_id', product_id);
+                console.log("file Client", file);
+                const response = await fetch(`${route}/uploadContent`,{
+                    method: 'POST',
+                    headers: {
+                       'Authorization': 'Bearer '+ token,
+                    },
+                    body: formData
+                });
+                const content = await response.json();
+                if(content.status == "OK"){
+                    const response = await fetch(`${route}/uploadThumbnail`,{
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer '+ token
+                        },
+                        body: JSON.stringify({
+                            product_id: product_id
+                        })
+                    });
+                    const content = await response.json();
+                    if(content.status == "OK"){
+                        setAlertDuration(10000);
+                        setAlertMessage(content.msg);
+                        setAlertStatus(content.status);
                         setIsAlertVisible(true);
                     }else{
-                        setAlertMessage(`Success upload image to product id ${product.id}`);
-                        setAlertStatus("OK");
+                        setAlertDuration(10000);
+                        setAlertMessage(content.msg);
+                        setAlertStatus(content.status);
                         setIsAlertVisible(true);
                     }
-                }            
+                }
+                else{
+                    setAlertDuration(10000);
+                    setAlertMessage(content.msg);
+                    setAlertStatus(content.status);
+                    setIsAlertVisible(true);
+                }
             }
         } catch (error){
+            setAlertDuration(10000);
             setAlertMessage(error as string);
             setAlertStatus("Failed");
             setIsAlertVisible(true);
-            console.error(error);
-        }
-            
-    };
+        }       
+    }
     async function handleUpdate(e: SyntheticEvent){
         e.preventDefault();
+        if(Number.isNaN(price)){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Price is not a number");
+            return;
+        }
+        if(title == ""){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Title is required");
+            return;
+        }
+        if(Number(price) <= 0){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Price is required");
+            return;
+        }
+        if(quantity <= 0){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Quantity is required");
+            return;
+        }
         setIsMutating(true);
         const response = await fetch(`${route}/products`,{
             method: 'PATCH',
@@ -119,28 +127,26 @@ export default function UpdateProduct(product: Products){
                 id: product.id,
                 title: title,
                 price: price,
-                quantity: quantity
+                quantity: quantity,
+                description: description
             })
         });
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            router.refresh();
+            product.onUpdateTable();
             setModal(false);
         }
         else{
             setIsMutating(false);
-            router.refresh();
-            setModal(false);
             setAlertMessage(content.msg);
             setAlertStatus("Failed");
             setIsAlertVisible(true);
         }
    
     }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
+    const handleCloseAlert = () => setIsAlertVisible(false);
+
     function handlePrice(price:string){
         let stringPrice:string = price.toString().replace(/\./g, '');
         stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -156,9 +162,9 @@ export default function UpdateProduct(product: Products){
                     <h3 className="font-bold text-2xl mb-4 text-gray-800">Update {product.title}</h3>
                     <h1 className="text-md font-semibold text-gray-600 mb-6">Category: {product.category}</h1>
                     {alertStatus === "Failed" ? (
-                        <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} />         
+                        <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} duration={alertDuration} />
                     ) : (
-                        <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} />
+                        <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} duration={alertDuration} />
                     )}
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="form-control">
@@ -170,6 +176,16 @@ export default function UpdateProduct(product: Products){
                                 className="input w-full input-bordered border-gray-300 rounded-md"  
                                 placeholder="Product Name"
                             />
+                        </div>
+                        <div className="form-control">
+                            <label className="label font-semibold text-gray-700 mb-1">Description</label>
+                            <textarea 
+                                value={description}
+                                onChange={(e)=> setDescription(e.target.value)}
+                                className="textarea textarea-bordered w-full border-gray-300 rounded-md" 
+                                placeholder="Description"
+                            >
+                            </textarea>
                         </div>
                         <div className="form-control">
                             <label className="label font-semibold text-gray-700 mb-1">Price</label>
@@ -205,7 +221,7 @@ export default function UpdateProduct(product: Products){
                                     accept="video/*"
                                 />         
                             </div>
-                        ) : (
+                        ) : product.category === "Handphone" ? (
                             <div className="form-control">
                                 <label className="label font-semibold text-gray-700 mb-1">Upload Image Product</label>          
                                 <input 
@@ -217,7 +233,7 @@ export default function UpdateProduct(product: Products){
                                     accept="image/*"
                                 />     
                             </div>
-                        )}
+                        ) : <></>}
 
                         <div className="modal-action mt-6 flex justify-end space-x-2">
                             <button 
@@ -239,14 +255,12 @@ export default function UpdateProduct(product: Products){
                                     type="button" 
                                     className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
                                 >
-                                    Updating...
                                 </button>
                             )}
                         </div>
                     </form>
                 </div>
             </div>
-
         </div>
     )
 }

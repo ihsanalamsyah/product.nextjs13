@@ -1,6 +1,16 @@
 import { NextResponse, NextRequest } from "next/server";
 import { supabase } from "@/utils/supabase";
 
+async function ValidateImage(imageUrl:string):Promise<boolean>{
+    let result: boolean = false;
+    const response = await fetch(imageUrl);
+    if(response.ok){
+        result = true;
+        return result;
+    }else{
+        return result;
+    }
+}
 export async function POST(req: NextRequest, res: NextResponse) {
     let dataResult:MapUserProduct[] = [];
     try {
@@ -17,48 +27,58 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const search = body.search ?? "";
         const user:Users = response.data![0];
         if(user.role == "User"){
-            let responseGetUserProduct :any;
+            let getUserProduct :any;
             if(body.category?.toLowerCase() == "video"){
-                responseGetUserProduct = await supabase.rpc('get_products_users_video', {
+                getUserProduct = await supabase.rpc('get_products_users_video', {
                     email_args: body.email,
                     search_args: search
                 });
-                dataResult = responseGetUserProduct.data!;
+                dataResult = getUserProduct.data!;
                 for(let i = 0; i < dataResult.length; i++){
                     const getImageUrl = supabase.storage
-                        .from('images')
-                        .getPublicUrl(`Video-product_id-${dataResult[i].product_id}.mp4`);
-                
-                    dataResult[i].video_url =  getImageUrl.data.publicUrl;
+                        .from('videos')
+                        .getPublicUrl(`thumbnails/Thumbnail-video-product_id-${dataResult[i].product_id}.jpg`);
+                    const validateUrl = await ValidateImage(getImageUrl.data.publicUrl);
+                    if(validateUrl){
+                        dataResult[i].image_url =  getImageUrl.data.publicUrl;
+                    }else{
+                        dataResult[i].image_url =  "";
+                    }
                 }
             }else if(body.category?.toLowerCase() == "handphone"){
-                responseGetUserProduct = await supabase.rpc('get_products_users_phone', {
+                getUserProduct = await supabase.rpc('get_products_users_phone', {
                     search_args: search
                 });
-                dataResult = responseGetUserProduct.data!;
+                dataResult = getUserProduct.data!;
                 for(let i = 0; i < dataResult.length; i++){
                     const getImageUrl = supabase.storage
                         .from('images')
                         .getPublicUrl(`Foto-product-product_id-${dataResult[i].product_id}.png`);
-                
-                    dataResult[i].image_url =  getImageUrl.data.publicUrl;
+                    const validateUrl = await ValidateImage(getImageUrl.data.publicUrl);
+                    if(validateUrl){
+                        dataResult[i].image_url =  getImageUrl.data.publicUrl;
+                    }else{
+                        dataResult[i].image_url =  "";
+                    }
                 }
             }
 
-            if(responseGetUserProduct.error != null){
-                return NextResponse.json({status: "Failed", msg: "Error fetching data", errorMessage: responseGetUserProduct.error.message} as DynamicResult, {status: 300});
+            if(getUserProduct.error != null){
+                return NextResponse.json({status: "Failed", msg: "Error fetching data", errorMessage: getUserProduct.error.message} as DynamicResult, {status: 300});
             }               
         }
         else{
-            const { data, error } = await supabase.rpc('get_products_users_admin', {
-                search_args: search
+            const { data, error } = await supabase.rpc('get_products_users_admin',{
+                order_by1_args: body.order_by1,
+                order_by2_args: body.order_by2,
+                order_direction_args: body.order_direction,
             });
             if(error != null){
                 return NextResponse.json({status: "Failed", msg: "Error fetching data", errorMessage: error.message} as DynamicResult, {status : 300});
             }
-            dataResult = data!;
-           
+            dataResult = data!;  
         }
+        //console.log("dataResult",dataResult)
         return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult} as DynamicResult, {status : 200});
     }
     catch (error){

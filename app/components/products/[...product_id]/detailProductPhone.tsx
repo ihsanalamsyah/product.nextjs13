@@ -1,15 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getCookie } from '@/utils/cookies';
 import AlertFailed from '@/app/components/alertFailed';
 import AlertSuccess from '@/app/components/alertSuccess';
-import BackToDashboard from '@/app/components/products/[...product_id]/backToDashboard';
 
-export default function DetailProductPhone(detailProductPhone: DetailProductHandphone){
+export default function DetailProductPhone(detailProductPhone: DetailProduct){
     const [modal, setModal] = useState(false);
     const [isMutating, setIsMutating] = useState(false);
-    const [price, setPrice] = useState("");
+    const detailPrice: number = detailProductPhone.price;
+    let stringPrice:string = detailPrice.toString().replace(/\./g, '');
+    stringPrice = "Rp. " + stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00";
+    const [price, setPrice] = useState(stringPrice);
     const [quantityBuy, setQuantityBuy] = useState(0);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
@@ -19,19 +21,11 @@ export default function DetailProductPhone(detailProductPhone: DetailProductHand
     const token = getCookie("token");
     const email = getCookie("email");
 
-    useEffect(() => {
-        const price: number = detailProductPhone.price;
-        let stringPrice:string = price.toString().replace(/\./g, '');
-        stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        setPrice(stringPrice);
-    }, [detailProductPhone.price]);
-
-    function resetForm(){
-        setQuantityBuy(0);
-    }
+    const resetForm = () => setQuantityBuy(0);
+    
     function handlePlus(){
         if(quantity <= 0){
-            setAlertMessage("Product sudah habis");
+            setAlertMessage("Product is empty");
             setIsAlertVisible(true);
             setAlertStatus("Failed");
         }
@@ -52,7 +46,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProductHand
     
     function handleModalBuy(){
         if(quantityBuy <= 0){
-            setAlertMessage("Please add quantity first");
+            setAlertMessage("Add quantity");
             setIsAlertVisible(true);
             setAlertStatus("Failed");
         }else{
@@ -94,50 +88,61 @@ export default function DetailProductPhone(detailProductPhone: DetailProductHand
             resetForm();
         }
     }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
+
+    const handleCloseAlert = () => setIsAlertVisible(false);
+
     return(
-        <div className='flex flex-col justify-center w-1/2 m-16'>         
-            <p className="text-2xl font-medium tracking-wider underline underline-offset-1">Product Detail :</p>
-            <p className="text-5xl font-medium"><b>{detailProductPhone.title.toUpperCase()}</b></p>
+        <div className="flex flex-col justify-center lg:w-1/2 lg:p-16 p-6">         
+            <p className="lg:text-2xl lg:block hidden font-medium tracking-wider underline underline-offset-1">Product Detail :</p>
+            <p className="lg:text-5xl text-2xl font-medium"><b>{detailProductPhone.title.toUpperCase()}</b></p>
             <div className="flex justify-between">
-                <p className="text-2xl font-medium">Price : Rp. {price},00</p>
-                <p className="text-2xl font-medium">Quantity : {quantity}</p>
+                <p className="lg:text-2xl text-lg font-medium">Price : {price}</p>
             </div>  
              
             <hr className="border-y-1 border-gray-700"></hr>
             <br></br>
             <div className="collapse collapse-arrow border-base-300 bg-base-200 border lg:hidden grid">
                 <input type="checkbox" />
-                <div className="collapse-title"><p className="text-md lg:text-xl">View Product Description</p></div>
+                <div className="collapse-title"><p className="text-base lg:text-xl">View Product Description</p></div>
                 <div className="collapse-content">
-                    <p className="text-justify lg:text-base text-sm">
+                    {detailProductPhone.description != null ? (
+                    <p className="text-justify text-base">
+                        {detailProductPhone.description}
+                    </p>          
+                    ):(
+                    <p className="text-justify text-base">
                         Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
                         gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
                         Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
                         habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
-                        Metus orci ultrices dignissim, feugiat dis amet suspendisse.
-                    </p>
+                        Metus orci ultrices dignissim, feugiat dis amet suspendisse.    
+                    </p>          
+                    )}
                 </div>
             </div>
             <div className="lg:block hidden">
-                <p className="text-justify lg:text-base text-sm">
+                {detailProductPhone.description != null ? (
+                <p className="text-justify text-base">
+                    {detailProductPhone.description}
+                </p>          
+                ):(
+                <p className="text-justify text-base">
                     Lorem ipsum odor amet, consectetuer adipiscing elit. Interdum mollis cursus sed turpis risus,
                     gravida ornare nisl vulputate! Neque maecenas at enim praesent himenaeos lectus tellus. 
                     Nam non nibh duis mattis lorem. Vel dis sagittis id felis elementum nostra sapien rhoncus 
                     habitant. Curabitur tincidunt facilisis ullamcorper, felis ridiculus scelerisque. 
-                    Metus orci ultrices dignissim, feugiat dis amet suspendisse.
-                </p>
+                    Metus orci ultrices dignissim, feugiat dis amet suspendisse.    
+                </p>          
+                )}
             </div>
             <br></br>
             <hr className="border-y-1 border-gray-700 border-dashed"></hr>
-            <p className="text-2xl font-medium">Quantity :</p>
+            <p className="lg:text-2xl text-lg font-medium">Quantity : {quantity}</p>
             <br></br>
             <div className="join">
-                <button className="btn join-item btn-md w-24" onClick={handleMinus}><p className='text-2xl'>-</p></button>
-                <button className="btn join-item no-animation btn-md w-96"><p className='text-2xl'>{quantityBuy}</p></button>
-                <button className="btn join-item btn-md w-24" onClick={handlePlus}><p className='text-2xl'>+</p></button>
+                <button className="btn join-item btn-md lg:w-24" onClick={handleMinus}><p className='text-2xl'>-</p></button>
+                <button className="btn join-item no-animation !hover:none focus:none active:none btn-md lg:w-[27rem] w-64 "><p className='text-2xl'>{quantityBuy}</p></button>
+                <button className="btn join-item btn-md lg:w-24" onClick={handlePlus}><p className='text-2xl'>+</p></button>
             </div>
             <br></br>
             {quantity > 0 ? (
@@ -153,23 +158,34 @@ export default function DetailProductPhone(detailProductPhone: DetailProductHand
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <br></br>
-            <div className='flex'>
+            {/* <div className='flex'>
                 <BackToDashboard category={"handphone"}/>
-            </div>
+            </div> */}
             <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure want to buy {detailProductPhone.title} with quantity: {quantityBuy} ?</h3>
+                <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
+                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Are you sure want to buy {detailProductPhone.title} with quantity: {quantityBuy} ?</h3>
                     <div className="modal-action">
-                        <button type="button" className="btn" onClick={handleModalBuy}>
+                        <button 
+                            type="button" 
+                            className="btn bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300" 
+                            onClick={handleModalBuy}
+                        >
                             Close
                         </button>
                         {!isMutating ? (
-                        <button type="button" onClick={handleBuy} className="btn btn-primary">
+                        <button
+                            type="button" 
+                            onClick={handleBuy} 
+                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                        >
                             Buy
                         </button>
                         ) : (
-                        <button type="button" className="btn loading">
+                        <button 
+                            type="button" 
+                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
+                        >
                             Buying...
                         </button>
                         )}                 

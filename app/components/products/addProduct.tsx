@@ -1,18 +1,17 @@
 'use client'
 
 import { useState, SyntheticEvent } from "react";
-import { useRouter} from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import AlertSuccess from "@/app/components/alertSuccess";
 import AlertFailed from "@/app/components/alertFailed";
 
 export default function AddProduct( addProduct: AddProduct){
     const [title, setTitle] = useState("");
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState("0");
+    const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
     const [quantity, setQuantity] = useState(0);
     const [modal, setModal] = useState(false);
-    const router = useRouter();
     const [isMutating, setIsMutating] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
@@ -24,22 +23,50 @@ export default function AddProduct( addProduct: AddProduct){
     }
     function resetForm(){
         setTitle("");
-        setPrice(0);
+        setPrice("0");
         setQuantity(0);
         setCategory("");
-    }
-
-    function handleCategory(value: string){
-        setCategory(value); 
+        setDescription("");
     }
 
     async function handleSubmit(e: SyntheticEvent){
+        e.preventDefault();
         if(category == "Video" && quantity > 1){
             setAlertStatus("Failed");
             setIsAlertVisible(true);
-            return setAlertMessage("Cant submit, if video quantity cant more than 1");
+            setAlertMessage("Cant submit, if video quantity cant more than 1");
+            return;
         }
-        e.preventDefault();
+        if(Number.isNaN(price)){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Price is not a number");
+            return;
+        }
+        if(category == ""){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Category is required");
+            return;
+        }
+        if(title == ""){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Title is required");
+            return;
+        }
+        if(Number(price) <= 0){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Price is required");
+            return;
+        }    
+        if(quantity <= 0){
+            setAlertStatus("Failed");
+            setIsAlertVisible(true);
+            setAlertMessage("Quantity is required");
+            return;
+        }
         setIsMutating(true);
         const route = process.env.NEXT_PUBLIC_ROUTE;
                 
@@ -53,27 +80,27 @@ export default function AddProduct( addProduct: AddProduct){
                 category: category,
                 title: title,
                 price: price,
-                quantity: quantity
+                quantity: quantity,
+                description: description
             })
         });
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
             resetForm();
-            router.refresh();
+            addProduct.onUpdateTable();
             setModal(false);
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
+            return;
         }
         else{
             setIsMutating(false);
-            resetForm();
-            router.refresh();
-            setModal(false);
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
+            return;
         }
         
     }
@@ -81,18 +108,23 @@ export default function AddProduct( addProduct: AddProduct){
         if(category == "Video" && quantity > 1){
             setIsAlertVisible(true);
             setAlertStatus("Failed");
-            return setAlertMessage("If video, quantity cant more than 1"); 
+            setAlertMessage("If video, quantity cant more than 1");
+            return;
         }else{
-            return setQuantity(qty);
+            setQuantity(qty);
+            return;
         }
-        
     }
-    function handlePrice(price:number){
-        setPrice(price);
+
+    function handlePrice(price:string){
+        let stringPrice:string = price.toString().replace(/\./g, '');
+        stringPrice = stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        setPrice(stringPrice);
     }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
+    const handleCloseAlert = () => setIsAlertVisible(false);
+
+    const handleCategory = (value: string) => setCategory(value); 
+
     if(!addProduct.isVisible){
         return null;
     }
@@ -122,20 +154,32 @@ export default function AddProduct( addProduct: AddProduct){
                         <div className="form-control">
                             <label className="label font-semibold text-gray-700 mb-1">Product Name</label>
                             <input 
-                            type="text" 
-                            value={title}
-                            onChange={(e)=> setTitle(e.target.value)}
-                            className="input w-full input-bordered border-gray-300 rounded-md"  
-                            placeholder="Product Name"/>
+                                type="text" 
+                                value={title}
+                                onChange={(e)=> setTitle(e.target.value)}
+                                className="input input-bordered w-full border-gray-300 rounded-md"  
+                                placeholder="Product Name"
+                            />
+                        </div>
+                        <div className="form-control">
+                            <label className="label font-semibold text-gray-700 mb-1">Description</label>
+                            <textarea 
+                                value={description}
+                                onChange={(e)=> setDescription(e.target.value)}
+                                className="textarea textarea-bordered w-full border-gray-300 rounded-md" 
+                                placeholder="Description"
+                            >
+                            </textarea>
                         </div>
                         <div className="form-control">
                             <label className="label font-semibold text-gray-700 mb-1">Price</label>
                             <input 
                                 type="text" 
                                 value={price}
-                                onChange={(e)=> handlePrice(Number(e.target.value))}
+                                onChange={(e)=> handlePrice(e.target.value)}
                                 className="input w-full input-bordered border-gray-300 rounded-md" 
-                                placeholder="Price" />
+                                placeholder="Price" 
+                            />
                         </div>
                         <div className="form-control">
                             <label className="label font-semibold text-gray-700 mb-1">Quantity</label>
@@ -144,7 +188,8 @@ export default function AddProduct( addProduct: AddProduct){
                                 value={quantity}
                                 onChange={(e)=>handleQuantity(Number(e.target.value))}
                                 className="input w-full input-bordered border-gray-300 rounded-md" 
-                                placeholder="Quantity" />
+                                placeholder="Quantity" 
+                            />
                         </div>
                         <div className="modal-action">
                             <button
@@ -166,7 +211,6 @@ export default function AddProduct( addProduct: AddProduct){
                                 type="button" 
                                 className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
                             >
-                                Saving...
                             </button>
                             )}                  
                         </div>

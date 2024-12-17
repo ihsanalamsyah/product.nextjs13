@@ -10,12 +10,11 @@ import { useState } from "react";
 export default function Home() {
   const [isShowSignIn, setIsShowSignIn] = useState(true);
   const [isResetPassword, setIsResetPassword] = useState(false);
-  function toogleSignIn(){
-    setIsShowSignIn(!isShowSignIn);
-  }
-  function toogleResetPassword(){
-    setIsResetPassword(!isResetPassword);
-  }
+
+  const toogleSignIn = () => setIsShowSignIn(!isShowSignIn);
+
+  const toogleResetPassword = () => setIsResetPassword(!isResetPassword);
+  
   return (
     <>
       <div className="lg:w-screen w-full h-screen bg-gradient-to-b from-gray-400 to-gray-900 ">

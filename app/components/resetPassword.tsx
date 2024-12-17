@@ -13,9 +13,7 @@ export default function ResetPassword(resetPassword: ContentToogle){
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
 
-    function resetForm(){
-        setEmail("");
-    }
+    const resetForm =() => setEmail("");
    
     async function handleSubmit(e: SyntheticEvent){
         e.preventDefault();
@@ -46,16 +44,14 @@ export default function ResetPassword(resetPassword: ContentToogle){
         }
         
     }
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
-    function handleHomePage(){
-        resetPassword.onToogle();
-    }
+    const handleCloseAlert = () => setIsAlertVisible(false);
+    
+    const handleHomePage = () => resetPassword.onToogle();
+
     return (
         <>
-            <h1 className="lg:text-4xl text-xl text-white">Enter Email.</h1>
-            <h1 className="text-white my-1 lg:text-base text-xs">Please Enter Email Correctly :</h1>
+            <h1 className="lg:text-4xl text-xl text-white">Enter email</h1>
+            <h1 className="text-white my-1 lg:text-base text-xs">Please enter email :</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-control my-2">
                 <input
@@ -70,11 +66,11 @@ export default function ResetPassword(resetPassword: ContentToogle){
                     <div>
                         {!isMutating ? (
                         <button type="submit" className="btn btn-success lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Submit
+                            Reset Password
                         </button>
                         ) : (
                         <button type="button" className="btn loading lg:btn-sm btn-xs lg:px-6 lg:pb-6 lg:pt-2 text-white">
-                            Submit...
+                            Reset Password...
                         </button>
                         )}       
                     </div>
@@ -86,7 +82,7 @@ export default function ResetPassword(resetPassword: ContentToogle){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
             )}
             <div className="my-1">
-                <p className="text-white lg:text-base text-xs">Click <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleHomePage}>here</a> to go back to the homepage.</p>
+                <p className="text-white lg:text-base text-xs">Remember your password? <a className="hover:underline text-blue-300 cursor-pointer" onClick={handleHomePage}>Login here</a></p>
             </div>
         </>
     )

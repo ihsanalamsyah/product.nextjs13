@@ -3,38 +3,37 @@
 import { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto'
 import { getCookie } from '@/utils/cookies';
+
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
+async function GetHistoryBuyProduct(token: string) {
+  let historyBuyProduct:GetHistoryBuyProduct[] = [];
+  try {             
+    const response = await fetch(`${route}/getTracker`, {
+        method: 'GET',
+        headers:{
+            'Authorization': 'Bearer '+ token,
+            'Content-Type': 'application/json'
+        }
+    });
+    const content = await response.json();
+      
+    historyBuyProduct = content.data;
+      
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+
+  return historyBuyProduct;
+};
 export default function Tracker() {
   const chartRef = useRef<Chart | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   
-  async function getHistoryBuyProduct(token: string) {
-    let historyBuyProduct:GetHistoryBuyProduct[] = [];
-    try {             
-      const response = await fetch(`${route}/getTracker`, {
-          method: 'GET',
-          headers:{
-              'Authorization': 'Bearer '+ token,
-              'Content-Type': 'application/json'
-          }
-      });
-      const content = await response.json();
-        
-      historyBuyProduct = content.data;
-        
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-
-    return historyBuyProduct;
-  };
-
   useEffect(() =>{
-     
     const fetchData =  async ()=>{    
       const token = getCookie("token");
-      const historyBuyProduct: GetHistoryBuyProduct[] = await getHistoryBuyProduct(token!);
+      const historyBuyProduct: GetHistoryBuyProduct[] = await GetHistoryBuyProduct(token!);
       const labels:string[] = [];
       const datasets:Datasets[] = [];
       for(let i = 0; i < historyBuyProduct.length; i++){
@@ -58,8 +57,7 @@ export default function Tracker() {
               dataset.data[dateIndex] += item.total_quantity;
           }
       });
-      
-      
+        
       const data = {
         labels: labels,
         datasets: datasets

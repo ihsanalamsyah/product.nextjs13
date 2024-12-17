@@ -1,72 +1,55 @@
 'use client'
 
-import { useState, SyntheticEvent, useEffect } from "react";
-import { useRouter} from "next/navigation";
+import { useState, SyntheticEvent } from "react";
 import { getCookie } from '@/utils/cookies';
-import { ChangeEvent } from "react";
-import { supabase } from '@/utils/supabase';
+import { ChangeEvent, useMemo } from "react";
 import AlertSuccess from "@/app/components/alertSuccess";
 import AlertFailed from "@/app/components/alertFailed";
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 
 export default function Profile(profile: Profile){
-    const router = useRouter();
     const [id, setId] = useState(profile.user_id);
     const [name, setName] = useState(profile.name);
     const [phone, setPhone] = useState(profile.phone);
     const token = getCookie("token");
-    const email = getCookie("email");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [isMutating, setIsMutating] = useState(false);
-    const [modalProfile, setModalProfile] = useState(profile.modalProfile);
+    const profileName = useMemo(() => profile.name, [profile.name]);
+    
+    const handleCloseAlert = () => setIsAlertVisible(false);
 
-    function handleCloseAlert(){
-        setIsAlertVisible(false);
-    }
-    const handleFileChange = async (e:ChangeEvent<HTMLInputElement>) => {
-
+    async function handleFileChange (e:ChangeEvent<HTMLInputElement>):Promise<void> {
         try{
             const fileInput = e.target;
             const files = fileInput.files;
             if (files && files.length > 0) {
                 const file = files[0];
-                let respUploadStorage: any = await supabase.storage
-                    .from('images')
-                    .upload(`Foto-user-user_id-${id}.png`, file!);
-               
-                if (respUploadStorage.error != null) {
-                    if(respUploadStorage.error.message == "The resource already exists"){
-                        let respUpdateStorage: any = await supabase
-                            .storage
-                            .from('images')
-                            .update(`Foto-user-user_id-${id}.png`, file!, {
-                            cacheControl: '3600',
-                            upsert: true
-                        });
-                                            
-                        if(respUpdateStorage.error != null){
-                            setAlertMessage(respUpdateStorage.error.message);
-                            setAlertStatus("Failed");
-                            setIsAlertVisible(true);
-                            return console.error(respUpdateStorage.error.message);
-                        }else{
-                            setAlertMessage(`Success upload image user ${name}`);
-                            setAlertStatus("OK");
-                            setIsAlertVisible(true);
-                        }
-                    }else{
-                        setAlertMessage(respUploadStorage.error.message);
-                        setAlertStatus("Failed");
-                        setIsAlertVisible(true);
-                    }               
-                }else{
-                    setAlertMessage(`Success upload image user ${name}`);
-                    setAlertStatus("OK");
+                const user_id = id!.toString();
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('user_id', user_id);
+                console.log("file Client Profile Picture", file);
+                const response = await fetch(`${route}/uploadProfilePicture`,{
+                    method: 'POST',
+                    headers: {
+                       'Authorization': 'Bearer '+ token,
+                    },
+                    body: formData
+                });
+                const content = await response.json();
+                if(content.status == "OK"){
+                    setAlertMessage(content.msg);
+                    setAlertStatus(content.status);
                     setIsAlertVisible(true);
-                }            
+                }
+                else{
+                    setAlertMessage(content.msg);
+                    setAlertStatus(content.status);
+                    setIsAlertVisible(true);
+                }           
             }
         } catch (error){
             setAlertMessage(error as string);
@@ -76,7 +59,7 @@ export default function Profile(profile: Profile){
         }
             
     };
-    async function handleUpdate(e: SyntheticEvent){
+    async function handleUpdate(e: SyntheticEvent):Promise<void>{
         e.preventDefault();
         setIsMutating(true);
         const response = await fetch(`${route}/users`,{
@@ -94,28 +77,26 @@ export default function Profile(profile: Profile){
         const content = await response.json();
         if(content.status == "OK"){
             setIsMutating(false);
-            router.refresh();
             profile.handleChangeProfile();
+            profile.onUpdateTable();
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
         }
         else{
             setIsMutating(false);
-            router.refresh();
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
         }
     }
     
-    
     return (
         <>
             <input type="checkbox" checked={profile.modalProfile} onChange={profile.handleChangeProfile} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
-                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Update profile {name}</h3>
+                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Update profile {profileName}</h3>
                     {alertStatus == "Failed" ? (
                         <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>         
                     ): (
@@ -130,7 +111,8 @@ export default function Profile(profile: Profile){
                                     value={name}
                                     onChange={(e)=> setName(e.target.value)}
                                     className="input w-full input-bordered border-gray-300 rounded-md"  
-                                    placeholder="Username"/>
+                                    placeholder="Username"
+                                />
                             </div>
                             <div className="form-control">
                                 <label className="label font-semibold text-gray-700 mb-1">Phone</label>
@@ -139,7 +121,8 @@ export default function Profile(profile: Profile){
                                     value={phone}
                                     onChange={(e)=> setPhone(Number(e.target.value))}
                                     className="input w-full input-bordered border-gray-300 rounded-md" 
-                                    placeholder="Phone Number" />
+                                    placeholder="Phone Number"
+                                />
                             </div>
                             <div className="form-control">
                                 <label className="label font-semibold text-gray-700 mb-1">Upload Image User</label>      
@@ -172,7 +155,6 @@ export default function Profile(profile: Profile){
                                     type="button"
                                     className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
                                  >
-                                    Updating...
                                 </button>
                                 )}                                        
                             </div>
