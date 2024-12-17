@@ -16,6 +16,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const [alertDuration, setAlertDuration] = useState(3000);
     const [quantity, setQuantity] = useState(detailProductPhone.quantity);
     const route = process.env.NEXT_PUBLIC_ROUTE;
     const token = getCookie("token");
@@ -76,6 +77,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
             setModal(false);
             setAlertMessage(content.msg);
             setIsAlertVisible(true);
+            setAlertDuration(10000);
             setAlertStatus(content.status);
             resetForm();
         }
@@ -84,6 +86,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
             setModal(false);
             setAlertMessage(content.msg);
             setIsAlertVisible(true);
+            setAlertDuration(10000);
             setAlertStatus(content.status);
             resetForm();
         }
@@ -153,14 +156,11 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
             
             <br></br>
             {alertStatus == "Failed" ? (
-                <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+                <AlertFailed message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} duration={alertDuration}/>
             ): (
-                <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert}/>
+                <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} duration={alertDuration}/>
             )}
             <br></br>
-            {/* <div className='flex'>
-                <BackToDashboard category={"handphone"}/>
-            </div> */}
             <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box rounded-lg p-6 shadow-lg bg-white">

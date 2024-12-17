@@ -49,9 +49,6 @@ export default function DetailProductVideo(detailProductVideo: DetailProduct){
             <hr className="border-y-1 border-gray-700 border-dashed border-slate-100"></hr>
                
             <br></br>
-            {/* <div className='flex'>
-                <BackToDashboard category={"video"}/>
-            </div> */}
         </div>  
     )
 }
