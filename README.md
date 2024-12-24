@@ -21,3 +21,7 @@ https://product-nextjs13.vercel.app/
 
 Thank you Terima Kasih
 =======
+
+Ada user untuk testing role-nya User
+email: usertesting021090@gmail.com
+password: 123456

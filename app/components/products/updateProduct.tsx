@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, SyntheticEvent } from "react";
-import { useRouter} from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import { ChangeEvent } from "react";
 import AlertSuccess from "@/app/components/alertSuccess";
@@ -17,7 +16,6 @@ export default function UpdateProduct(product: EditProduct){
     const [price, setPrice] = useState(stringPrice);
     const [quantity, setQuantity] = useState(product.quantity!);
     const [modal, setModal] = useState(false);
-    const router = useRouter();
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [alertDuration, setAlertDuration] = useState(3000);
@@ -43,7 +41,6 @@ export default function UpdateProduct(product: EditProduct){
                 formData.append('file', file);
                 formData.append('category', product.category!);
                 formData.append('product_id', product_id);
-                console.log("file Client", file);
                 const response = await fetch(`${route}/uploadContent`,{
                     method: 'POST',
                     headers: {

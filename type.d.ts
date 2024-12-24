@@ -44,18 +44,11 @@ type MapUserProduct = {
     order_direction: string | null
 }
 
-type GetMapUserProduct = {
-    name: string
-}
-
 type EnrollProduct = {
     user: Users;
     product: Products;
 }
 
-type GetUserProduct = {
-    mapUserProducts: MapUserProduct[];
-}
 type WelcomeMessage = {
     isAdmin: boolean,
     name: string,
@@ -67,16 +60,7 @@ type DynamicResult = {
     errorMessage: string | null,
     data: any | null
 }
-type GetImage = {
-    image: File,
-    product_id: number
-}
 
-type ImageComponent = {
-    children: any,
-    isAdmin: boolean,
-    product_id: number
-}
 type EditProduct = {
     id: number | null,
     category: string | null,
@@ -86,13 +70,10 @@ type EditProduct = {
     quantity: number | null,
     image_url: string | null,
     video_url: string | null,
-    onUpdateTable: any
+    onUpdateTable: () => void,
 }
 type CheckContentProduct = {
     content_url: string
-}
-type CheckVideo = {
-    video_url: string
 }
 type DetailProduct = {
     id: number,
@@ -102,27 +83,23 @@ type DetailProduct = {
     description: string
 }
 
-type UploadImageProduct = {
-    isAdmin: boolean,
-    product_id: number
-}
 type BuyProduct = {
     quantity: number,
     product_id: number,
     email: string
 }
 type Alert = {
-    onClose: any,
+    onClose: () => void,
     visible: boolean,
     message: string,
     duration?: number
 }
 type ContentToogle = {
-    onToogle: any
+    onToogle: () => void,
 }
 type ContentToogleSignIn = {
-    onToogle: any,
-    onToogleResetPassword: any
+    onToogle: () => void,
+    onToogleResetPassword: () => void
 }
 type ResetPassword = {
     email: "",
@@ -136,12 +113,12 @@ type ImageProduct = {
 }
 type AddProduct = {
     isVisible: boolean,
-    onUpdateTable: any
+    onUpdateTable: () => void,
 }
 
 type TableProduct = {
     users: Users[],
-    onUpdateTable: any,
+    onUpdateTable: () => void,
     isUpdateTable: boolean
 }
 type CardProduct = {
@@ -159,16 +136,16 @@ type VideoProduct = {
 
 type Profile = {
     modalProfile: boolean,
-    handleChangeProfile: any,
+    handleChangeProfile: () => void,
     user_id: number,
     name: string,
     phone: number,
-    onUpdateTable: any,
+    onUpdateTable: () => void,
 }
 
 type Logout = {
     modalLogout: boolean,
-    handleChangeLogout: any
+    handleChangeLogout: () => Promise<void>
 }
 type BackToDashboard = {
     category: string
@@ -179,6 +156,15 @@ type GetHistoryBuyProduct = {
     total_quantity: number,
     username: string,
     format_created: string
+}
+type HistoryBuyProduct = {
+    product_id: number,
+    title: string,
+    total_quantity: number,
+    username: string,
+    format_created: string,
+    start_date:string,
+    end_date:string
 }
 type Datasets = {
     label:string,
@@ -196,4 +182,8 @@ type Upload={
 
 type UploadThumbnail={
     product_id: number,
+}
+type DatePicker = {
+    onChangeStartDate: (date: string) => void,
+    onChangeEndDate: (date: string) => void
 }

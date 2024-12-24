@@ -20,7 +20,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if(!isValidContentType){
             return NextResponse.json({status: "Failed", msg: "Invalid image type", errorMessage: "Invalid image type"} as DynamicResult, {status: 400});
         }
-        console.log("file Server Profile Picture", file);
         let respUploadStorage: any = await supabase.storage
             .from('images')
             .upload(`Foto-user-user_id-${user_id}.png`, file!);
