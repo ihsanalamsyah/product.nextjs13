@@ -20,7 +20,7 @@ export default function EnrollProduct(enrollProduct: EnrollProduct){
         setIsMutating(true);
         let today = new Date();
         let formattedToday = moment(today).format('YYYY-MM-DD');
-        const response = await fetch(`${route}/mapUserProduct`,{
+        const response = await fetch(`${route}/getAllProductUser`,{
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

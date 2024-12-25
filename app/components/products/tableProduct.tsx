@@ -15,7 +15,7 @@ const route = process.env.NEXT_PUBLIC_ROUTE;
 async function GetUserProduct(token: string, email: string, category: string, searchQuery: string, orderBy1:string, orderBy2:string, orderDirection:string):Promise<MapUserProduct[]> {
     let userAndProduct:MapUserProduct[] = [];
     try {           
-        const response = await fetch(`${route}/mapUserProduct`, {
+        const response = await fetch(`${route}/getAllProductAdmin`, {
             method: 'POST',
             cache: 'no-store',
             headers:{
