@@ -32,6 +32,8 @@ export default function UpdateProduct(product: EditProduct){
     
     async function handleFileChange(e:ChangeEvent<HTMLInputElement>) {
         try{
+            setModal(false);
+            product.onProcessing(true);
             const fileInput = e.target;
             const files = fileInput.files;
             if (files && files.length > 0) {
@@ -62,11 +64,15 @@ export default function UpdateProduct(product: EditProduct){
                     });
                     const content = await response.json();
                     if(content.status == "OK"){
+                        product.onProcessing(false);
+                        setModal(true);
                         setAlertDuration(10000);
                         setAlertMessage(content.msg);
                         setAlertStatus(content.status);
                         setIsAlertVisible(true);
                     }else{
+                        product.onProcessing(false);
+                        setModal(true);
                         setAlertDuration(10000);
                         setAlertMessage(content.msg);
                         setAlertStatus(content.status);
@@ -74,6 +80,8 @@ export default function UpdateProduct(product: EditProduct){
                     }
                 }
                 else{
+                    product.onProcessing(false);
+                    setModal(true);
                     setAlertDuration(10000);
                     setAlertMessage(content.msg);
                     setAlertStatus(content.status);
@@ -81,6 +89,8 @@ export default function UpdateProduct(product: EditProduct){
                 }
             }
         } catch (error){
+            product.onProcessing(true);
+            setModal(true);
             setAlertDuration(10000);
             setAlertMessage(error as string);
             setAlertStatus("Failed");
@@ -113,6 +123,8 @@ export default function UpdateProduct(product: EditProduct){
             setAlertMessage("Quantity is required");
             return;
         }
+        setModal(false);
+        product.onProcessing(true);
         setIsMutating(true);
         const response = await fetch(`${route}/products`,{
             method: 'PATCH',
@@ -130,14 +142,20 @@ export default function UpdateProduct(product: EditProduct){
         });
         const content = await response.json();
         if(content.status == "OK"){
+            product.onProcessing(false);
+            setModal(true);
             setIsMutating(false);
             product.onUpdateTable();
-            setModal(false);
+            setAlertMessage(content.msg);
+            setAlertStatus(content.status);
+            setIsAlertVisible(true);
         }
         else{
+            product.onProcessing(false);
+            setModal(true);
             setIsMutating(false);
             setAlertMessage(content.msg);
-            setAlertStatus("Failed");
+            setAlertStatus(content.status);
             setIsAlertVisible(true);
         }
    

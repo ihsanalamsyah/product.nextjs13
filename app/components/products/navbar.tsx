@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import ModalProcess from "@/app/components/modalProcess";
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 async function GetImageUrl(user_id:number):Promise<string>{
@@ -57,6 +58,7 @@ export default function Navbar(navbar: Navbar){
     const token = getCookie("token");
     const [isSuccessImage, setIsSuccessImage] = useState(false);
     const [searchQuery, setSearchQuery] = useState(searchParam.get("search")! ?? "");
+    const [isProcessing, setIsProcessing] = useState(false);
 
     function handleHomePage(){
         if(users[0].role == "Admin"){         
@@ -88,6 +90,10 @@ export default function Navbar(navbar: Navbar){
     const handleChangeLogout = () => handleLogout(token!);
 
     const handleUpdateTable =() => setTableDataUpdated(!tableDataUpdated);
+
+    function doProcessing(isOpen:boolean){
+        setIsProcessing(isOpen);
+    }
 
     function handleEnter(event: React.KeyboardEvent<HTMLInputElement>){
         if (event.key === 'Enter') {
@@ -138,7 +144,8 @@ export default function Navbar(navbar: Navbar){
     }, [users]);
     return (
         <>
-        <div className="navbar bg-gray-900 fixed top-0 left-0 w-full">
+        <ModalProcess isProcessing={isProcessing} onProcessing={doProcessing}/>
+        <div className="navbar bg-gray-900 fixed top-0 left-0 w-full z-10">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -247,6 +254,7 @@ export default function Navbar(navbar: Navbar){
             phone={users[0].phone!} 
             user_id={users[0].id!} 
             onUpdateTable={handleUpdateTable}
+            onProcessing={doProcessing}
         />
         }   
         </>   

@@ -14,7 +14,6 @@ export default function SignUp(signUp:ContentToogle){
     const [role, setRole] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-
     const [isMutating, setIsMutating] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");

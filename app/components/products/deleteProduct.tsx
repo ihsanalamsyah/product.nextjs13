@@ -37,7 +37,6 @@ export default function DeleteProduct(product: EditProduct){
             setIsMutating(false);
             alert(content.msg);
         }
-   
     }
     return (
         <div>

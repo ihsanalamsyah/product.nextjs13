@@ -10,6 +10,7 @@ import WelcomeMessage from "@/app/components/products/welcomeMessage";
 import AddProduct from "@/app/components/products/addProduct";
 import TableProduct from "@/app/components/products/tableProduct";
 import Tracker from "@/app/components/products/tracker";
+import ModalProcess from "@/app/components/modalProcess";
 import HomeIcon from '@mui/icons-material/Home';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
@@ -86,6 +87,7 @@ export default function Drawer(){
     const [isSuccessImage, setIsSuccessImage] = useState(false);
     const [page, setPage] = useState("");
     const [isDrawerOpen, setDrawerOpen] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
     function handleHomePage(){
         if(users[0].role == "Admin"){
             return router.push("/admin");
@@ -128,6 +130,9 @@ export default function Drawer(){
             return router.push("/products");   
         }
     }
+    function doProcessing(isOpen:boolean){
+        setIsProcessing(isOpen);
+    }
     useEffect(()=>{
         const fetchData =  async ()=>{ 
             const token = getCookie("token");
@@ -147,6 +152,7 @@ export default function Drawer(){
     }, [isAdmin, tableDataUpdated]);
     return (
         <>
+        <ModalProcess isProcessing={isProcessing} onProcessing={doProcessing}/>
         <div className="drawer lg:drawer-open">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={toggleDrawer}/>
             <div className="drawer-content flex flex-col items-center">
@@ -203,7 +209,7 @@ export default function Drawer(){
                             <WelcomeMessage name={users[0].name!} isAdmin={isAdmin}/>  
                         </div> 
                         <div className="py-2 flex flex-row-reverse">
-                            <AddProduct isVisible={isAdmin} onUpdateTable={handleUpdateTable}/>
+                            <AddProduct isVisible={isAdmin} onUpdateTable={handleUpdateTable} onProcessing={doProcessing}/>
                         </div>
                         <hr></hr>
                         <div>
@@ -298,6 +304,7 @@ export default function Drawer(){
             phone={users[0]?.phone!} 
             user_id={users[0]?.id!}
             onUpdateTable={handleUpdateTable}
+            onProcessing={doProcessing}
         />
         }
         </>   

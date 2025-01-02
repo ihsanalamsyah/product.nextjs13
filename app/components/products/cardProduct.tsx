@@ -3,6 +3,7 @@
 import moment from "moment";
 import EnrollProduct from "@/app/components/products/enrollProduct";
 import OpenProduct from "@/app/components/products/openProduct";
+import CardSkeleton from "@/app/components/products/cardSkeleton";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
@@ -44,6 +45,7 @@ export default function CardProduct(cardProduct: CardProduct){
     const [isAdmin, setIsAdmin] = useState(false);
     const [isProductEmpty, setIsProductEmpty] = useState(false);
     const router = useRouter();
+    const [isLoading , setIsLoading] = useState(true);
 
     useEffect(()=>{    
         const fetchData =  async ()=>{    
@@ -51,6 +53,7 @@ export default function CardProduct(cardProduct: CardProduct){
             const email = getCookie("email");
             const mapUserProducts: MapUserProduct[] = await GetUserProduct(token!, email!, category!, searchQuery!);
             setMapUserProducts(mapUserProducts);
+            setIsLoading(false);
             if(mapUserProducts.length <= 0){
                 setIsProductEmpty(true);
             }
@@ -62,10 +65,10 @@ export default function CardProduct(cardProduct: CardProduct){
     }, [category,searchQuery,cardProduct.users]);
     function handleOpen(product_id: number, category:string){
         return router.push(`products/${product_id}?category=${category?.toLowerCase()}`); 
-     }
+    }
     return (
         <>
-          {isProductEmpty ? (
+          {isLoading ? <CardSkeleton /> : isProductEmpty ? (
                 isAdmin ? (
                     <div className="flex justify-center my-2"><p>Product is empty, Please add some</p></div>
                 ) : (
@@ -73,7 +76,7 @@ export default function CardProduct(cardProduct: CardProduct){
                 )              
                 ) : (
                     <div className="grid gap-x-5 gap-y-4 lg:grid-cols-5 grid-cols-2">   
-                         {mapUserProducts.map((mapUserProduct)=>{
+                        {mapUserProducts.map((mapUserProduct)=>{
                             const today = new Date();
                             const enroll_date = mapUserProduct.enroll_date;            
                             const formattedToday = moment(today);
@@ -84,17 +87,17 @@ export default function CardProduct(cardProduct: CardProduct){
                             const price: number = mapUserProduct.price!;
                             let stringPrice:string = price.toString().replace(/\./g, '');
                             stringPrice = "Rp" + stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-                            if(dateDiff > 3 && mapUserProduct.category == "Video"){
-                                const product: Products = {
-                                    id: mapUserProduct.product_id!,
-                                    category: mapUserProduct.category,
-                                    price: mapUserProduct.price!,
-                                    title: mapUserProduct.title!,
-                                    description: mapUserProduct.description,
-                                    quantity: mapUserProduct.quantity,
-                                    image_url: mapUserProduct.image_url,
-                                    video_url: mapUserProduct.video_url
-                                }
+                            const product: Products = {
+                                id: mapUserProduct.product_id!,
+                                category: mapUserProduct.category,
+                                price: mapUserProduct.price!,
+                                title: mapUserProduct.title!,
+                                description: mapUserProduct.description,
+                                quantity: mapUserProduct.quantity,
+                                image_url: mapUserProduct.image_url,
+                                video_url: mapUserProduct.video_url
+                            }
+                            if(dateDiff > 3 && mapUserProduct.category == "Video"){              
                                 return(
                                 <div className="card static bg-base-100 lg:w-64 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
                                     <figure className="lg:min-h-44 min-h-36 w-full bg-gray-200">
@@ -115,16 +118,6 @@ export default function CardProduct(cardProduct: CardProduct){
                                 </div>)
                             }
                             else{
-                                const product: Products = {
-                                    id: mapUserProduct.product_id!,
-                                    category: mapUserProduct.category,
-                                    price: mapUserProduct.price!,
-                                    title: mapUserProduct.title!,
-                                    description: mapUserProduct.description,
-                                    quantity: mapUserProduct.quantity,
-                                    image_url: mapUserProduct.image_url,
-                                    video_url: mapUserProduct.video_url
-                                }
                                 return(
                                 <div className="card static bg-base-100 lg:w-64 shadow-xl lg:mx-5 lg:my-2" key={product.id}>
                                     <figure title={product.category == "Video" ? "Watch Now" : "Open Detail"} className="lg:min-h-44 min-h-36 w-full bg-gray-200">

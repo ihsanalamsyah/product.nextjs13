@@ -71,6 +71,7 @@ type EditProduct = {
     image_url: string | null,
     video_url: string | null,
     onUpdateTable: () => void,
+    onProcessing: (isOpen:boolean) => void
 }
 type CheckContentProduct = {
     content_url: string
@@ -114,6 +115,7 @@ type ImageProduct = {
 type AddProduct = {
     isVisible: boolean,
     onUpdateTable: () => void,
+    onProcessing: (isOpen:boolean) => void
 }
 
 type TableProduct = {
@@ -141,6 +143,7 @@ type Profile = {
     name: string,
     phone: number,
     onUpdateTable: () => void,
+    onProcessing: (isOpen:boolean) => void,
 }
 
 type Logout = {
@@ -186,4 +189,9 @@ type UploadThumbnail={
 type DatePicker = {
     onChangeStartDate: (date: string) => void,
     onChangeEndDate: (date: string) => void
+}
+
+type ModalProcess={
+    isProcessing:boolean,
+    onProcessing: (isOpen:boolean) => void
 }

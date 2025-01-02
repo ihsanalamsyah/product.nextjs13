@@ -22,7 +22,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if(error != null){
             return NextResponse.json({status: "Failed", msg: "Error fetch function admin", data: error.message} as DynamicResult, {status : 300});
         }
-        console.log("getUserProduct", data);
         dataResult = data!;
         return NextResponse.json({status: "OK", msg: "Get User Product", data: dataResult} as DynamicResult, {status : 200});
     }

@@ -68,6 +68,8 @@ export default function AddProduct( addProduct: AddProduct){
             return;
         }
         setIsMutating(true);
+        setModal(false);
+        addProduct.onProcessing(true);
         const route = process.env.NEXT_PUBLIC_ROUTE;
                 
         const response = await fetch(`${route}/products`,{
@@ -86,21 +88,22 @@ export default function AddProduct( addProduct: AddProduct){
         });
         const content = await response.json();
         if(content.status == "OK"){
+            addProduct.onProcessing(false);
+            setModal(true);
             setIsMutating(false);
             resetForm();
             addProduct.onUpdateTable();
-            setModal(false);
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
-            return;
         }
         else{
+            addProduct.onProcessing(false);
+            setModal(true);
             setIsMutating(false);
             setAlertMessage(content.msg);
             setAlertStatus(content.status);
             setIsAlertVisible(true);
-            return;
         }
         
     }

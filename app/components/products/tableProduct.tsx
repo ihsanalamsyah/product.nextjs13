@@ -5,6 +5,7 @@ import DeleteProduct from "@/app/components/products/deleteProduct";
 import EnrollProduct from "@/app/components/products/enrollProduct";
 import OpenProduct from "@/app/components/products/openProduct";
 import UpdateProduct from "@/app/components/products/updateProduct";
+import ModalProcess from "@/app/components/modalProcess";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
@@ -51,6 +52,7 @@ export default function TableProduct(tableProduct: TableProduct){
     const [orderBy1, setOrderBy1] = useState("category");
     const [orderBy2, setOrderBy2] = useState("title");
     const [orderDirection, setOrderDirection] = useState(true);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(()=>{    
         const fetchData =  async ()=>{    
@@ -70,6 +72,9 @@ export default function TableProduct(tableProduct: TableProduct){
 
     const handleUpdateTable = () => tableProduct.onUpdateTable();
     
+    function doProcessing(isOpen:boolean){
+        setIsProcessing(isOpen);
+    }
     function handleSort(sortByParam1:string, sortByParam2:string){
         setOrderBy1(sortByParam1);
         setOrderBy2(sortByParam2);
@@ -85,10 +90,11 @@ export default function TableProduct(tableProduct: TableProduct){
         }else{
             return(<ArrowUpwardIcon className="w-4 h-4 inline-block ml-1" />)
         }
-    };
+    }
     return (
         <>
-          {isProductEmpty ? (
+            <ModalProcess isProcessing={isProcessing} onProcessing={doProcessing}/>
+            {isProductEmpty ? (
                 isAdmin ? (
                     <div className="flex justify-center my-2"><p>Product is empty, Please add some</p></div>
                 ) : (
@@ -126,6 +132,16 @@ export default function TableProduct(tableProduct: TableProduct){
                             const price: number = mapUserProduct.price!;
                             let stringPrice:string = price.toString().replace(/\./g, '');
                             stringPrice = "Rp"+ stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                            const product: Products = {
+                                id: mapUserProduct.product_id!,
+                                category: "",
+                                price: mapUserProduct.price!,
+                                title: mapUserProduct.title!,
+                                description: mapUserProduct.description,
+                                quantity: 0,
+                                image_url: "",
+                                video_url: ""
+                            }
                             if(role == "Admin"){
                                 return(<tr key={mapUserProduct.product_id!}>
                                     <th>{index + 1}</th>
@@ -140,8 +156,8 @@ export default function TableProduct(tableProduct: TableProduct){
                                     <th className="w-fit">{stringPrice}</th>
                                     <th>{mapUserProduct.quantity!}</th>
                                     <th className="flex">
-                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable}/>
-                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable}/>
+                                        <UpdateProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable} onProcessing={doProcessing}/>
+                                        <DeleteProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!} category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""} onUpdateTable={handleUpdateTable} onProcessing={doProcessing}/>
                                         <OpenProduct id={mapUserProduct.product_id!} title={mapUserProduct.title!} price={mapUserProduct.price!} quantity={mapUserProduct.quantity!}  category={mapUserProduct.category!} description={mapUserProduct.description!} video_url={""} image_url={""}/>
                                     </th>
 
@@ -154,16 +170,6 @@ export default function TableProduct(tableProduct: TableProduct){
                             }
                             else if (role == "User"){
                                 if(dateDiff > 3 && mapUserProduct.category == "Video"){
-                                    const product: Products = {
-                                        id: mapUserProduct.product_id!,
-                                        category: "",
-                                        price: mapUserProduct.price!,
-                                        title: mapUserProduct.title!,
-                                        description: mapUserProduct.description,
-                                        quantity: 0,
-                                        image_url: "",
-                                        video_url: ""
-                                    }
                                     return(<tr key={mapUserProduct.product_id!}>
                                         <th>{index + 1}</th>
                                         {
@@ -244,7 +250,8 @@ export default function TableProduct(tableProduct: TableProduct){
                         })}
                         </tbody>
                     </table>
-                )} 
+                )
+            } 
         </>    
     )
 }
