@@ -12,7 +12,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
     let stringPrice:string = detailPrice.toString().replace(/\./g, '');
     stringPrice = "Rp. " + stringPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ",00";
     const [price, setPrice] = useState(stringPrice);
-    const [quantityBuy, setQuantityBuy] = useState(0);
+    const [quantityBuy, setQuantityBuy] = useState(1);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertStatus, setAlertStatus] = useState("");
     const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -22,7 +22,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
     const token = getCookie("token");
     const email = getCookie("email");
 
-    const resetForm = () => setQuantityBuy(0);
+    const resetForm = () => setQuantityBuy(1);
     
     function handlePlus(){
         if(quantity <= 0){
@@ -45,20 +45,11 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
         }
     }
     
-    function handleModalBuy(){
-        if(quantityBuy <= 0){
-            setAlertMessage("Add quantity");
-            setIsAlertVisible(true);
-            setAlertStatus("Failed");
-        }else{
-            setModal(!modal);
-        }    
-    }
 
     async function handleBuy(){
         setIsMutating(true);
     
-        const response = await fetch(`${route}/buyProductHandphone`,{
+        const response = await fetch(`${route}/storeToCart`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +63,6 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
         });
         const content = await response.json();
         if(content.status == "OK"){
-            setQuantity(content.data[0].quantity);
             setIsMutating(false);
             setModal(false);
             setAlertMessage(content.msg);
@@ -143,15 +133,15 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
             <p className="lg:text-2xl text-lg font-medium">Quantity : {quantity}</p>
             <br></br>
             <div className="join">
-                <button className="btn join-item btn-md lg:w-24" onClick={handleMinus}><p className='text-2xl'>-</p></button>
+                <button className="btn join-item btn-md lg:w-24" onClick={handleMinus} disabled={quantityBuy === 1}><p className='text-2xl'>-</p></button>
                 <button className="btn join-item no-animation !hover:none focus:none active:none btn-md lg:w-[27rem] w-64 "><p className='text-2xl'>{quantityBuy}</p></button>
-                <button className="btn join-item btn-md lg:w-24" onClick={handlePlus}><p className='text-2xl'>+</p></button>
+                <button className="btn join-item btn-md lg:w-24" onClick={handlePlus} disabled={quantityBuy === detailProductPhone.quantity}><p className='text-2xl'>+</p></button>
             </div>
             <br></br>
             {quantity > 0 ? (
-                <button className="btn btn-success btn-sm" disabled={false} onClick={handleModalBuy}>Buy</button>
+                <button className="btn btn-success btn-sm" disabled={false} onClick={handleBuy}>+ Cart</button>
             ) :(
-                <button className="btn btn-success btn-sm" disabled={true} >Buy</button>
+                <button className="btn btn-success btn-sm" disabled={true}>+ Cart</button>
             )}
             
             <br></br>
@@ -161,37 +151,7 @@ export default function DetailProductPhone(detailProductPhone: DetailProduct){
                 <AlertSuccess message={alertMessage} visible={isAlertVisible} onClose={handleCloseAlert} duration={alertDuration}/>
             )}
             <br></br>
-            <input type="checkbox" checked={modal} onChange={handleModalBuy} className="modal-toggle" />
-            <div className="modal">
-                <div className="modal-box rounded-lg p-6 shadow-lg bg-white">
-                    <h3 className="font-bold text-2xl mb-4 text-gray-800">Are you sure want to buy {detailProductPhone.title} with quantity: {quantityBuy} ?</h3>
-                    <div className="modal-action">
-                        <button 
-                            type="button" 
-                            className="btn bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300" 
-                            onClick={handleModalBuy}
-                        >
-                            Close
-                        </button>
-                        {!isMutating ? (
-                        <button
-                            type="button" 
-                            onClick={handleBuy} 
-                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                        >
-                            Buy
-                        </button>
-                        ) : (
-                        <button 
-                            type="button" 
-                            className="btn bg-blue-600 text-white px-4 py-2 rounded-md loading"
-                        >
-                            Buying...
-                        </button>
-                        )}                 
-                    </div>
-                </div>
-            </div>
+           
         </div>    
     )
 }

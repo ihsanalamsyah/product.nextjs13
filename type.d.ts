@@ -87,7 +87,9 @@ type DetailProduct = {
 type BuyProduct = {
     quantity: number,
     product_id: number,
-    email: string
+    email: string,
+    cart_id: number,
+    carts: Cart[]
 }
 type Alert = {
     onClose: () => void,
@@ -179,9 +181,6 @@ type MapTitleQtyDatasets = {
     quantity:number[]
 }
 
-type Upload={
-    file:File
-}
 
 type UploadThumbnail={
     product_id: number,
@@ -195,3 +194,31 @@ type ModalProcess={
     isProcessing:boolean,
     onProcessing: (isOpen:boolean) => void
 }
+
+type CheckoutProduct = {
+    email: string,
+    carts: Cart[]
+}
+
+// type CartProduct={
+//     category: string,
+//     carts: Cart[]
+// }
+class Cart{
+    cart_id:number;
+    category: string;
+    product_id:number;
+    quantity:number;
+    checkbox: boolean;
+    products:Products;
+}
+
+class CartProduct {
+    category: string;
+    carts: Cart[];
+  
+    // constructor() {
+    //   this.category = "";
+    //   this.carts = [];
+    // }
+  }

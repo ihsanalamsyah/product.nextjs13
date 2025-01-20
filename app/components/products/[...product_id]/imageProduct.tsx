@@ -13,7 +13,8 @@ export default function ImageProduct(imageProduct: ImageProduct){
                         alt={imageProduct.image_alt}
                         width={400}
                         height={400}
-                        className="object-cover w-full h-full"></Image>
+                        className="object-cover w-full h-full"
+                    />
                 </div>
             </div>
             ) : (

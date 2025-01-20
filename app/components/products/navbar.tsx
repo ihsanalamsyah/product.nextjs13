@@ -11,6 +11,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ModalProcess from "@/app/components/modalProcess";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 async function GetImageUrl(user_id:number):Promise<string>{
@@ -46,27 +48,53 @@ async function CheckImageUrl(token:string, image_url:string):Promise<boolean>{
     }
     return isSuccessImage;
 }
+
+async function GetCountCart(token:string, email:string):Promise<number>{
+    let countCart:number = 0;
+    try{
+        const response = await fetch(`${route}/getAllCart`,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email
+            })
+        });
+        const content = await response.json();
+        if(content.status == "OK"){
+            countCart = content.data.length;
+        }
+    }catch(error) {
+        console.error('Error fetching data:', error);
+    }
+    return countCart;
+}
 export default function Navbar(navbar: Navbar){
     const searchParam = useSearchParams();
-    const [tableDataUpdated, setTableDataUpdated] = useState(false);
+    const [tableDataUpdated, setTableDataUpdated] = useState<boolean>(false);
     const detailsRef = useRef<HTMLDetailsElement>(null);
-    const [modalProfile, setModalProfile] = useState(false);
-    const [urlImageProfile, setUrlImageProfile] = useState("");
+    const [modalProfile, setModalProfile] = useState<boolean>(false);
+    const [urlImageProfile, setUrlImageProfile] = useState<string>("");
+    const [countCart, setCountCart] = useState<number>(0);
     const [users, setUsers] = useState<Users[]>(navbar.users);
     const category = searchParam.get("category")!;
     const router = useRouter();
     const token = getCookie("token");
-    const [isSuccessImage, setIsSuccessImage] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(searchParam.get("search")! ?? "");
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [isSuccessImage, setIsSuccessImage] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string>(searchParam.get("search")! ?? "");
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     function handleHomePage(){
         if(users[0].role == "Admin"){         
             return router.push("/admin");
         }else{
             return router.push("/products?category=handphone");
-        }
-        
+        }   
+    }
+    function handleCartPage(){
+        return router.push("/cart");
     }
     function handleCategoryPhone(){
         detailsRef.current!.removeAttribute("open");
@@ -75,7 +103,6 @@ export default function Navbar(navbar: Navbar){
         }else{
             return router.push("/products?category=handphone");
         }
-        
     }
     function handleCategoryVideo(){ 
         detailsRef.current!.removeAttribute("open");
@@ -84,7 +111,6 @@ export default function Navbar(navbar: Navbar){
         }else{
             return router.push("/products?category=video");
         }
-        
     } 
     const handleChangeProfile=()=> setModalProfile(!modalProfile);
     const handleChangeLogout = () => handleLogout(token!);
@@ -101,15 +127,15 @@ export default function Navbar(navbar: Navbar){
                 if(users[0].role == "Admin"){
                     return router.push(`/products?search=${searchQuery}`);
                 }else{
-                    return router.push(`/products?category=${category}&search=${searchQuery}`);
-                }   
+                    return router.push(`/search?search=${searchQuery}`);
+                }
             }else{
                 if(users[0].role == "Admin"){
                     return router.push(`/admin`);
                 }else{
-                    return router.push(`/products?category=${category}`);
-                } 
-            }        
+                    return router.push(`/products?category=handphone`);
+                }
+            }
         }
     };
     
@@ -135,10 +161,13 @@ export default function Navbar(navbar: Navbar){
     useEffect(()=>{      
         const fetchData =  async ()=>{
             const token = getCookie("token");
+            const email = getCookie("email");
             const imageUrl:string = await GetImageUrl(users[0]?.id!);
             setUrlImageProfile(imageUrl);
             const isSuccessImage = await CheckImageUrl(token!, imageUrl);
             setIsSuccessImage(isSuccessImage);
+            const countCart= await GetCountCart(token!, email!);
+            setCountCart(countCart ?? 0);
         }
         fetchData();
     }, [users]);
@@ -168,7 +197,7 @@ export default function Navbar(navbar: Navbar){
                         <li className="text-black"><a onClick={handleHomePage}><b>Home</b></a></li>
                         {users[0].role == "User" ? (
                             <li className="text-black">
-                                <a><b>Category</b></a>
+                                <a><b>Categories</b></a>
                                 <ul className="p-2">
                                     <li className="text-black"><a onClick={handleCategoryPhone}><p>Handphone</p></a></li>
                                     <li className="text-black"><a onClick={handleCategoryVideo}><p>Video</p></a></li>
@@ -183,11 +212,11 @@ export default function Navbar(navbar: Navbar){
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-                    <li className="text-white hover:bg-gray-700 rounded-lg"><a onClick={handleHomePage}><b>Home</b></a></li>
+                    <li className="text-white hover:bg-gray-700 rounded-lg active:scale-95"><a onClick={handleHomePage}><b>Home</b></a></li>
                     {users[0].role == "User" ? (
                     <li>
                         <details ref={detailsRef}>
-                            <summary className="text-white hover:bg-gray-700"><b>Category</b></summary>
+                            <summary className="text-white hover:bg-gray-700"><b>Categories</b></summary>
                             <ul className="p-2">
                                 <li><a onClick={handleCategoryPhone}>Handphone</a></li>
                                 <li><a onClick={handleCategoryVideo}>Video</a></li>
@@ -201,13 +230,20 @@ export default function Navbar(navbar: Navbar){
             </div>
             <div className="navbar-end">
                 {users[0].role == "User" ? (
-                    <div className="form-control">
-                        <input type="text" placeholder="Search" value={searchQuery} className="input input-bordered w-24 md:w-auto input-sm" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
+                    <>
+                    <div className="relative flex items-center mx-1">
+                        <SearchOutlinedIcon className="absolute left-3 text-gray-400" />
+                        <input type="text" placeholder="Search" value={searchQuery} className="input pl-10 input-bordered w-40 md:w-auto input-sm" onKeyDown={handleEnter}  onChange={(e) => setSearchQuery(e.target.value)}/>
                     </div>
+                    </>                
                 ) : (
                     <></>
                 )}
-                <div className="dropdown dropdown-end">
+                <div className="indicator mx-1 hover:bg-gray-700 p-2 cursor-pointer rounded-lg active:scale-95 active:shadow-md" onClick={handleCartPage}>
+                    <ShoppingCartIcon className="text-gray-300" />
+                    {countCart != 0 ? <span className="indicator-item badge badge-error text-white">{countCart}</span> : (<></>)}
+                </div>
+                <div className="dropdown dropdown-end mx-1">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar hover:bg-gray-700">
                         <div className="w-10 rounded-full border-white">
                             {isSuccessImage ? (

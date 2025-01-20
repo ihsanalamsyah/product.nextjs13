@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const quantity = body.quantity as number;
         const title = body.title as string;
         const category = body.category as string;
-        //jika undefined " " atau "" adalah false maka null
+        
         const description = !body.description?.trim() ? null : body.description;
         if(isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price is not number"} as DynamicResult, {status: 400});
@@ -74,8 +74,8 @@ export async function PATCH(req: NextRequest, res: NextResponse){
         price = Number(stringPrice);
         const quantity = body.quantity as number;
         const today = new Date();
-         //jika undefined " " atau "" adalah false maka null
-         const description = !body.description?.trim() ? null : body.description;
+        
+        const description = !body.description?.trim() ? null : body.description;
         if (isNaN(price)){
             return NextResponse.json({status: "Failed", msg: "Price NaN"} as DynamicResult, {status: 400});
         }

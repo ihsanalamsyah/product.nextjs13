@@ -5,10 +5,9 @@ import EnrollProduct from "@/app/components/products/enrollProduct";
 import OpenProduct from "@/app/components/products/openProduct";
 import CardSkeleton from "@/app/components/products/cardSkeleton";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { getCookie } from '@/utils/cookies';
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 const route = process.env.NEXT_PUBLIC_ROUTE;
 async function GetUserProduct(token: string, email: string, category: string, searchQuery: string):Promise<MapUserProduct[]> {
@@ -36,8 +35,33 @@ async function GetUserProduct(token: string, email: string, category: string, se
     }
     return userAndProduct;
 };
+async function GetSearchProduct(token: string, email: string, searchQuery: string):Promise<MapUserProduct[]> {
+    let userAndProduct:MapUserProduct[] = [];
+    try {             
+        const response = await fetch(`${route}/getSearchProduct`, {
+            method: 'POST',
+            cache: 'no-store',
+            headers:{
+                'Authorization': 'Bearer '+ token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                search: searchQuery
+            })
+        });
+        const content = await response.json();
+        
+        userAndProduct = content.data;
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    return userAndProduct;
+}
 export default function CardProduct(cardProduct: CardProduct){
     const searchParam = useSearchParams();
+    const pathname = usePathname();
     const [mapUserProducts, setMapUserProducts] = useState<MapUserProduct[]>([]);
     const [users, setUsers] = useState<Users[]>(cardProduct.users);
     const category = searchParam.get("category")!;
@@ -51,7 +75,13 @@ export default function CardProduct(cardProduct: CardProduct){
         const fetchData =  async ()=>{    
             const token = getCookie("token");
             const email = getCookie("email");
-            const mapUserProducts: MapUserProduct[] = await GetUserProduct(token!, email!, category!, searchQuery!);
+            let mapUserProducts: MapUserProduct[] = [];
+            if(pathname == "/search"){
+                mapUserProducts = await GetSearchProduct(token!, email!, searchQuery!);
+            }else{
+                mapUserProducts = await GetUserProduct(token!, email!, category!, searchQuery!);
+            }
+           
             setMapUserProducts(mapUserProducts);
             setIsLoading(false);
             if(mapUserProducts.length <= 0){
@@ -62,7 +92,7 @@ export default function CardProduct(cardProduct: CardProduct){
             }
         }
         fetchData();
-    }, [category,searchQuery,cardProduct.users]);
+    }, [category, searchQuery, cardProduct.users]);
     function handleOpen(product_id: number, category:string){
         return router.push(`products/${product_id}?category=${category?.toLowerCase()}`); 
     }
